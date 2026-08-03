@@ -1,14 +1,14 @@
 import Phaser from 'phaser';
+import { buttonTexture, panelTexture } from './art';
 
 export const W = 720;
 export const H = 1280;
 
 export const COLORS = {
   bg: 0x12080f,
-  wood: 0x4a2c1a,
+  wood: 0x59331d,
   woodDark: 0x33200f,
-  woodLight: 0x6b3f24,
-  floor: 0x241318,
+  woodLight: 0x7a4a28,
   accent: 0xe8a33d,
   accentDark: 0xb87a20,
   cream: 0xf2e6d0,
@@ -21,6 +21,10 @@ export const COLORS = {
 
 export const FONT = 'Trebuchet MS, Arial, sans-serif';
 
+export function hex(color: number): string {
+  return `#${color.toString(16).padStart(6, '0')}`;
+}
+
 export function txt(
   scene: Phaser.Scene,
   x: number,
@@ -30,19 +34,22 @@ export function txt(
   color = '#f2e6d0',
   style: Partial<Phaser.Types.GameObjects.Text.TextStyle> = {},
 ): Phaser.GameObjects.Text {
-  return scene.add.text(x, y, text, {
+  const t = scene.add.text(x, y, text, {
     fontFamily: FONT,
     fontSize: `${size}px`,
     color,
     ...style,
   });
+  t.setShadow(0, 2, 'rgba(0,0,0,0.55)', 3);
+  return t;
 }
 
 export interface Btn {
   container: Phaser.GameObjects.Container;
-  bg: Phaser.GameObjects.Rectangle;
+  image: Phaser.GameObjects.Image;
   label: Phaser.GameObjects.Text;
   setEnabled(on: boolean): void;
+  setToggled(on: boolean): void;
 }
 
 export function button(
@@ -55,25 +62,30 @@ export function button(
   onClick: () => void,
   color = COLORS.accent,
 ): Btn {
-  const bg = scene.add.rectangle(0, 0, w, h, color).setStrokeStyle(3, 0x000000, 0.35);
+  const image = scene.add.image(0, 0, buttonTexture(scene, w, h, hex(color)));
   const label = txt(scene, 0, 0, text, Math.min(30, h * 0.42), '#241308', { fontStyle: 'bold' }).setOrigin(0.5);
-  const container = scene.add.container(x, y, [bg, label]);
+  label.setShadow(0, 1, 'rgba(255,255,255,0.25)', 0);
+  const container = scene.add.container(x, y, [image, label]);
   container.setSize(w, h);
   let enabled = true;
-  bg.setInteractive({ useHandCursor: true });
-  bg.on('pointerdown', () => {
+  image.setInteractive({ useHandCursor: true });
+  image.on('pointerdown', () => {
     if (!enabled) return;
     scene.tweens.add({ targets: container, scale: 0.94, duration: 60, yoyo: true });
     onClick();
   });
   return {
     container,
-    bg,
+    image,
     label,
     setEnabled(on: boolean) {
       enabled = on;
-      bg.setFillStyle(on ? color : 0x555555);
-      label.setAlpha(on ? 1 : 0.55);
+      image.setTint(on ? 0xffffff : 0x666666);
+      label.setAlpha(on ? 1 : 0.5);
+    },
+    setToggled(on: boolean) {
+      image.setTint(on ? 0xffe0a0 : 0xffffff);
+      container.setScale(on ? 1.04 : 1);
     },
   };
 }
@@ -84,9 +96,8 @@ export function panel(
   y: number,
   w: number,
   h: number,
-  color = COLORS.panel,
-): Phaser.GameObjects.Rectangle {
-  return scene.add.rectangle(x, y, w, h, color, 0.96).setStrokeStyle(2, COLORS.accent, 0.5);
+): Phaser.GameObjects.Image {
+  return scene.add.image(x, y, panelTexture(scene, w, h));
 }
 
 export function formatMoney(n: number): string {

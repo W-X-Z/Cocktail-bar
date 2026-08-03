@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { bottleSizeMl, GameState } from '../systems/GameState';
 import { hasAllIngredientTypes } from '../systems/RecipeSystem';
+import { bottleTexture, vignetteTexture } from '../ui/art';
 import { button, COLORS, formatMoney, H, panel, txt, W } from '../ui/theme';
 
 type Tab = 'order' | 'menu';
@@ -26,6 +27,7 @@ export class ShopScene extends Phaser.Scene {
     this.scrollY = 0;
 
     this.add.rectangle(W / 2, H / 2, W, H, COLORS.bg);
+    this.add.image(W / 2, H / 2, vignetteTexture(this, W, H)).setAlpha(0.6);
     panel(this, W / 2, 80, W - 30, 120);
     txt(this, 40, 52, '발주 & 메뉴 관리', 38, '#e8a33d', { fontStyle: 'bold' });
     this.moneyText = txt(this, 40, 102, '', 28, '#5fbf67', { fontStyle: 'bold' });
@@ -84,8 +86,8 @@ export class ShopScene extends Phaser.Scene {
       const row = this.add.container(0, y);
       row.add(this.add.rectangle(W / 2, 0, W - 40, ROW_H - 10, COLORS.panelLight).setStrokeStyle(1, COLORS.accent, 0.2));
 
-      const color = Phaser.Display.Color.HexStringToColor(ing.color).color;
-      row.add(this.add.rectangle(70, 0, 22, 56, color).setStrokeStyle(2, 0x000000, 0.4));
+      const bottleKey = bottleTexture(this, `bottle_${ing.id}`, ing.color, ing.type !== 'mixer');
+      row.add(this.add.image(70, 0, bottleKey).setScale(0.55));
 
       const typeLabel = { spirit: '기주', liqueur: '리큐르', mixer: '믹서', garnish: '가니시', other: '기타' }[ing.type];
       row.add(txt(this, 110, -32, `${ing.nameKo}`, 26, '#f2e6d0', { fontStyle: 'bold' }));

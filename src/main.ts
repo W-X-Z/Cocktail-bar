@@ -5,7 +5,7 @@ import { MixScene } from './scenes/MixScene';
 import { ShopScene } from './scenes/ShopScene';
 import { COLORS, H, W } from './ui/theme';
 
-new Phaser.Game({
+const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
   width: W,
@@ -20,3 +20,11 @@ new Phaser.Game({
   },
   scene: [BootScene, BarScene, MixScene, ShopScene],
 });
+
+// E2E 테스트/디버깅용 훅
+declare global {
+  interface Window {
+    __game?: Phaser.Game;
+  }
+}
+window.__game = game;
