@@ -1,0 +1,26 @@
+{
+  "ingredients": [
+    { "id": "gin", "name": "Gin", "nameKo": "진", "type": "spirit", "price": 18000, "color": "#e8f4f0" },
+    { "id": "vodka", "name": "Vodka", "nameKo": "보드카", "type": "spirit", "price": 16000, "color": "#f0f0f4" },
+    { "id": "white_rum", "name": "White Rum", "nameKo": "화이트 럼", "type": "spirit", "price": 17000, "color": "#f4f0e4" },
+    { "id": "tequila", "name": "Tequila", "nameKo": "데킬라", "type": "spirit", "price": 28000, "color": "#f0e8c8" },
+    { "id": "bourbon", "name": "Bourbon Whiskey", "nameKo": "버번 위스키", "type": "spirit", "price": 32000, "color": "#c87830" },
+    { "id": "rye", "name": "Rye Whiskey", "nameKo": "라이 위스키", "type": "spirit", "price": 36000, "color": "#b86828" },
+    { "id": "campari", "name": "Campari", "nameKo": "캄파리", "type": "liqueur", "price": 26000, "color": "#d81830" },
+    { "id": "sweet_vermouth", "name": "Sweet Vermouth", "nameKo": "스위트 베르무트", "type": "liqueur", "price": 20000, "color": "#8c2818" },
+    { "id": "dry_vermouth", "name": "Dry Vermouth", "nameKo": "드라이 베르무트", "type": "liqueur", "price": 20000, "color": "#e8ecd8" },
+    { "id": "triple_sec", "name": "Triple Sec", "nameKo": "트리플 섹", "type": "liqueur", "price": 18000, "color": "#f4ecd8" },
+    { "id": "coffee_liqueur", "name": "Coffee Liqueur", "nameKo": "커피 리큐르", "type": "liqueur", "price": 24000, "color": "#3c2010" },
+    { "id": "tonic", "name": "Tonic Water", "nameKo": "토닉워터", "type": "mixer", "price": 3000, "color": "#eef4f4" },
+    { "id": "cola", "name": "Cola", "nameKo": "콜라", "type": "mixer", "price": 2500, "color": "#38180c" },
+    { "id": "soda", "name": "Soda Water", "nameKo": "탄산수", "type": "mixer", "price": 2000, "color": "#f0f6f8" },
+    { "id": "orange_juice", "name": "Orange Juice", "nameKo": "오렌지 주스", "type": "mixer", "price": 4000, "color": "#f8a828" },
+    { "id": "cranberry_juice", "name": "Cranberry Juice", "nameKo": "크랜베리 주스", "type": "mixer", "price": 4500, "color": "#c81848" },
+    { "id": "lime_juice", "name": "Lime Juice", "nameKo": "라임 주스", "type": "mixer", "price": 5000, "color": "#c8e878" },
+    { "id": "lemon_juice", "name": "Lemon Juice", "nameKo": "레몬 주스", "type": "mixer", "price": 5000, "color": "#f0e888" },
+    { "id": "sugar_syrup", "name": "Sugar Syrup", "nameKo": "설탕 시럽", "type": "mixer", "price": 4000, "color": "#f4f0e8" },
+    { "id": "espresso", "name": "Espresso", "nameKo": "에스프레소", "type": "mixer", "price": 6000, "color": "#2c1408" },
+    { "id": "angostura", "name": "Angostura Bitters", "nameKo": "앙고스투라 비터스", "type": "mixer", "price": 15000, "color": "#7c2818" },
+    { "id": "mint", "name": "Mint Leaves", "nameKo": "민트 잎", "type": "garnish", "price": 3500, "color": "#48a848" }
+  ]
+}

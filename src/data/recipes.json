@@ -1,0 +1,243 @@
+{
+  "_meta": {
+    "source": "IBA official cocktail list (2020/2024), cross-checked 2026-08-03",
+    "note": "ml 계량은 IBA 스펙 기준. shake/stir 시간은 게임 플레이용으로 단축 조정. muddle/rim/strain은 MVP에서 생략(post-MVP 예정).",
+    "simplifications": [
+      "Old Fashioned: 각설탕+물+머들 → 설탕시럽 10ml로 대체",
+      "Cosmopolitan: 시트론 보드카 → 보드카로 대체",
+      "Manhattan: 라이 위스키는 별도 보틀로 판매",
+      "Mojito: 민트 머들 → 가니시 추가로 단순화"
+    ]
+  },
+  "recipes": [
+    {
+      "id": "gin_tonic",
+      "name": "Gin & Tonic",
+      "nameKo": "진토닉",
+      "tier": 1,
+      "basePrice": 8000,
+      "glass": "highball",
+      "method": "build",
+      "steps": [
+        { "action": "pour", "ingredient": "gin", "amountMl": 45 },
+        { "action": "pour", "ingredient": "tonic", "amountMl": 90 },
+        { "action": "stir", "seconds": 3 }
+      ]
+    },
+    {
+      "id": "cuba_libre",
+      "name": "Cuba Libre",
+      "nameKo": "쿠바 리브레",
+      "tier": 1,
+      "basePrice": 8000,
+      "glass": "highball",
+      "method": "build",
+      "steps": [
+        { "action": "pour", "ingredient": "white_rum", "amountMl": 50 },
+        { "action": "pour", "ingredient": "lime_juice", "amountMl": 10 },
+        { "action": "pour", "ingredient": "cola", "amountMl": 120 },
+        { "action": "stir", "seconds": 3 }
+      ]
+    },
+    {
+      "id": "screwdriver",
+      "name": "Screwdriver",
+      "nameKo": "스크류드라이버",
+      "tier": 1,
+      "basePrice": 7500,
+      "glass": "highball",
+      "method": "build",
+      "steps": [
+        { "action": "pour", "ingredient": "vodka", "amountMl": 50 },
+        { "action": "pour", "ingredient": "orange_juice", "amountMl": 100 },
+        { "action": "stir", "seconds": 3 }
+      ]
+    },
+    {
+      "id": "whiskey_highball",
+      "name": "Whiskey Highball",
+      "nameKo": "위스키 하이볼",
+      "tier": 1,
+      "basePrice": 9000,
+      "glass": "highball",
+      "method": "build",
+      "steps": [
+        { "action": "pour", "ingredient": "bourbon", "amountMl": 45 },
+        { "action": "pour", "ingredient": "soda", "amountMl": 120 },
+        { "action": "stir", "seconds": 2 }
+      ]
+    },
+    {
+      "id": "daiquiri",
+      "name": "Daiquiri",
+      "nameKo": "다이키리",
+      "tier": 2,
+      "basePrice": 11000,
+      "glass": "coupe",
+      "method": "shake",
+      "steps": [
+        { "action": "pour", "ingredient": "white_rum", "amountMl": 60 },
+        { "action": "pour", "ingredient": "lime_juice", "amountMl": 20 },
+        { "action": "pour", "ingredient": "sugar_syrup", "amountMl": 10 },
+        { "action": "shake", "seconds": 6 }
+      ]
+    },
+    {
+      "id": "whiskey_sour",
+      "name": "Whiskey Sour",
+      "nameKo": "위스키 사워",
+      "tier": 2,
+      "basePrice": 12000,
+      "glass": "rocks",
+      "method": "shake",
+      "steps": [
+        { "action": "pour", "ingredient": "bourbon", "amountMl": 45 },
+        { "action": "pour", "ingredient": "lemon_juice", "amountMl": 25 },
+        { "action": "pour", "ingredient": "sugar_syrup", "amountMl": 20 },
+        { "action": "shake", "seconds": 6 }
+      ]
+    },
+    {
+      "id": "margarita",
+      "name": "Margarita",
+      "nameKo": "마가리타",
+      "tier": 2,
+      "basePrice": 12000,
+      "glass": "coupe",
+      "method": "shake",
+      "steps": [
+        { "action": "pour", "ingredient": "tequila", "amountMl": 50 },
+        { "action": "pour", "ingredient": "triple_sec", "amountMl": 20 },
+        { "action": "pour", "ingredient": "lime_juice", "amountMl": 15 },
+        { "action": "shake", "seconds": 6 }
+      ]
+    },
+    {
+      "id": "old_fashioned",
+      "name": "Old Fashioned",
+      "nameKo": "올드 패션드",
+      "tier": 2,
+      "basePrice": 13000,
+      "glass": "rocks",
+      "method": "stir",
+      "steps": [
+        { "action": "pour", "ingredient": "sugar_syrup", "amountMl": 10 },
+        { "action": "pour", "ingredient": "angostura", "amountMl": 2 },
+        { "action": "pour", "ingredient": "bourbon", "amountMl": 45 },
+        { "action": "stir", "seconds": 8 }
+      ]
+    },
+    {
+      "id": "negroni",
+      "name": "Negroni",
+      "nameKo": "네그로니",
+      "tier": 2,
+      "basePrice": 13000,
+      "glass": "rocks",
+      "method": "stir",
+      "steps": [
+        { "action": "pour", "ingredient": "gin", "amountMl": 30 },
+        { "action": "pour", "ingredient": "campari", "amountMl": 30 },
+        { "action": "pour", "ingredient": "sweet_vermouth", "amountMl": 30 },
+        { "action": "stir", "seconds": 5 }
+      ]
+    },
+    {
+      "id": "dry_martini",
+      "name": "Dry Martini",
+      "nameKo": "드라이 마티니",
+      "tier": 3,
+      "basePrice": 14000,
+      "glass": "martini",
+      "method": "stir",
+      "steps": [
+        { "action": "pour", "ingredient": "gin", "amountMl": 60 },
+        { "action": "pour", "ingredient": "dry_vermouth", "amountMl": 10 },
+        { "action": "stir", "seconds": 10 }
+      ]
+    },
+    {
+      "id": "manhattan",
+      "name": "Manhattan",
+      "nameKo": "맨해튼",
+      "tier": 3,
+      "basePrice": 14000,
+      "glass": "coupe",
+      "method": "stir",
+      "steps": [
+        { "action": "pour", "ingredient": "rye", "amountMl": 50 },
+        { "action": "pour", "ingredient": "sweet_vermouth", "amountMl": 20 },
+        { "action": "pour", "ingredient": "angostura", "amountMl": 1 },
+        { "action": "stir", "seconds": 10 }
+      ]
+    },
+    {
+      "id": "cosmopolitan",
+      "name": "Cosmopolitan",
+      "nameKo": "코스모폴리탄",
+      "tier": 3,
+      "basePrice": 13000,
+      "glass": "martini",
+      "method": "shake",
+      "steps": [
+        { "action": "pour", "ingredient": "vodka", "amountMl": 40 },
+        { "action": "pour", "ingredient": "triple_sec", "amountMl": 15 },
+        { "action": "pour", "ingredient": "lime_juice", "amountMl": 15 },
+        { "action": "pour", "ingredient": "cranberry_juice", "amountMl": 30 },
+        { "action": "shake", "seconds": 6 }
+      ]
+    },
+    {
+      "id": "mojito",
+      "name": "Mojito",
+      "nameKo": "모히토",
+      "tier": 3,
+      "basePrice": 12000,
+      "glass": "highball",
+      "method": "build",
+      "steps": [
+        { "action": "garnish", "ingredient": "mint" },
+        { "action": "pour", "ingredient": "lime_juice", "amountMl": 20 },
+        { "action": "pour", "ingredient": "sugar_syrup", "amountMl": 15 },
+        { "action": "pour", "ingredient": "white_rum", "amountMl": 45 },
+        { "action": "pour", "ingredient": "soda", "amountMl": 60 },
+        { "action": "stir", "seconds": 3 }
+      ]
+    },
+    {
+      "id": "espresso_martini",
+      "name": "Espresso Martini",
+      "nameKo": "에스프레소 마티니",
+      "tier": 3,
+      "basePrice": 15000,
+      "glass": "martini",
+      "method": "shake",
+      "steps": [
+        { "action": "pour", "ingredient": "vodka", "amountMl": 50 },
+        { "action": "pour", "ingredient": "coffee_liqueur", "amountMl": 30 },
+        { "action": "pour", "ingredient": "espresso", "amountMl": 30 },
+        { "action": "shake", "seconds": 8 }
+      ]
+    },
+    {
+      "id": "long_island_iced_tea",
+      "name": "Long Island Iced Tea",
+      "nameKo": "롱아일랜드 아이스티",
+      "tier": 3,
+      "basePrice": 16000,
+      "glass": "highball",
+      "method": "build",
+      "steps": [
+        { "action": "pour", "ingredient": "vodka", "amountMl": 15 },
+        { "action": "pour", "ingredient": "tequila", "amountMl": 15 },
+        { "action": "pour", "ingredient": "white_rum", "amountMl": 15 },
+        { "action": "pour", "ingredient": "gin", "amountMl": 15 },
+        { "action": "pour", "ingredient": "triple_sec", "amountMl": 15 },
+        { "action": "pour", "ingredient": "lemon_juice", "amountMl": 25 },
+        { "action": "pour", "ingredient": "sugar_syrup", "amountMl": 30 },
+        { "action": "pour", "ingredient": "cola", "amountMl": 40 },
+        { "action": "stir", "seconds": 3 }
+      ]
+    }
+  ]
+}
