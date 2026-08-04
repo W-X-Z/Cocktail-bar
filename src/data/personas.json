@@ -14,210 +14,649 @@
       "id": "kim_manager",
       "name": "김과장",
       "job": "회사원",
-      "look": { "body": "#3a4a6a", "hair": "#2a1a10", "skin": "#e8b890", "glasses": true },
-      "favorites": ["whiskey_highball", "old_fashioned"],
-      "dislikes": ["cosmopolitan"],
+      "look": {
+        "skin": "#e8b890",
+        "hair": "#2a1a10",
+        "eyes": "#3a2a1a",
+        "hairStyle": "short",
+        "outfit": "#3a4a6a",
+        "collar": "tie",
+        "glasses": true
+      },
+      "favorites": [
+        "whiskey_highball",
+        "old_fashioned"
+      ],
+      "dislikes": [
+        "cosmopolitan"
+      ],
       "patienceMul": 1.0,
       "tipMul": 1.0,
       "visitWeight": 4,
       "dialogue": {
-        "greet": ["아… 오늘 진짜 길었다.", "사장님, 저 왔어요.", "회식 빠지고 왔습니다. 비밀이에요."],
-        "order": ["{drink} 한 잔 부탁해요.", "{drink}요. 진하게는 말고 정량으로."],
-        "orderFallback": ["{desired}는 아직 없어요? 아쉽네… 그럼 {drink}로.", "{desired} 생기면 꼭 불러줘요. 오늘은 {drink}."],
-        "serveGood": ["크… 이 맛에 삽니다.", "퇴근길이 행복해지네요."],
-        "serveOk": ["뭐, 오늘도 무난하네요.", "나쁘지 않아요."],
-        "serveBad": ["…오늘 무슨 일 있으세요?", "이거 레시피 맞아요?"],
-        "angry": ["회사에서도 기다리고 여기서도 기다리네…", "다음엔 좀 빨리요."],
-        "regular": ["늘 마시던 걸로 — 라고 말해보고 싶었어요.", "여기가 제 두 번째 사무실이에요."]
+        "greet": [
+          "아… 오늘 진짜 길었다.",
+          "사장님, 저 왔어요.",
+          "회식 빠지고 왔습니다. 비밀이에요."
+        ],
+        "order": [
+          "{drink} 한 잔 부탁해요.",
+          "{drink}요. 진하게는 말고 정량으로."
+        ],
+        "orderFallback": [
+          "{desired}는 아직 없어요? 아쉽네… 그럼 {drink}로.",
+          "{desired} 생기면 꼭 불러줘요. 오늘은 {drink}."
+        ],
+        "serveGood": [
+          "크… 이 맛에 삽니다.",
+          "퇴근길이 행복해지네요."
+        ],
+        "serveOk": [
+          "뭐, 오늘도 무난하네요.",
+          "나쁘지 않아요."
+        ],
+        "serveBad": [
+          "…오늘 무슨 일 있으세요?",
+          "이거 레시피 맞아요?"
+        ],
+        "angry": [
+          "회사에서도 기다리고 여기서도 기다리네…",
+          "다음엔 좀 빨리요."
+        ],
+        "regular": [
+          "늘 마시던 걸로 — 라고 말해보고 싶었어요.",
+          "여기가 제 두 번째 사무실이에요."
+        ]
       }
     },
     {
       "id": "yuri_student",
       "name": "유리",
       "job": "대학생",
-      "look": { "body": "#8a4a6a", "hair": "#4a3a2a", "skin": "#f0c8a0", "glasses": false },
-      "favorites": ["screwdriver", "cuba_libre", "mojito"],
-      "dislikes": ["dry_martini", "manhattan"],
+      "look": {
+        "skin": "#f6d2b0",
+        "hair": "#7a4a28",
+        "eyes": "#5a3a20",
+        "hairStyle": "bob",
+        "outfit": "#c46a8a",
+        "collar": "plain",
+        "lashes": true,
+        "blush": true,
+        "lipstick": "#d4708a"
+      },
+      "favorites": [
+        "screwdriver",
+        "cuba_libre",
+        "mojito"
+      ],
+      "dislikes": [
+        "dry_martini",
+        "manhattan"
+      ],
       "patienceMul": 0.8,
       "tipMul": 0.8,
       "visitWeight": 4,
       "dialogue": {
-        "greet": ["과제 끝! 오늘은 마셔야 해요.", "친구들이 여기 맛있대서 왔어요."],
-        "order": ["{drink} 주세요! 달달하게요.", "{drink}! 사진 먼저 찍을 거예요."],
-        "orderFallback": ["헐, {desired} 없어요? 그럼 {drink}…", "{desired} 마시고 싶었는데… {drink}로 참을게요."],
-        "serveGood": ["대박, 인생 칵테일이에요!", "스토리에 올려도 돼요?"],
-        "serveOk": ["음~ 괜찮네요.", "그럭저럭이에요."],
-        "serveBad": ["이거… 술 맛밖에 안 나요.", "으, 뭔가 이상해요."],
-        "angry": ["과제나 하러 갈래요…", "여기 원래 이렇게 오래 걸려요?"],
-        "regular": ["시험 끝나면 무조건 여기죠!", "사장님 저 단골 맞죠? 서비스는요?"]
+        "greet": [
+          "과제 끝! 오늘은 마셔야 해요.",
+          "친구들이 여기 맛있대서 왔어요."
+        ],
+        "order": [
+          "{drink} 주세요! 달달하게요.",
+          "{drink}! 사진 먼저 찍을 거예요."
+        ],
+        "orderFallback": [
+          "헐, {desired} 없어요? 그럼 {drink}…",
+          "{desired} 마시고 싶었는데… {drink}로 참을게요."
+        ],
+        "serveGood": [
+          "대박, 인생 칵테일이에요!",
+          "스토리에 올려도 돼요?"
+        ],
+        "serveOk": [
+          "음~ 괜찮네요.",
+          "그럭저럭이에요."
+        ],
+        "serveBad": [
+          "이거… 술 맛밖에 안 나요.",
+          "으, 뭔가 이상해요."
+        ],
+        "angry": [
+          "과제나 하러 갈래요…",
+          "여기 원래 이렇게 오래 걸려요?"
+        ],
+        "regular": [
+          "시험 끝나면 무조건 여기죠!",
+          "사장님 저 단골 맞죠? 서비스는요?"
+        ]
       }
     },
     {
       "id": "marco_traveler",
       "name": "마르코",
       "job": "여행객",
-      "look": { "body": "#6a8a4a", "hair": "#6a4a1a", "skin": "#d8a878", "glasses": false },
-      "favorites": ["mojito", "daiquiri", "margarita"],
+      "look": {
+        "skin": "#d8a878",
+        "hair": "#6a4a1a",
+        "eyes": "#3a5a2a",
+        "hairStyle": "curly",
+        "outfit": "#4a8a5a",
+        "collar": "shirt"
+      },
+      "favorites": [
+        "mojito",
+        "daiquiri",
+        "margarita"
+      ],
       "dislikes": [],
       "patienceMul": 1.2,
       "tipMul": 1.4,
       "visitWeight": 2,
       "dialogue": {
-        "greet": ["오! 분위기 좋네요, 여기.", "가이드북에는 없는 바를 찾았어요!"],
-        "order": ["{drink}, 플리즈!", "{drink}! 한국에서 마시니까 더 기대돼요."],
-        "orderFallback": ["{desired}가 없다니… 오케이, {drink}!", "음, 그럼 {drink}로 갈게요!"],
-        "serveGood": ["원더풀! 우리나라보다 맛있어요!", "이 바, 별 다섯 개!"],
-        "serveOk": ["굿, 나쁘지 않아요.", "오케이오케이~"],
-        "serveBad": ["흠… 우리 동네 바가 그리워지네요.", "이건 좀…"],
-        "angry": ["비행기 시간이 더 빠르겠어요…", "노노, 너무 느려요."],
-        "regular": ["한국 오면 무조건 여기부터 와요!", "친구들한테 다 소문냈어요!"]
+        "greet": [
+          "오! 분위기 좋네요, 여기.",
+          "가이드북에는 없는 바를 찾았어요!"
+        ],
+        "order": [
+          "{drink}, 플리즈!",
+          "{drink}! 한국에서 마시니까 더 기대돼요."
+        ],
+        "orderFallback": [
+          "{desired}가 없다니… 오케이, {drink}!",
+          "음, 그럼 {drink}로 갈게요!"
+        ],
+        "serveGood": [
+          "원더풀! 우리나라보다 맛있어요!",
+          "이 바, 별 다섯 개!"
+        ],
+        "serveOk": [
+          "굿, 나쁘지 않아요.",
+          "오케이오케이~"
+        ],
+        "serveBad": [
+          "흠… 우리 동네 바가 그리워지네요.",
+          "이건 좀…"
+        ],
+        "angry": [
+          "비행기 시간이 더 빠르겠어요…",
+          "노노, 너무 느려요."
+        ],
+        "regular": [
+          "한국 오면 무조건 여기부터 와요!",
+          "친구들한테 다 소문냈어요!"
+        ]
       }
     },
     {
       "id": "seoyeon_designer",
       "name": "서연",
       "job": "디자이너",
-      "look": { "body": "#5a4a8a", "hair": "#141414", "skin": "#e8b890", "glasses": true },
-      "favorites": ["cosmopolitan", "espresso_martini"],
-      "dislikes": ["whiskey_highball"],
+      "look": {
+        "skin": "#f0c8a0",
+        "hair": "#16161c",
+        "eyes": "#2a2a30",
+        "hairStyle": "long",
+        "outfit": "#5a4a8a",
+        "collar": "turtle",
+        "glasses": true,
+        "lashes": true,
+        "lipstick": "#b05a6a",
+        "earrings": true
+      },
+      "favorites": [
+        "cosmopolitan",
+        "espresso_martini"
+      ],
+      "dislikes": [
+        "whiskey_highball"
+      ],
       "patienceMul": 0.9,
       "tipMul": 1.1,
       "visitWeight": 3,
       "dialogue": {
-        "greet": ["시안 엎어졌어요. 한 잔 필요해요.", "마감 끝났어요. 드디어."],
-        "order": ["{drink} 주세요. 잔 예쁜 걸로요.", "{drink}. 색감 살려서 부탁해요."],
-        "orderFallback": ["{desired} 없구나… 그럼 {drink}.", "{desired}가 없다니 아쉽다. {drink}로 주세요."],
-        "serveGood": ["색부터 완벽하네요. 맛도요.", "이건 포트폴리오감이에요."],
-        "serveOk": ["음, 킥이 조금 아쉽네요.", "나쁘지 않은데 2% 부족해요."],
-        "serveBad": ["비율이… 무너졌네요.", "이건 리젝이에요."],
-        "angry": ["클라이언트도 이것보단 빨라요…", "시간 없어서 갈게요."],
-        "regular": ["여기 무드는 제가 보증해요.", "역시 퇴근 후엔 여기죠."]
+        "greet": [
+          "시안 엎어졌어요. 한 잔 필요해요.",
+          "마감 끝났어요. 드디어."
+        ],
+        "order": [
+          "{drink} 주세요. 잔 예쁜 걸로요.",
+          "{drink}. 색감 살려서 부탁해요."
+        ],
+        "orderFallback": [
+          "{desired} 없구나… 그럼 {drink}.",
+          "{desired}가 없다니 아쉽다. {drink}로 주세요."
+        ],
+        "serveGood": [
+          "색부터 완벽하네요. 맛도요.",
+          "이건 포트폴리오감이에요."
+        ],
+        "serveOk": [
+          "음, 킥이 조금 아쉽네요.",
+          "나쁘지 않은데 2% 부족해요."
+        ],
+        "serveBad": [
+          "비율이… 무너졌네요.",
+          "이건 리젝이에요."
+        ],
+        "angry": [
+          "클라이언트도 이것보단 빨라요…",
+          "시간 없어서 갈게요."
+        ],
+        "regular": [
+          "여기 무드는 제가 보증해요.",
+          "역시 퇴근 후엔 여기죠."
+        ]
       }
     },
     {
       "id": "park_boss",
       "name": "박사장",
       "job": "옆가게 사장",
-      "look": { "body": "#8a3a3a", "hair": "#8a8a8a", "skin": "#d8a878", "glasses": false },
-      "favorites": ["negroni", "manhattan", "old_fashioned"],
-      "dislikes": ["screwdriver"],
+      "look": {
+        "skin": "#d8a878",
+        "hair": "#9a9aa2",
+        "eyes": "#3a2a1a",
+        "hairStyle": "slick",
+        "outfit": "#6a3a3a",
+        "collar": "shirt"
+      },
+      "favorites": [
+        "negroni",
+        "manhattan",
+        "old_fashioned"
+      ],
+      "dislikes": [
+        "screwdriver"
+      ],
       "patienceMul": 0.75,
       "tipMul": 1.5,
       "visitWeight": 2,
       "dialogue": {
-        "greet": ["장사는 좀 어때? 난 오늘 공쳤어.", "젊은 사장, 나 왔네."],
-        "order": ["{drink} 하나. 제대로 만들어봐.", "{drink}. 어디 실력 좀 볼까."],
-        "orderFallback": ["{desired}도 없이 장사를 해? 허허… {drink} 줘봐.", "{desired} 들여놔, 팔릴 거야. 오늘은 {drink}."],
-        "serveGood": ["어이구, 제법인데?", "이 맛이면 월세 걱정은 없겠어."],
-        "serveOk": ["뭐, 반은 왔네.", "쓸만하구만."],
-        "serveBad": ["이걸 돈 받고 팔면 안 되지…", "다시 배워야겠는데?"],
-        "angry": ["장사 이렇게 하면 안 돼~", "나 성격 급한 거 알잖아."],
-        "regular": ["우리 가게 손님들한테도 소문냈어.", "이 집은 내가 키웠지, 암."]
+        "greet": [
+          "장사는 좀 어때? 난 오늘 공쳤어.",
+          "젊은 사장, 나 왔네."
+        ],
+        "order": [
+          "{drink} 하나. 제대로 만들어봐.",
+          "{drink}. 어디 실력 좀 볼까."
+        ],
+        "orderFallback": [
+          "{desired}도 없이 장사를 해? 허허… {drink} 줘봐.",
+          "{desired} 들여놔, 팔릴 거야. 오늘은 {drink}."
+        ],
+        "serveGood": [
+          "어이구, 제법인데?",
+          "이 맛이면 월세 걱정은 없겠어."
+        ],
+        "serveOk": [
+          "뭐, 반은 왔네.",
+          "쓸만하구만."
+        ],
+        "serveBad": [
+          "이걸 돈 받고 팔면 안 되지…",
+          "다시 배워야겠는데?"
+        ],
+        "angry": [
+          "장사 이렇게 하면 안 돼~",
+          "나 성격 급한 거 알잖아."
+        ],
+        "regular": [
+          "우리 가게 손님들한테도 소문냈어.",
+          "이 집은 내가 키웠지, 암."
+        ]
       }
     },
     {
       "id": "haneul_writer",
       "name": "하늘",
       "job": "소설가",
-      "look": { "body": "#2e2e3e", "hair": "#4a3a2a", "skin": "#f0c8a0", "glasses": true },
-      "favorites": ["dry_martini", "old_fashioned", "manhattan"],
-      "dislikes": ["long_island_iced_tea"],
+      "look": {
+        "skin": "#f0d8c0",
+        "hair": "#4a3a2a",
+        "eyes": "#3a3a42",
+        "hairStyle": "curly",
+        "outfit": "#2e2e3e",
+        "collar": "turtle",
+        "glasses": true
+      },
+      "favorites": [
+        "dry_martini",
+        "old_fashioned",
+        "manhattan"
+      ],
+      "dislikes": [
+        "long_island_iced_tea"
+      ],
       "patienceMul": 1.4,
       "tipMul": 1.0,
       "visitWeight": 3,
       "dialogue": {
-        "greet": ["…조용한 자리 있나요.", "원고가 안 풀려서요."],
-        "order": ["{drink}를. 천천히 주셔도 됩니다.", "{drink}… 그게 오늘 문장에 어울리겠네요."],
-        "orderFallback": ["{desired}가 없다… 그것도 이야기가 되겠군요. {drink}로.", "그럼 {drink}. 대체제도 나름의 맛이 있죠."],
-        "serveGood": ["…이 한 잔으로 세 페이지는 쓰겠어요.", "완벽한 문장 같은 맛이네요."],
-        "serveOk": ["초고 정도의 맛이군요.", "퇴고가 조금 필요하겠어요."],
-        "serveBad": ["…이건 오탈자가 많네요.", "맛의 개연성이 없어요."],
-        "angry": ["기다림도 소재가 되긴 합니다만….", "오늘은 여기까지 하죠."],
-        "regular": ["신작에 이 바가 나옵니다.", "제 지정석, 비워두셨죠?"]
+        "greet": [
+          "…조용한 자리 있나요.",
+          "원고가 안 풀려서요."
+        ],
+        "order": [
+          "{drink}를. 천천히 주셔도 됩니다.",
+          "{drink}… 그게 오늘 문장에 어울리겠네요."
+        ],
+        "orderFallback": [
+          "{desired}가 없다… 그것도 이야기가 되겠군요. {drink}로.",
+          "그럼 {drink}. 대체제도 나름의 맛이 있죠."
+        ],
+        "serveGood": [
+          "…이 한 잔으로 세 페이지는 쓰겠어요.",
+          "완벽한 문장 같은 맛이네요."
+        ],
+        "serveOk": [
+          "초고 정도의 맛이군요.",
+          "퇴고가 조금 필요하겠어요."
+        ],
+        "serveBad": [
+          "…이건 오탈자가 많네요.",
+          "맛의 개연성이 없어요."
+        ],
+        "angry": [
+          "기다림도 소재가 되긴 합니다만….",
+          "오늘은 여기까지 하죠."
+        ],
+        "regular": [
+          "신작에 이 바가 나옵니다.",
+          "제 지정석, 비워두셨죠?"
+        ]
       }
     },
     {
       "id": "minjun_trainer",
       "name": "민준",
       "job": "헬스 트레이너",
-      "look": { "body": "#4a6a8a", "hair": "#111111", "skin": "#c89060", "glasses": false },
-      "favorites": ["gin_tonic", "margarita"],
-      "dislikes": ["espresso_martini"],
+      "look": {
+        "skin": "#c89060",
+        "hair": "#181818",
+        "eyes": "#2a1a10",
+        "hairStyle": "short",
+        "outfit": "#3a6a8a",
+        "collar": "plain"
+      },
+      "favorites": [
+        "gin_tonic",
+        "margarita"
+      ],
+      "dislikes": [
+        "espresso_martini"
+      ],
       "patienceMul": 1.0,
       "tipMul": 0.9,
       "visitWeight": 3,
       "dialogue": {
-        "greet": ["치팅데이입니다!", "오늘 하체 했더니 죽겠네요."],
-        "order": ["{drink}요! 시원하게!", "{drink} 하나요. 어차피 내일 태우면 돼요."],
-        "orderFallback": ["{desired} 없어요? 그럼 {drink}로 가죠!", "오케이, 플랜B. {drink}!"],
-        "serveGood": ["캬! 운동한 보람이 있네요!", "이건 근손실도 용서됩니다."],
-        "serveOk": ["오~ 나쁘지 않아요.", "무난하게 좋네요."],
-        "serveBad": ["으, 이럴 거면 프로틴 마실걸.", "이건 좀 아닌데요."],
-        "angry": ["인터벌도 이것보단 짧아요…", "가서 스쿼트나 할래요."],
-        "regular": ["회원님들한테는 비밀인 곳이죠.", "사장님도 등 운동 하셔야 해요. 셰이킹에 좋아요."]
+        "greet": [
+          "치팅데이입니다!",
+          "오늘 하체 했더니 죽겠네요."
+        ],
+        "order": [
+          "{drink}요! 시원하게!",
+          "{drink} 하나요. 어차피 내일 태우면 돼요."
+        ],
+        "orderFallback": [
+          "{desired} 없어요? 그럼 {drink}로 가죠!",
+          "오케이, 플랜B. {drink}!"
+        ],
+        "serveGood": [
+          "캬! 운동한 보람이 있네요!",
+          "이건 근손실도 용서됩니다."
+        ],
+        "serveOk": [
+          "오~ 나쁘지 않아요.",
+          "무난하게 좋네요."
+        ],
+        "serveBad": [
+          "으, 이럴 거면 프로틴 마실걸.",
+          "이건 좀 아닌데요."
+        ],
+        "angry": [
+          "인터벌도 이것보단 짧아요…",
+          "가서 스쿼트나 할래요."
+        ],
+        "regular": [
+          "회원님들한테는 비밀인 곳이죠.",
+          "사장님도 등 운동 하셔야 해요. 셰이킹에 좋아요."
+        ]
       }
     },
     {
       "id": "jieun_nurse",
       "name": "지은",
       "job": "간호사",
-      "look": { "body": "#4a8a7a", "hair": "#2a1a10", "skin": "#f0c8a0", "glasses": false },
-      "favorites": ["whiskey_sour", "daiquiri"],
+      "look": {
+        "skin": "#f0c8a0",
+        "hair": "#2a1a10",
+        "eyes": "#4a2a18",
+        "hairStyle": "ponytail",
+        "outfit": "#4a8a7a",
+        "collar": "plain",
+        "lashes": true,
+        "blush": true,
+        "lipstick": "#c87878"
+      },
+      "favorites": [
+        "whiskey_sour",
+        "daiquiri"
+      ],
       "dislikes": [],
       "patienceMul": 1.1,
       "tipMul": 1.0,
       "visitWeight": 3,
       "dialogue": {
-        "greet": ["나이트 끝나고 오는 길이에요.", "3교대 끝! 드디어 사람 됐어요."],
-        "order": ["{drink} 한 잔이면 살 것 같아요.", "{drink} 주세요. 오늘은 마실 자격 있어요."],
-        "orderFallback": ["{desired}는 없나 보네요… {drink} 주세요.", "그럼 {drink}로 할게요. 뭐든 좋아요, 사실."],
-        "serveGood": ["피로가 싹 풀리네요…", "이건 처방전이 필요한 맛이에요."],
-        "serveOk": ["음, 효과는 있네요.", "괜찮아요, 오늘은 뭐든 달아요."],
-        "serveBad": ["…링거가 더 달겠어요.", "이건 좀 쓴 처방이네요."],
-        "angry": ["병동보다 바쁘신가 봐요…", "잠이나 자러 갈게요."],
-        "regular": ["오프 날엔 무조건 여기예요.", "동기들 다 데려왔잖아요, 제가."]
+        "greet": [
+          "나이트 끝나고 오는 길이에요.",
+          "3교대 끝! 드디어 사람 됐어요."
+        ],
+        "order": [
+          "{drink} 한 잔이면 살 것 같아요.",
+          "{drink} 주세요. 오늘은 마실 자격 있어요."
+        ],
+        "orderFallback": [
+          "{desired}는 없나 보네요… {drink} 주세요.",
+          "그럼 {drink}로 할게요. 뭐든 좋아요, 사실."
+        ],
+        "serveGood": [
+          "피로가 싹 풀리네요…",
+          "이건 처방전이 필요한 맛이에요."
+        ],
+        "serveOk": [
+          "음, 효과는 있네요.",
+          "괜찮아요, 오늘은 뭐든 달아요."
+        ],
+        "serveBad": [
+          "…링거가 더 달겠어요.",
+          "이건 좀 쓴 처방이네요."
+        ],
+        "angry": [
+          "병동보다 바쁘신가 봐요…",
+          "잠이나 자러 갈게요."
+        ],
+        "regular": [
+          "오프 날엔 무조건 여기예요.",
+          "동기들 다 데려왔잖아요, 제가."
+        ]
       }
     },
     {
       "id": "tom_teacher",
       "name": "톰",
       "job": "영어 강사",
-      "look": { "body": "#8a6a3a", "hair": "#6a4a1a", "skin": "#e8b890", "glasses": true },
-      "favorites": ["long_island_iced_tea", "cuba_libre"],
-      "dislikes": ["negroni"],
+      "look": {
+        "skin": "#e8b890",
+        "hair": "#7a5a2a",
+        "eyes": "#3a5a7a",
+        "hairStyle": "curly",
+        "outfit": "#8a6a3a",
+        "collar": "shirt",
+        "glasses": true
+      },
+      "favorites": [
+        "long_island_iced_tea",
+        "cuba_libre"
+      ],
+      "dislikes": [
+        "negroni"
+      ],
       "patienceMul": 1.0,
       "tipMul": 1.2,
       "visitWeight": 2,
       "dialogue": {
-        "greet": ["하이~ 오늘 수업 개힘들었어요.", "어메이징한 하루였어요. 나쁜 쪽으로."],
-        "order": ["{drink} 플리즈~ 스트롱하게!", "{drink}! 오늘은 취해도 되는 날이에요."],
-        "orderFallback": ["오 노, {desired} 없어요? 댓츠 오케이, {drink}!", "왓? 그럼 {drink}로 할게요~"],
-        "serveGood": ["퍼펙트! 액설런트! A+!", "이거 완전 마스터피스예요!"],
-        "serveOk": ["낫배드~ B+ 드릴게요.", "굿 이너프!"],
-        "serveBad": ["음… 이건 F예요, 쏘리.", "리테이크가 필요해요~"],
-        "angry": ["타임 이즈 머니예요~", "수업 준비하러 갈게요…"],
-        "regular": ["마이 페이보릿 플레이스!", "학생들한텐 비밀이에요~"]
+        "greet": [
+          "하이~ 오늘 수업 개힘들었어요.",
+          "어메이징한 하루였어요. 나쁜 쪽으로."
+        ],
+        "order": [
+          "{drink} 플리즈~ 스트롱하게!",
+          "{drink}! 오늘은 취해도 되는 날이에요."
+        ],
+        "orderFallback": [
+          "오 노, {desired} 없어요? 댓츠 오케이, {drink}!",
+          "왓? 그럼 {drink}로 할게요~"
+        ],
+        "serveGood": [
+          "퍼펙트! 액설런트! A+!",
+          "이거 완전 마스터피스예요!"
+        ],
+        "serveOk": [
+          "낫배드~ B+ 드릴게요.",
+          "굿 이너프!"
+        ],
+        "serveBad": [
+          "음… 이건 F예요, 쏘리.",
+          "리테이크가 필요해요~"
+        ],
+        "angry": [
+          "타임 이즈 머니예요~",
+          "수업 준비하러 갈게요…"
+        ],
+        "regular": [
+          "마이 페이보릿 플레이스!",
+          "학생들한텐 비밀이에요~"
+        ]
       }
     },
     {
       "id": "eunja_elder",
       "name": "은자씨",
       "job": "동네 어르신",
-      "look": { "body": "#6a5a4a", "hair": "#c8c8c8", "skin": "#d8a878", "glasses": true },
-      "favorites": ["whiskey_highball", "manhattan"],
-      "dislikes": ["mojito"],
+      "look": {
+        "skin": "#d8a878",
+        "hair": "#c8c8cc",
+        "eyes": "#3a2a1a",
+        "hairStyle": "bun",
+        "outfit": "#6a5a4a",
+        "collar": "turtle",
+        "glasses": true
+      },
+      "favorites": [
+        "whiskey_highball",
+        "manhattan"
+      ],
+      "dislikes": [
+        "mojito"
+      ],
       "patienceMul": 1.5,
       "tipMul": 1.3,
       "visitWeight": 2,
       "dialogue": {
-        "greet": ["젊은 사장, 오늘도 문 열었구먼.", "우리 영감은 두고 왔어. 시끄러워서."],
-        "order": ["{drink} 한 잔 주게나.", "{drink}. 옛날 생각나는 맛으로."],
-        "orderFallback": ["{desired}는 없어? 요즘 것들은… 그럼 {drink}.", "허허, 그럼 {drink}나 주게."],
-        "serveGood": ["젊은 사람이 손끝이 야무지네.", "우리 때 명동 바가 이 맛이었지."],
-        "serveOk": ["마실 만하구먼.", "뭐, 나쁘지 않아."],
-        "serveBad": ["아이고, 이건 맹물이야 술이야?", "손맛이 아직 멀었구먼."],
-        "angry": ["늙은이 기다리게 하는 법이 어딨어.", "다음엔 빨리 좀 주게나."],
-        "regular": ["여기가 내 사랑방이야.", "자네 보러 오는 재미로 살아."]
+        "greet": [
+          "젊은 사장, 오늘도 문 열었구먼.",
+          "우리 영감은 두고 왔어. 시끄러워서."
+        ],
+        "order": [
+          "{drink} 한 잔 주게나.",
+          "{drink}. 옛날 생각나는 맛으로."
+        ],
+        "orderFallback": [
+          "{desired}는 없어? 요즘 것들은… 그럼 {drink}.",
+          "허허, 그럼 {drink}나 주게."
+        ],
+        "serveGood": [
+          "젊은 사람이 손끝이 야무지네.",
+          "우리 때 명동 바가 이 맛이었지."
+        ],
+        "serveOk": [
+          "마실 만하구먼.",
+          "뭐, 나쁘지 않아."
+        ],
+        "serveBad": [
+          "아이고, 이건 맹물이야 술이야?",
+          "손맛이 아직 멀었구먼."
+        ],
+        "angry": [
+          "늙은이 기다리게 하는 법이 어딨어.",
+          "다음엔 빨리 좀 주게나."
+        ],
+        "regular": [
+          "여기가 내 사랑방이야.",
+          "자네 보러 오는 재미로 살아."
+        ]
+      }
+    },
+    {
+      "id": "sera_singer",
+      "name": "세라",
+      "job": "재즈 싱어",
+      "look": {
+        "skin": "#f2cfae",
+        "hair": "#1a1218",
+        "eyes": "#7a3a4a",
+        "hairStyle": "long",
+        "outfit": "#7a1a35",
+        "collar": "scoop",
+        "lashes": true,
+        "lipstick": "#c22a4a",
+        "blush": true,
+        "earrings": true
+      },
+      "favorites": [
+        "dry_martini",
+        "manhattan",
+        "cosmopolitan"
+      ],
+      "dislikes": [
+        "cuba_libre"
+      ],
+      "patienceMul": 0.9,
+      "tipMul": 1.35,
+      "visitWeight": 2,
+      "dialogue": {
+        "greet": [
+          "공연 끝나고 오는 길이에요. 목이 마르네요.",
+          "여기, 조명이 마음에 들어요.",
+          "오늘 무대는… 별로였어요. 위로해줘요."
+        ],
+        "order": [
+          "{drink}. 노래 한 소절만큼 정성 들여서요.",
+          "{drink} 한 잔. 서두르지 않아도 돼요."
+        ],
+        "orderFallback": [
+          "{desired}가 없는 바라니, 아쉽네요. {drink}로 할게요.",
+          "흠… 그럼 {drink}. 기대할게요."
+        ],
+        "serveGood": [
+          "…이 맛, 오늘 밤 앙코르감이네요.",
+          "완벽해요. 다음 곡은 당신을 위해 부를게요."
+        ],
+        "serveOk": [
+          "나쁘지 않아요. 리허설 정도?",
+          "음… 반주는 좋은데 보컬이 아쉬운 느낌."
+        ],
+        "serveBad": [
+          "이건… 음이탈이네요.",
+          "오늘 밤 두 번째로 실망스러운 무대예요."
+        ],
+        "angry": [
+          "기다림은 노래로 충분해요. 갈게요.",
+          "무대 시간이 다 됐어요."
+        ],
+        "regular": [
+          "단골 무대보다 편한 곳은 여기뿐이에요.",
+          "당신 칵테일이 그리워서 왔죠."
+        ]
       }
     }
   ]

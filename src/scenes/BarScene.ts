@@ -14,9 +14,9 @@ import {
   bottleTexture,
   counterTexture,
   glowTexture,
-  personFrontTexture,
   vignetteTexture,
 } from '../ui/art';
+import { portraitTexture } from '../ui/portraits';
 import { button, COLORS, formatMoney, H, panel, txt, W } from '../ui/theme';
 
 const DAY_LENGTH_SEC = 150; // 실시간 150초 = 영업시간 20:00 → 02:00
@@ -60,6 +60,7 @@ export class BarScene extends Phaser.Scene {
   private dayText!: Phaser.GameObjects.Text;
   private hintText!: Phaser.GameObjects.Text;
   private toast: Phaser.GameObjects.Container | null = null;
+  private dialogueCard: Phaser.GameObjects.Container | null = null;
 
   private seatX(i: number): number {
     return 120 + i * 165;
@@ -78,6 +79,7 @@ export class BarScene extends Phaser.Scene {
     this.spawnTimer = 0;
     this.nextSpawnIn = 2;
     this.toast = null;
+    this.dialogueCard = null;
 
     this.drawRoom();
     this.drawHud();
@@ -218,20 +220,11 @@ export class BarScene extends Phaser.Scene {
     const lv = regularLevel(persona.id);
 
     const c = this.add.container(-70, this.seatY);
-    const sprite = this.add.image(
-      0,
-      0,
-      personFrontTexture(
-        this,
-        `front_${persona.id}`,
-        persona.look.body,
-        persona.look.hair,
-        persona.look.skin,
-        persona.look.glasses,
-      ),
-    );
+    const sprite = this.add
+      .image(0, 0, portraitTexture(this, `portrait_${persona.id}`, persona.look))
+      .setScale(3);
     c.add(sprite);
-    const nameText = txt(this, 0, 80, this.nameLabel(persona), 20, lv.level >= 2 ? '#ffd27a' : '#b09070', {
+    const nameText = txt(this, 0, 84, this.nameLabel(persona), 20, lv.level >= 2 ? '#ffd27a' : '#b09070', {
       fontStyle: 'bold',
       align: 'center',
     }).setOrigin(0.5);
@@ -299,6 +292,7 @@ export class BarScene extends Phaser.Scene {
         bubble.setVisible(true);
         bubble.setScale(0);
         bubbleText.setText(greetText);
+        this.showDialogue(persona, greetText);
         this.tweens.add({ targets: bubble, scale: 1, duration: 260, ease: 'Back.out' });
         const worldX = sx + 40 + bw / 2;
         if (worldX > W - 10) bubble.x = 40 - (worldX - (W - 10));
@@ -342,7 +336,9 @@ export class BarScene extends Phaser.Scene {
     customer.state = 'reacting';
     const s = data.scoreTotal;
     const face = s >= 0.85 ? '😍' : s >= 0.6 ? '🙂' : s >= 0.35 ? '😐' : '🤢';
-    customer.bubbleText.setText(`${face} ${line(customer.persona, reactionKey(s))}`);
+    const reactionLine = line(customer.persona, reactionKey(s));
+    customer.bubbleText.setText(`${face}`);
+    this.showDialogue(customer.persona, reactionLine);
     customer.patienceBar.setVisible(false);
 
     if (s >= 0.6) {
@@ -377,6 +373,49 @@ export class BarScene extends Phaser.Scene {
 
     this.showToast(data);
     this.time.delayedCall(2200, () => this.removeCustomer(customer, false));
+  }
+
+  /**
+   * 대화 인터랙션 카드 (비주얼노벨식).
+   * 픽셀 초상화를 크게 확대해 하단 카운터 위에 대사와 함께 띄운다.
+   */
+  private showDialogue(persona: Persona, text: string): void {
+    this.dialogueCard?.destroy();
+    const card = this.add.container(0, 0).setDepth(49);
+
+    card.add(panel(this, W / 2 + 40, 985, W - 100, 190));
+    // 대형 초상화 (5배 확대 픽셀아트)
+    const portrait = this.add
+      .image(120, 942, portraitTexture(this, `portrait_${persona.id}`, persona.look))
+      .setScale(5);
+    card.add(portrait);
+    const lv = regularLevel(persona.id);
+    card.add(
+      txt(this, 225, 915, `${this.nameLabel(persona)}  ·  ${persona.job}`, 24, lv.level >= 2 ? '#ffd27a' : '#e8a33d', {
+        fontStyle: 'bold',
+      }),
+    );
+    card.add(
+      txt(this, 225, 952, text, 25, '#f2e6d0', { wordWrap: { width: 430 }, lineSpacing: 6 }),
+    );
+
+    card.setAlpha(0);
+    portrait.setX(100);
+    this.tweens.add({ targets: card, alpha: 1, duration: 180 });
+    this.tweens.add({ targets: portrait, x: 120, duration: 220, ease: 'Back.out' });
+
+    this.dialogueCard = card;
+    this.time.delayedCall(3000, () => {
+      if (this.dialogueCard === card) {
+        this.tweens.add({
+          targets: card,
+          alpha: 0,
+          duration: 300,
+          onComplete: () => card.destroy(),
+        });
+        this.dialogueCard = null;
+      }
+    });
   }
 
   /** 채점 요약 토스트 (탭하면 닫힘) */
@@ -426,7 +465,9 @@ export class BarScene extends Phaser.Scene {
         customer.patience > 0.5 ? COLORS.ok : customer.patience > 0.25 ? COLORS.accent : COLORS.danger,
       );
       if (customer.patience <= 0) {
-        customer.bubbleText.setText(`💢 ${line(customer.persona, 'angry')}`);
+        const angryLine = line(customer.persona, 'angry');
+        customer.bubbleText.setText('💢');
+        this.showDialogue(customer.persona, angryLine);
         recordAngryLeave(customer.persona.id);
         customer.nameText.setText(this.nameLabel(customer.persona));
         const c = customer;

@@ -70,11 +70,22 @@ export type DialogueKey =
   | 'angry'
   | 'regular';
 
+export type HairStyle = 'short' | 'slick' | 'bob' | 'long' | 'ponytail' | 'bun' | 'curly';
+export type CollarStyle = 'plain' | 'shirt' | 'tie' | 'scoop' | 'turtle';
+
+/** 픽셀 초상화 생성 파라미터 (ui/portraits.ts) */
 export interface PersonaLook {
-  body: string;
-  hair: string;
   skin: string;
-  glasses: boolean;
+  hair: string;
+  eyes: string;
+  hairStyle: HairStyle;
+  outfit: string;
+  collar: CollarStyle;
+  glasses?: boolean;
+  lashes?: boolean;
+  lipstick?: string;
+  blush?: boolean;
+  earrings?: boolean;
 }
 
 export interface Persona {
