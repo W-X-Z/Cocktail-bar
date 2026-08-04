@@ -20,10 +20,11 @@ src/
     OrderSystem.ts      # 손님 주문 생성(메뉴 내/외), 팁 계산
     ShakeDetector.ts    # DeviceMotion 셰이크 감지 + 포인터 폴백
     StirDetector.ts     # 원형 드래그 각도 누적 감지
+    TiltDetector.ts     # DeviceOrientation 기울기 붓기 + 드래그 폴백
   scenes/               # Phaser 씬 — 표현/입력만 담당, 로직은 systems에 위임
-    BootScene.ts        # 타이틀 화면 (첫 유저 제스처 확보)
-    BarScene.ts         # 탑다운 운영 뷰 (HUD 포함)
-    MixScene.ts         # POV 조주 뷰 (채점 결과 오버레이 포함)
+    BootScene.ts        # 타이틀 + 세이브 슬롯 3개 선택/삭제
+    BarScene.ts         # 바텐더 POV 운영 뷰 (HUD·손님 반응·채점 토스트·운영비 정산)
+    MixScene.ts         # POV 조주 뷰 (틸트 붓기 게이지)
     ShopScene.ts        # 발주 + 메뉴 등록
   ui/
     theme.ts            # 색상 팔레트, 폰트, 버튼/패널 팩토리
@@ -39,9 +40,10 @@ src/
 ## 씬 흐름
 
 ```
-Boot(타이틀) → Bar(탑다운)
-                ├─ 손님 탭 → Bar sleep + Mix run(POV) → 채점 오버레이 → Bar wake(결과 전달)
-                └─ 영업 종료 → Shop(발주/메뉴 등록) → 다음 날 Bar 재시작
+Boot(슬롯 선택) → Bar(바텐더 POV)
+                   ├─ 손님 탭 → Bar sleep + Mix run(POV) → 서빙 즉시 Bar wake
+                   │            (손님 반응·채점 토스트는 Bar에서 연출)
+                   └─ 영업 종료 → 운영비 정산 → Shop(발주/메뉴) → 다음 날 Bar 재시작
 ```
 
 ## 셰이크 감지 설계
@@ -54,7 +56,7 @@ Boot(타이틀) → Bar(탑다운)
 
 ## 저장
 
-- `localStorage["cocktail-bar-save-v1"]` — GameState 직렬화 (돈, 재고 ml, 메뉴, 일차)
+- `localStorage["cocktail-bar-save-v2-slot{0..2}"]` — 슬롯 3개, GameState 직렬화 (돈, 재고 ml, 메뉴, 일차, 당일 매출)
 - 스키마 버전 키 포함 → 마이그레이션 대비
 
 ## 안드로이드 배포 경로 (출시 시)

@@ -4,6 +4,7 @@ import { settle } from '../systems/OrderSystem';
 import { scoreMix } from '../systems/RecipeSystem';
 import { ShakeDetector } from '../systems/ShakeDetector';
 import { StirDetector } from '../systems/StirDetector';
+import { TiltDetector } from '../systems/TiltDetector';
 import type { Ingredient, MixAction, Recipe } from '../systems/types';
 import {
   bottleTexture,
@@ -14,7 +15,7 @@ import {
   spoonTexture,
   vignetteTexture,
 } from '../ui/art';
-import { button, COLORS, formatMoney, H, panel, txt, W, type Btn } from '../ui/theme';
+import { button, COLORS, H, panel, txt, W, type Btn } from '../ui/theme';
 
 interface MixSceneData {
   recipeId: string;
@@ -23,7 +24,7 @@ interface MixSceneData {
   seatIndex: number;
 }
 
-type MixMode = 'idle' | 'stir' | 'shake';
+type MixMode = 'idle' | 'pour' | 'stir' | 'shake';
 
 const GLASS_CAPACITY: Record<string, number> = {
   highball: 260,
@@ -32,7 +33,8 @@ const GLASS_CAPACITY: Record<string, number> = {
   martini: 160,
 };
 
-const POUR_RATE_MLPS = 40;
+/** 최대 기울기에서의 유량 (ml/s) — 기울기 붓기라 세게 기울일수록 조절이 어렵다 */
+const MAX_POUR_RATE_MLPS = 90;
 const GLASS_X = 240;
 const GLASS_Y = 850;
 
@@ -50,7 +52,6 @@ export class MixScene extends Phaser.Scene {
   private sceneData!: MixSceneData;
 
   private mode: MixMode = 'idle';
-  private pouring = false;
   private selectedId: string | null = null;
   private poured = new Map<string, number>();
   private pourOrder: string[] = [];
@@ -60,10 +61,12 @@ export class MixScene extends Phaser.Scene {
 
   private shake = new ShakeDetector();
   private stir = new StirDetector();
+  private tilt = new TiltDetector();
 
   private liquid!: Phaser.GameObjects.Graphics;
   private stream!: Phaser.GameObjects.Graphics;
   private pourBottle!: Phaser.GameObjects.Image;
+  private tiltGauge!: Phaser.GameObjects.Graphics;
   private shaker!: Phaser.GameObjects.Container;
   private spoon!: Phaser.GameObjects.Container;
   private mlText!: Phaser.GameObjects.Text;
@@ -72,6 +75,7 @@ export class MixScene extends Phaser.Scene {
   private stockTexts = new Map<string, Phaser.GameObjects.Text>();
   private bottleBgs = new Map<string, Phaser.GameObjects.Rectangle>();
   private bottleImgs = new Map<string, Phaser.GameObjects.Image>();
+  private pourBtn!: Btn;
   private stirBtn!: Btn;
   private shakeBtn!: Btn;
 
@@ -83,7 +87,6 @@ export class MixScene extends Phaser.Scene {
     this.sceneData = data;
     this.recipe = GameState.recipe(data.recipeId);
     this.mode = 'idle';
-    this.pouring = false;
     this.selectedId = null;
     this.poured = new Map();
     this.pourOrder = [];
@@ -92,6 +95,7 @@ export class MixScene extends Phaser.Scene {
     this.finished = false;
     this.shake = new ShakeDetector();
     this.stir = new StirDetector();
+    this.tilt = new TiltDetector();
     this.checkTexts = [];
     this.stockTexts = new Map();
     this.bottleBgs = new Map();
@@ -99,7 +103,6 @@ export class MixScene extends Phaser.Scene {
   }
 
   create(): void {
-    // 어두운 바 배경 + 온기
     this.add.rectangle(W / 2, H / 2, W, H, 0x160a10);
     this.add
       .image(W / 2, 420, glowTexture(this))
@@ -108,10 +111,8 @@ export class MixScene extends Phaser.Scene {
       .setAlpha(0.22)
       .setBlendMode(Phaser.BlendModes.ADD);
 
-    // 작업대 (POV 카운터)
     this.add.image(W / 2, 1024, counterTexture(this, 'mix_counter', W, 512)).setDisplaySize(W, 512);
     this.add.rectangle(W / 2, 764, W, 14, COLORS.woodLight).setStrokeStyle(2, 0x000000, 0.4);
-    // 카운터 위 스포트라이트
     this.add
       .image(GLASS_X, GLASS_Y - 40, glowTexture(this))
       .setScale(2.6, 2.0)
@@ -132,6 +133,15 @@ export class MixScene extends Phaser.Scene {
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
       if (this.mode === 'stir') this.stir.pointerMove(p.x, p.y, p.isDown);
       else if (this.mode === 'shake') this.shake.pointerMove(p.x, p.isDown);
+      else if (this.mode === 'pour') this.tilt.pointerMove(p.y, p.isDown);
+    });
+    this.input.on('pointerup', () => {
+      if (this.mode === 'pour') this.tilt.pointerMove(0, false);
+    });
+
+    this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.shake.stop();
+      this.tilt.stop();
     });
   }
 
@@ -163,7 +173,7 @@ export class MixScene extends Phaser.Scene {
   }
 
   private drawShelf(): void {
-    txt(this, 40, 142, '선반 — 보틀을 골라 잔에 따르세요', 20, '#b09070');
+    txt(this, 40, 142, '선반 — 보틀 선택 후 [따르기]를 켜고 기기를 기울이세요', 20, '#b09070');
     const items = this.ownedPourables();
     const cols = 4;
     const cellW = (W - 60) / cols;
@@ -191,7 +201,6 @@ export class MixScene extends Phaser.Scene {
   }
 
   private selectBottle(id: string): void {
-    this.setMode('idle');
     this.selectedId = id;
     for (const [bid, bg] of this.bottleBgs) {
       const sel = bid === id;
@@ -204,13 +213,18 @@ export class MixScene extends Phaser.Scene {
       }
     }
     this.pourBottle.setTexture(`bottle_${id}`);
-    this.modeText.setText(`${GameState.ingredient(id).nameKo} 선택됨`);
+    if (this.mode === 'pour') {
+      this.tilt.resetBaseline();
+      this.modeText.setText(`${GameState.ingredient(id).nameKo} — 기울여서 따르세요`);
+    } else {
+      this.setMode('idle');
+      this.modeText.setText(`${GameState.ingredient(id).nameKo} 선택됨`);
+    }
   }
 
   private drawGlassArea(): void {
     this.liquid = this.add.graphics().setDepth(2);
 
-    // 잔 텍스처 (액체 위에 유리 하이라이트가 겹치도록)
     const glassKey = glassTexture(this, this.recipe.glass);
     const gy = this.recipe.glass === 'rocks' ? GLASS_Y - 15 : GLASS_Y - 40;
     this.add.image(GLASS_X, gy, glassKey).setDepth(3);
@@ -219,16 +233,14 @@ export class MixScene extends Phaser.Scene {
     this.mlText = txt(this, GLASS_X, GLASS_Y + 96, `0ml / 최대 ${cap}ml`, 24, '#f2e6d0').setOrigin(0.5);
     this.modeText = txt(this, GLASS_X, GLASS_Y - 205, '', 24, '#ffd27a', { align: 'center' }).setOrigin(0.5).setDepth(6);
 
-    // 따르는 병 + 물줄기
     this.stream = this.add.graphics().setDepth(4);
+    this.tiltGauge = this.add.graphics().setDepth(6);
     this.pourBottle = this.add
       .image(GLASS_X + 130, GLASS_Y - 250, bottleTexture(this, 'bottle_gin', '#e8f4f0'))
       .setScale(1.1)
-      .setRotation(-1.95)
       .setDepth(5)
       .setVisible(false);
 
-    // 셰이커 / 바 스푼
     this.shaker = this.add
       .container(GLASS_X, GLASS_Y - 40, [this.add.image(0, 0, shakerTexture(this))])
       .setDepth(5)
@@ -262,16 +274,10 @@ export class MixScene extends Phaser.Scene {
   }
 
   private drawActions(): void {
-    // 따르기: 누르는 동안 계속 따라진다
-    const pourBtn = button(this, 110, 1130, 170, 84, '따르기 ⏬', () => {}, COLORS.accent);
-    pourBtn.container.setDepth(61);
-    pourBtn.image.on('pointerdown', () => {
-      this.setMode('idle');
-      this.pouring = true;
-    });
-    const stopPour = () => (this.pouring = false);
-    pourBtn.image.on('pointerup', stopPour);
-    pourBtn.image.on('pointerout', stopPour);
+    this.pourBtn = button(this, 110, 1130, 170, 84, '따르기 🫗', () => {
+      this.setMode(this.mode === 'pour' ? 'idle' : 'pour');
+    }, COLORS.accent);
+    this.pourBtn.container.setDepth(61);
 
     this.stirBtn = button(this, 300, 1130, 170, 84, '스터 🥄', () => {
       this.setMode(this.mode === 'stir' ? 'idle' : 'stir');
@@ -283,7 +289,6 @@ export class MixScene extends Phaser.Scene {
     }, 0x9a5a7a);
     this.shakeBtn.container.setDepth(61);
 
-    // 가니시 (보유 시)
     const mintStock = GameState.stockOf('mint');
     const mintBtn = button(this, 645, 1130, 120, 84, '민트 🌿', () => {
       if (GameState.stockOf('mint') < 1 || this.garnishes.has('mint')) return;
@@ -301,17 +306,30 @@ export class MixScene extends Phaser.Scene {
   private setMode(mode: MixMode): void {
     if (this.finished) return;
     this.mode = mode;
-    this.pouring = false;
     this.shaker.setVisible(mode === 'shake');
     this.spoon.setVisible(mode === 'stir');
+    this.pourBottle.setVisible(mode === 'pour' && !!this.selectedId);
+    this.pourBtn.setToggled(mode === 'pour');
     this.stirBtn.setToggled(mode === 'stir');
     this.shakeBtn.setToggled(mode === 'shake');
-    if (mode === 'shake') {
-      void this.shake.start(); // iOS 권한 요청은 유저 제스처(버튼 탭) 컨텍스트에서
+    if (mode !== 'pour') {
+      this.stream.clear();
+      this.tiltGauge.clear();
+    }
+    if (mode === 'pour') {
+      void this.tilt.start(); // iOS 권한 요청은 유저 제스처(버튼 탭) 컨텍스트에서
+      this.modeText.setText(
+        this.selectedId
+          ? '기기를 기울여 따르세요!\n(데스크톱: 잔 위를 누른 채 아래로 드래그)'
+          : '먼저 선반에서 보틀을 고르세요',
+      );
+    } else if (mode === 'shake') {
+      void this.shake.start();
       this.modeText.setText('휴대폰을 흔드세요!\n(데스크톱: 화면을 빠르게 문지르기)');
     } else if (mode === 'stir') {
       this.modeText.setText('잔 위에서 원을 그리며 저으세요');
     } else {
+      this.tilt.stop();
       this.modeText.setText(this.selectedId ? `${GameState.ingredient(this.selectedId).nameKo} 선택됨` : '');
     }
   }
@@ -327,22 +345,31 @@ export class MixScene extends Phaser.Scene {
     const dt = deltaMs / 1000;
     this.mixSeconds += dt;
 
-    // 붓기
-    let pouredNow = false;
-    if (this.pouring && this.selectedId) {
-      const cap = GLASS_CAPACITY[this.recipe.glass] ?? 200;
-      const stock = GameState.stockOf(this.selectedId);
-      const room = cap - this.totalMl();
-      const amount = Math.min(POUR_RATE_MLPS * dt, stock, room);
-      if (amount > 0) {
-        if (!this.poured.has(this.selectedId)) this.pourOrder.push(this.selectedId);
-        this.poured.set(this.selectedId, (this.poured.get(this.selectedId) ?? 0) + amount);
-        GameState.consume(this.selectedId, amount);
-        this.redrawLiquid();
-        pouredNow = true;
+    // 기울기 붓기
+    if (this.mode === 'pour' && this.selectedId) {
+      const flow = this.tilt.flowRate;
+      let pouredNow = false;
+      if (flow > 0) {
+        const cap = GLASS_CAPACITY[this.recipe.glass] ?? 200;
+        const stock = GameState.stockOf(this.selectedId);
+        const room = cap - this.totalMl();
+        const amount = Math.min(MAX_POUR_RATE_MLPS * flow * dt, stock, room);
+        if (amount > 0) {
+          if (!this.poured.has(this.selectedId)) this.pourOrder.push(this.selectedId);
+          this.poured.set(this.selectedId, (this.poured.get(this.selectedId) ?? 0) + amount);
+          GameState.consume(this.selectedId, amount);
+          this.redrawLiquid();
+          pouredNow = true;
+        }
       }
+      this.updatePourVisual(pouredNow);
+      const deg = Math.round(this.tilt.tiltDeg);
+      this.modeText.setText(
+        flow > 0
+          ? `따르는 중! ${deg}°`
+          : `기울기 ${deg}° — ${TiltDetector.START_DEG}° 이상 기울이면 나옵니다`,
+      );
     }
-    this.updatePourVisual(pouredNow);
 
     // 셰이킹
     if (this.mode === 'shake') {
@@ -376,25 +403,42 @@ export class MixScene extends Phaser.Scene {
 
   private updatePourVisual(active: boolean): void {
     this.stream.clear();
-    if (!active || !this.selectedId) {
+    this.tiltGauge.clear();
+    if (this.mode !== 'pour' || !this.selectedId) {
       this.pourBottle.setVisible(false);
       return;
     }
     this.pourBottle.setVisible(true);
-    // 병 입구에서 잔 수면까지 물줄기
+
+    // 병 기울기 = 실제 기울기 반영
+    const t = Math.min(1, this.tilt.tiltDeg / TiltDetector.MAX_DEG);
+    this.pourBottle.setRotation(-0.5 - t * 1.5);
+
+    // 기울기 게이지 (잔 오른쪽)
+    const gx = GLASS_X + 150;
+    const gy = GLASS_Y - 60;
+    const gh = 160;
+    this.tiltGauge.fillStyle(0x000000, 0.35);
+    this.tiltGauge.fillRoundedRect(gx, gy - gh / 2, 18, gh, 6);
+    const startFrac = TiltDetector.START_DEG / 90;
+    this.tiltGauge.fillStyle(0xffffff, 0.25);
+    this.tiltGauge.fillRect(gx, gy + gh / 2 - gh * startFrac - 2, 18, 2);
+    const frac = Math.min(1, this.tilt.tiltDeg / 90);
+    this.tiltGauge.fillStyle(frac * 90 > TiltDetector.START_DEG ? 0xe8a33d : 0x8a8a8a, 0.95);
+    this.tiltGauge.fillRoundedRect(gx + 3, gy + gh / 2 - gh * frac + 3, 12, Math.max(4, gh * frac - 6), 4);
+
+    if (!active) return;
+    // 물줄기: 유량에 따라 굵어짐
     const color = Phaser.Display.Color.HexStringToColor(GameState.ingredient(this.selectedId).color).color;
     const geom = LIQUID_GEOM[this.recipe.glass] ?? LIQUID_GEOM['rocks']!;
     const cap = GLASS_CAPACITY[this.recipe.glass] ?? 200;
-    const frac = Math.min(1, this.totalMl() / cap);
-    const surfaceY = GLASS_Y + geom.bottom - geom.maxH * frac;
-    const mouthX = GLASS_X + 52;
-    const mouthY = GLASS_Y - 215;
-    this.stream.lineStyle(7, color, 0.85);
-    this.stream.lineBetween(mouthX, mouthY, GLASS_X + 4, surfaceY);
+    const fillFrac = Math.min(1, this.totalMl() / cap);
+    const surfaceY = GLASS_Y + geom.bottom - geom.maxH * fillFrac;
+    const flow = this.tilt.flowRate;
+    this.stream.lineStyle(4 + flow * 7, color, 0.85);
+    this.stream.lineBetween(GLASS_X + 52, GLASS_Y - 215, GLASS_X + 4, surfaceY);
     this.stream.fillStyle(color, 0.5);
-    this.stream.fillCircle(GLASS_X + 4, surfaceY, 9);
-    // 병 살짝 흔들림
-    this.pourBottle.setRotation(-1.95 + Math.sin(this.mixSeconds * 10) * 0.03);
+    this.stream.fillCircle(GLASS_X + 4, surfaceY, 6 + flow * 5);
   }
 
   private refreshTexts(): void {
@@ -407,7 +451,6 @@ export class MixScene extends Phaser.Scene {
       t.setText(`${Math.round(GameState.stockOf(id))}${unit}`);
     }
 
-    // 체크리스트 진행 표시
     this.recipe.steps.forEach((step, i) => {
       const t = this.checkTexts[i];
       if (!t) return;
@@ -438,7 +481,6 @@ export class MixScene extends Phaser.Scene {
     const frac = Math.min(1, total / cap);
     const geom = LIQUID_GEOM[this.recipe.glass] ?? LIQUID_GEOM['rocks']!;
 
-    // 부피 가중 평균 색
     let r = 0;
     let gr = 0;
     let b = 0;
@@ -460,7 +502,6 @@ export class MixScene extends Phaser.Scene {
       const h = geom.maxH * frac;
       this.liquid.fillStyle(base, 0.9);
       this.liquid.fillRect(GLASS_X - geom.halfW, bottomY - h, geom.halfW * 2, h);
-      // 표면 밝은 띠
       this.liquid.fillStyle(lighter, 0.9);
       this.liquid.fillRect(GLASS_X - geom.halfW, bottomY - h, geom.halfW * 2, Math.min(10, h));
     } else {
@@ -473,7 +514,7 @@ export class MixScene extends Phaser.Scene {
     }
 
     if (this.garnishes.has('mint')) {
-      const topY = geom.kind === 'rect' ? bottomY - geom.maxH - 8 : bottomY - geom.maxH - 12;
+      const topY = bottomY - geom.maxH - 10;
       this.liquid.fillStyle(0x48a848, 1);
       this.liquid.fillCircle(GLASS_X + 30, topY, 12);
       this.liquid.fillCircle(GLASS_X + 44, topY - 8, 9);
@@ -505,7 +546,6 @@ export class MixScene extends Phaser.Scene {
   }
 
   private cancel(): void {
-    this.shake.stop();
     this.scene.wake('Bar', {
       seatIndex: this.sceneData.seatIndex,
       totalPaid: 0,
@@ -516,65 +556,26 @@ export class MixScene extends Phaser.Scene {
     this.scene.stop();
   }
 
+  /** 서빙 → 채점 후 바로 메인 씬으로 (반응은 BarScene에서 연출) */
   private serve(): void {
     if (this.finished) return;
     this.finished = true;
-    this.pouring = false;
-    this.stream.clear();
-    this.pourBottle.setVisible(false);
-    this.shake.stop();
 
     const score = scoreMix(this.recipe, this.buildActions());
-    // 조주에 오래 걸릴수록 손님 인내심 추가 하락
     const patience = this.sceneData.patience - this.mixSeconds / 150;
     const pay = settle(this.recipe, score, patience, this.sceneData.tipEligible);
     GameState.earn(pay.total);
 
-    this.showResult(score.total, score.lines, pay.base, pay.tip);
-  }
+    const worstLines = [...score.lines].sort((a, b) => a.ratio - b.ratio).slice(0, 3);
 
-  private showResult(
-    total: number,
-    lines: { label: string; ratio: number; detail: string }[],
-    base: number,
-    tip: number,
-  ): void {
-    const overlay = this.add.container(0, 0).setDepth(100);
-    overlay.add(this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.78).setInteractive());
-    overlay.add(panel(this, W / 2, H / 2, 600, 240 + lines.length * 44));
-
-    const startY = H / 2 - (240 + lines.length * 44) / 2 + 60;
-    const grade = total >= 0.85 ? '완벽해요! 😍' : total >= 0.6 ? '좋아요 🙂' : total >= 0.35 ? '음… 그럭저럭 😐' : '이게 뭐죠? 🤢';
-    overlay.add(
-      txt(this, W / 2, startY, `${this.recipe.nameKo} — ${Math.round(total * 100)}점`, 38, '#e8a33d', {
-        fontStyle: 'bold',
-      }).setOrigin(0.5),
-    );
-    overlay.add(txt(this, W / 2, startY + 48, grade, 28).setOrigin(0.5));
-
-    lines.forEach((line, i) => {
-      const y = startY + 100 + i * 44;
-      const color = line.ratio >= 0.9 ? '#7fdc8a' : line.ratio >= 0.5 ? '#ffd27a' : '#ff8a8a';
-      overlay.add(txt(this, W / 2 - 260, y, line.label, 24, color));
-      overlay.add(txt(this, W / 2 + 260, y, line.detail, 24, color).setOrigin(1, 0));
+    this.scene.wake('Bar', {
+      seatIndex: this.sceneData.seatIndex,
+      totalPaid: pay.total,
+      tip: pay.tip,
+      scoreTotal: score.total,
+      recipeName: this.recipe.nameKo,
+      worstLines,
     });
-
-    const payY = startY + 110 + lines.length * 44;
-    overlay.add(
-      txt(this, W / 2, payY, `대금 ${formatMoney(base)}  +  팁 ${formatMoney(tip)}`, 30, '#7fdc8a', {
-        fontStyle: 'bold',
-      }).setOrigin(0.5),
-    );
-
-    const btn = button(this, W / 2, payY + 76, 300, 76, '확인', () => {
-      this.scene.wake('Bar', {
-        seatIndex: this.sceneData.seatIndex,
-        totalPaid: base + tip,
-        tip,
-        scoreTotal: total,
-      });
-      this.scene.stop();
-    });
-    overlay.add(btn.container);
+    this.scene.stop();
   }
 }

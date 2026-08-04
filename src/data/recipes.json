@@ -7,7 +7,8 @@
       "Cosmopolitan: 시트론 보드카 → 보드카로 대체",
       "Manhattan: 라이 위스키는 별도 보틀로 판매",
       "Mojito: 민트 머들 → 가니시 추가로 단순화"
-    ]
+    ],
+    "pricing": "2026-08 시세 조사 기반: 병값은 국내 소매가, 판매가는 서울 소형 1인 바 기준. docs/01-research.md 참고"
   },
   "recipes": [
     {
@@ -15,13 +16,24 @@
       "name": "Gin & Tonic",
       "nameKo": "진토닉",
       "tier": 1,
-      "basePrice": 8000,
+      "basePrice": 13000,
       "glass": "highball",
       "method": "build",
       "steps": [
-        { "action": "pour", "ingredient": "gin", "amountMl": 45 },
-        { "action": "pour", "ingredient": "tonic", "amountMl": 90 },
-        { "action": "stir", "seconds": 3 }
+        {
+          "action": "pour",
+          "ingredient": "gin",
+          "amountMl": 45
+        },
+        {
+          "action": "pour",
+          "ingredient": "tonic",
+          "amountMl": 90
+        },
+        {
+          "action": "stir",
+          "seconds": 3
+        }
       ]
     },
     {
@@ -29,14 +41,29 @@
       "name": "Cuba Libre",
       "nameKo": "쿠바 리브레",
       "tier": 1,
-      "basePrice": 8000,
+      "basePrice": 12000,
       "glass": "highball",
       "method": "build",
       "steps": [
-        { "action": "pour", "ingredient": "white_rum", "amountMl": 50 },
-        { "action": "pour", "ingredient": "lime_juice", "amountMl": 10 },
-        { "action": "pour", "ingredient": "cola", "amountMl": 120 },
-        { "action": "stir", "seconds": 3 }
+        {
+          "action": "pour",
+          "ingredient": "white_rum",
+          "amountMl": 50
+        },
+        {
+          "action": "pour",
+          "ingredient": "lime_juice",
+          "amountMl": 10
+        },
+        {
+          "action": "pour",
+          "ingredient": "cola",
+          "amountMl": 120
+        },
+        {
+          "action": "stir",
+          "seconds": 3
+        }
       ]
     },
     {
@@ -44,13 +71,24 @@
       "name": "Screwdriver",
       "nameKo": "스크류드라이버",
       "tier": 1,
-      "basePrice": 7500,
+      "basePrice": 11000,
       "glass": "highball",
       "method": "build",
       "steps": [
-        { "action": "pour", "ingredient": "vodka", "amountMl": 50 },
-        { "action": "pour", "ingredient": "orange_juice", "amountMl": 100 },
-        { "action": "stir", "seconds": 3 }
+        {
+          "action": "pour",
+          "ingredient": "vodka",
+          "amountMl": 50
+        },
+        {
+          "action": "pour",
+          "ingredient": "orange_juice",
+          "amountMl": 100
+        },
+        {
+          "action": "stir",
+          "seconds": 3
+        }
       ]
     },
     {
@@ -62,9 +100,20 @@
       "glass": "highball",
       "method": "build",
       "steps": [
-        { "action": "pour", "ingredient": "bourbon", "amountMl": 45 },
-        { "action": "pour", "ingredient": "soda", "amountMl": 120 },
-        { "action": "stir", "seconds": 2 }
+        {
+          "action": "pour",
+          "ingredient": "bourbon",
+          "amountMl": 45
+        },
+        {
+          "action": "pour",
+          "ingredient": "soda",
+          "amountMl": 120
+        },
+        {
+          "action": "stir",
+          "seconds": 2
+        }
       ]
     },
     {
@@ -72,14 +121,29 @@
       "name": "Daiquiri",
       "nameKo": "다이키리",
       "tier": 2,
-      "basePrice": 11000,
+      "basePrice": 14000,
       "glass": "coupe",
       "method": "shake",
       "steps": [
-        { "action": "pour", "ingredient": "white_rum", "amountMl": 60 },
-        { "action": "pour", "ingredient": "lime_juice", "amountMl": 20 },
-        { "action": "pour", "ingredient": "sugar_syrup", "amountMl": 10 },
-        { "action": "shake", "seconds": 6 }
+        {
+          "action": "pour",
+          "ingredient": "white_rum",
+          "amountMl": 60
+        },
+        {
+          "action": "pour",
+          "ingredient": "lime_juice",
+          "amountMl": 20
+        },
+        {
+          "action": "pour",
+          "ingredient": "sugar_syrup",
+          "amountMl": 10
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        }
       ]
     },
     {
@@ -87,14 +151,29 @@
       "name": "Whiskey Sour",
       "nameKo": "위스키 사워",
       "tier": 2,
-      "basePrice": 12000,
+      "basePrice": 15000,
       "glass": "rocks",
       "method": "shake",
       "steps": [
-        { "action": "pour", "ingredient": "bourbon", "amountMl": 45 },
-        { "action": "pour", "ingredient": "lemon_juice", "amountMl": 25 },
-        { "action": "pour", "ingredient": "sugar_syrup", "amountMl": 20 },
-        { "action": "shake", "seconds": 6 }
+        {
+          "action": "pour",
+          "ingredient": "bourbon",
+          "amountMl": 45
+        },
+        {
+          "action": "pour",
+          "ingredient": "lemon_juice",
+          "amountMl": 25
+        },
+        {
+          "action": "pour",
+          "ingredient": "sugar_syrup",
+          "amountMl": 20
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        }
       ]
     },
     {
@@ -102,14 +181,29 @@
       "name": "Margarita",
       "nameKo": "마가리타",
       "tier": 2,
-      "basePrice": 12000,
+      "basePrice": 15000,
       "glass": "coupe",
       "method": "shake",
       "steps": [
-        { "action": "pour", "ingredient": "tequila", "amountMl": 50 },
-        { "action": "pour", "ingredient": "triple_sec", "amountMl": 20 },
-        { "action": "pour", "ingredient": "lime_juice", "amountMl": 15 },
-        { "action": "shake", "seconds": 6 }
+        {
+          "action": "pour",
+          "ingredient": "tequila",
+          "amountMl": 50
+        },
+        {
+          "action": "pour",
+          "ingredient": "triple_sec",
+          "amountMl": 20
+        },
+        {
+          "action": "pour",
+          "ingredient": "lime_juice",
+          "amountMl": 15
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        }
       ]
     },
     {
@@ -117,14 +211,29 @@
       "name": "Old Fashioned",
       "nameKo": "올드 패션드",
       "tier": 2,
-      "basePrice": 13000,
+      "basePrice": 17000,
       "glass": "rocks",
       "method": "stir",
       "steps": [
-        { "action": "pour", "ingredient": "sugar_syrup", "amountMl": 10 },
-        { "action": "pour", "ingredient": "angostura", "amountMl": 2 },
-        { "action": "pour", "ingredient": "bourbon", "amountMl": 45 },
-        { "action": "stir", "seconds": 8 }
+        {
+          "action": "pour",
+          "ingredient": "sugar_syrup",
+          "amountMl": 10
+        },
+        {
+          "action": "pour",
+          "ingredient": "angostura",
+          "amountMl": 2
+        },
+        {
+          "action": "pour",
+          "ingredient": "bourbon",
+          "amountMl": 45
+        },
+        {
+          "action": "stir",
+          "seconds": 8
+        }
       ]
     },
     {
@@ -132,14 +241,29 @@
       "name": "Negroni",
       "nameKo": "네그로니",
       "tier": 2,
-      "basePrice": 13000,
+      "basePrice": 16000,
       "glass": "rocks",
       "method": "stir",
       "steps": [
-        { "action": "pour", "ingredient": "gin", "amountMl": 30 },
-        { "action": "pour", "ingredient": "campari", "amountMl": 30 },
-        { "action": "pour", "ingredient": "sweet_vermouth", "amountMl": 30 },
-        { "action": "stir", "seconds": 5 }
+        {
+          "action": "pour",
+          "ingredient": "gin",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "campari",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "sweet_vermouth",
+          "amountMl": 30
+        },
+        {
+          "action": "stir",
+          "seconds": 5
+        }
       ]
     },
     {
@@ -147,13 +271,24 @@
       "name": "Dry Martini",
       "nameKo": "드라이 마티니",
       "tier": 3,
-      "basePrice": 14000,
+      "basePrice": 16000,
       "glass": "martini",
       "method": "stir",
       "steps": [
-        { "action": "pour", "ingredient": "gin", "amountMl": 60 },
-        { "action": "pour", "ingredient": "dry_vermouth", "amountMl": 10 },
-        { "action": "stir", "seconds": 10 }
+        {
+          "action": "pour",
+          "ingredient": "gin",
+          "amountMl": 60
+        },
+        {
+          "action": "pour",
+          "ingredient": "dry_vermouth",
+          "amountMl": 10
+        },
+        {
+          "action": "stir",
+          "seconds": 10
+        }
       ]
     },
     {
@@ -161,14 +296,29 @@
       "name": "Manhattan",
       "nameKo": "맨해튼",
       "tier": 3,
-      "basePrice": 14000,
+      "basePrice": 17000,
       "glass": "coupe",
       "method": "stir",
       "steps": [
-        { "action": "pour", "ingredient": "rye", "amountMl": 50 },
-        { "action": "pour", "ingredient": "sweet_vermouth", "amountMl": 20 },
-        { "action": "pour", "ingredient": "angostura", "amountMl": 1 },
-        { "action": "stir", "seconds": 10 }
+        {
+          "action": "pour",
+          "ingredient": "rye",
+          "amountMl": 50
+        },
+        {
+          "action": "pour",
+          "ingredient": "sweet_vermouth",
+          "amountMl": 20
+        },
+        {
+          "action": "pour",
+          "ingredient": "angostura",
+          "amountMl": 1
+        },
+        {
+          "action": "stir",
+          "seconds": 10
+        }
       ]
     },
     {
@@ -176,15 +326,34 @@
       "name": "Cosmopolitan",
       "nameKo": "코스모폴리탄",
       "tier": 3,
-      "basePrice": 13000,
+      "basePrice": 14000,
       "glass": "martini",
       "method": "shake",
       "steps": [
-        { "action": "pour", "ingredient": "vodka", "amountMl": 40 },
-        { "action": "pour", "ingredient": "triple_sec", "amountMl": 15 },
-        { "action": "pour", "ingredient": "lime_juice", "amountMl": 15 },
-        { "action": "pour", "ingredient": "cranberry_juice", "amountMl": 30 },
-        { "action": "shake", "seconds": 6 }
+        {
+          "action": "pour",
+          "ingredient": "vodka",
+          "amountMl": 40
+        },
+        {
+          "action": "pour",
+          "ingredient": "triple_sec",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "lime_juice",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "cranberry_juice",
+          "amountMl": 30
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        }
       ]
     },
     {
@@ -192,16 +361,38 @@
       "name": "Mojito",
       "nameKo": "모히토",
       "tier": 3,
-      "basePrice": 12000,
+      "basePrice": 15000,
       "glass": "highball",
       "method": "build",
       "steps": [
-        { "action": "garnish", "ingredient": "mint" },
-        { "action": "pour", "ingredient": "lime_juice", "amountMl": 20 },
-        { "action": "pour", "ingredient": "sugar_syrup", "amountMl": 15 },
-        { "action": "pour", "ingredient": "white_rum", "amountMl": 45 },
-        { "action": "pour", "ingredient": "soda", "amountMl": 60 },
-        { "action": "stir", "seconds": 3 }
+        {
+          "action": "garnish",
+          "ingredient": "mint"
+        },
+        {
+          "action": "pour",
+          "ingredient": "lime_juice",
+          "amountMl": 20
+        },
+        {
+          "action": "pour",
+          "ingredient": "sugar_syrup",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "white_rum",
+          "amountMl": 45
+        },
+        {
+          "action": "pour",
+          "ingredient": "soda",
+          "amountMl": 60
+        },
+        {
+          "action": "stir",
+          "seconds": 3
+        }
       ]
     },
     {
@@ -209,14 +400,29 @@
       "name": "Espresso Martini",
       "nameKo": "에스프레소 마티니",
       "tier": 3,
-      "basePrice": 15000,
+      "basePrice": 16000,
       "glass": "martini",
       "method": "shake",
       "steps": [
-        { "action": "pour", "ingredient": "vodka", "amountMl": 50 },
-        { "action": "pour", "ingredient": "coffee_liqueur", "amountMl": 30 },
-        { "action": "pour", "ingredient": "espresso", "amountMl": 30 },
-        { "action": "shake", "seconds": 8 }
+        {
+          "action": "pour",
+          "ingredient": "vodka",
+          "amountMl": 50
+        },
+        {
+          "action": "pour",
+          "ingredient": "coffee_liqueur",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "espresso",
+          "amountMl": 30
+        },
+        {
+          "action": "shake",
+          "seconds": 8
+        }
       ]
     },
     {
@@ -224,19 +430,54 @@
       "name": "Long Island Iced Tea",
       "nameKo": "롱아일랜드 아이스티",
       "tier": 3,
-      "basePrice": 16000,
+      "basePrice": 17000,
       "glass": "highball",
       "method": "build",
       "steps": [
-        { "action": "pour", "ingredient": "vodka", "amountMl": 15 },
-        { "action": "pour", "ingredient": "tequila", "amountMl": 15 },
-        { "action": "pour", "ingredient": "white_rum", "amountMl": 15 },
-        { "action": "pour", "ingredient": "gin", "amountMl": 15 },
-        { "action": "pour", "ingredient": "triple_sec", "amountMl": 15 },
-        { "action": "pour", "ingredient": "lemon_juice", "amountMl": 25 },
-        { "action": "pour", "ingredient": "sugar_syrup", "amountMl": 30 },
-        { "action": "pour", "ingredient": "cola", "amountMl": 40 },
-        { "action": "stir", "seconds": 3 }
+        {
+          "action": "pour",
+          "ingredient": "vodka",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "tequila",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "white_rum",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "gin",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "triple_sec",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "lemon_juice",
+          "amountMl": 25
+        },
+        {
+          "action": "pour",
+          "ingredient": "sugar_syrup",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "cola",
+          "amountMl": 40
+        },
+        {
+          "action": "stir",
+          "seconds": 3
+        }
       ]
     }
   ]

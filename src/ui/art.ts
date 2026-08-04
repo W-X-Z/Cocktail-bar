@@ -240,6 +240,74 @@ export function personTexture(scene: Phaser.Scene, key: string, body: string, ha
   });
 }
 
+/** 정면 인물 (바텐더 POV에서 마주 보는 손님) */
+export function personFrontTexture(
+  scene: Phaser.Scene,
+  key: string,
+  body: string,
+  hair: string,
+  skin = '#e8b890',
+): string {
+  return ensureTexture(scene, key, 110, 130, (ctx, w, h) => {
+    const cx = w / 2;
+    // 어깨/상체
+    const bg = ctx.createLinearGradient(cx - 50, h - 55, cx + 50, h);
+    bg.addColorStop(0, shade(body, 0.2));
+    bg.addColorStop(1, shade(body, -0.3));
+    ctx.beginPath();
+    ctx.moveTo(cx - 52, h);
+    ctx.quadraticCurveTo(cx - 50, h - 48, cx - 26, h - 52);
+    ctx.lineTo(cx + 26, h - 52);
+    ctx.quadraticCurveTo(cx + 50, h - 48, cx + 52, h);
+    ctx.closePath();
+    ctx.fillStyle = bg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    // 목
+    ctx.fillStyle = shade(skin, -0.1);
+    ctx.fillRect(cx - 9, h - 62, 18, 14);
+    // 머리
+    ctx.beginPath();
+    ctx.arc(cx, 52, 32, 0, Math.PI * 2);
+    ctx.fillStyle = skin;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // 헤어 (앞머리 캡)
+    const hg = ctx.createLinearGradient(cx, 12, cx, 52);
+    hg.addColorStop(0, shade(hair, 0.3));
+    hg.addColorStop(1, shade(hair, -0.15));
+    ctx.beginPath();
+    ctx.arc(cx, 52, 33, Math.PI * 0.95, Math.PI * 2.05);
+    ctx.quadraticCurveTo(cx + 20, 38, cx, 40);
+    ctx.quadraticCurveTo(cx - 20, 38, cx - 32.5, 57);
+    ctx.closePath();
+    ctx.fillStyle = hg;
+    ctx.fill();
+    // 눈
+    ctx.fillStyle = '#2a1a12';
+    ctx.beginPath();
+    ctx.arc(cx - 12, 58, 3.6, 0, Math.PI * 2);
+    ctx.arc(cx + 12, 58, 3.6, 0, Math.PI * 2);
+    ctx.fill();
+    // 볼터치
+    ctx.fillStyle = 'rgba(220,120,100,0.25)';
+    ctx.beginPath();
+    ctx.arc(cx - 19, 68, 5, 0, Math.PI * 2);
+    ctx.arc(cx + 19, 68, 5, 0, Math.PI * 2);
+    ctx.fill();
+    // 입 (옅은 미소)
+    ctx.strokeStyle = '#7a4a3a';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(cx, 70, 8, Math.PI * 0.15, Math.PI * 0.85);
+    ctx.stroke();
+  });
+}
+
 /* ---------- 보틀 / 잔 ---------- */
 
 export function bottleTexture(scene: Phaser.Scene, key: string, liquid: string, tall = true): string {
