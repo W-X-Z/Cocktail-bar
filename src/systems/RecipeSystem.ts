@@ -1,5 +1,17 @@
-import type { MixAction, MixScore, Recipe, ScoreLine } from './types';
+import type { MixAction, MixScore, Recipe, ScoreLine, Vessel } from './types';
 import { GameState } from './GameState';
+
+/**
+ * 레시피별 얼음 요구 위치 (게임 단순화 규칙):
+ * - 셰이크 레시피 → 셰이커에 얼음
+ * - 빌드/스터 + 하이볼·락 글라스 → 잔에 얼음
+ * - 쿠페·마티니·마가리타 글라스(스트레이트 업) → 얼음 없음 (칠링 가정)
+ */
+export function iceExpectation(recipe: Recipe): Vessel | 'none' {
+  if (recipe.method === 'shake') return 'shaker';
+  if (recipe.glass === 'highball' || recipe.glass === 'rocks') return 'glass';
+  return 'none';
+}
 
 /** 계량 오차 허용: ±10%까지 무감점, 60% 이상 어긋나면 0점 */
 function pourRatio(target: number, actual: number): number {
@@ -21,10 +33,11 @@ function timeRatio(target: number, actual: number): number {
 
 /**
  * 레시피 스펙과 플레이어 행동 로그를 비교해 부분 점수제로 채점한다.
- * - 재료별 계량 오차 (가중치 60%)
- * - 기법(셰이크/스터) 시간 (30%)
+ * - 재료별 계량 오차 (가중치 55%)
+ * - 기법: 셰이크/스터 시간 + 셰이크 레시피의 잔에 따르기(스트레인) (25%)
+ * - 얼음 위치 (10%)
  * - 가니시 (10%, 레시피에 있을 때만)
- * - 레시피 밖 재료 투입은 건당 25% 감점
+ * - 레시피 밖 재료/기법/얼음은 감점
  */
 export function scoreMix(recipe: Recipe, actions: MixAction[]): MixScore {
   const lines: ScoreLine[] = [];
@@ -33,6 +46,8 @@ export function scoreMix(recipe: Recipe, actions: MixAction[]): MixScore {
   let shakeSec = 0;
   let stirSec = 0;
   const garnished = new Set<string>();
+  const icedVessels = new Set<Vessel>();
+  let strained = false;
 
   for (const a of actions) {
     if (a.action === 'pour' && a.ingredient) {
@@ -43,6 +58,10 @@ export function scoreMix(recipe: Recipe, actions: MixAction[]): MixScore {
       stirSec += a.seconds ?? 0;
     } else if (a.action === 'garnish' && a.ingredient) {
       garnished.add(a.ingredient);
+    } else if (a.action === 'ice' && a.vessel) {
+      icedVessels.add(a.vessel);
+    } else if (a.action === 'strain') {
+      strained = true;
     }
   }
 
@@ -105,7 +124,34 @@ export function scoreMix(recipe: Recipe, actions: MixAction[]): MixScore {
     lines.push({ label: '셰이킹', ratio: 0, detail: '이 레시피는 흔들지 않아요' });
   }
 
-  // 4) 가니시
+  // 3-1) 셰이크 레시피: 셰이커 → 잔에 따르기(스트레인)
+  if (recipe.method === 'shake') {
+    techScores.push(strained ? 1 : 0);
+    lines.push({
+      label: '잔에 따르기',
+      ratio: strained ? 1 : 0,
+      detail: strained ? 'OK' : '셰이커에 담긴 채 서빙!',
+    });
+  }
+
+  // 4) 얼음
+  const iceExp = iceExpectation(recipe);
+  const iceScores: number[] = [];
+  if (iceExp !== 'none') {
+    const ok = icedVessels.has(iceExp);
+    iceScores.push(ok ? 1 : 0);
+    lines.push({
+      label: `얼음(${iceExp === 'shaker' ? '셰이커' : '잔'})`,
+      ratio: ok ? 1 : 0,
+      detail: ok ? 'OK' : '빠짐',
+    });
+  }
+  if (iceExp !== 'glass' && icedVessels.has('glass')) {
+    extraPenalty += 0.15;
+    lines.push({ label: '얼음', ratio: 0, detail: '이 잔에는 얼음을 넣지 않아요' });
+  }
+
+  // 5) 가니시
   const garnishScores: number[] = [];
   for (const step of recipe.steps) {
     if (step.action !== 'garnish' || !step.ingredient) continue;
@@ -120,8 +166,9 @@ export function scoreMix(recipe: Recipe, actions: MixAction[]): MixScore {
 
   const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 1);
   let total =
-    avg(pourScores) * 0.6 +
-    avg(techScores) * 0.3 +
+    avg(pourScores) * 0.55 +
+    avg(techScores) * 0.25 +
+    avg(iceScores) * 0.1 +
     avg(garnishScores) * 0.1;
   total = Math.max(0, Math.min(1, total - extraPenalty));
 

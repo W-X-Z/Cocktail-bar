@@ -396,6 +396,7 @@ export function glassTexture(scene: Phaser.Scene, glass: string): string {
     rocks: { w: 200, h: 180 },
     coupe: { w: 220, h: 220 },
     martini: { w: 220, h: 220 },
+    margarita: { w: 230, h: 220 },
   };
   const { w: TW, h: TH } = specs[glass] ?? specs['rocks']!;
   return ensureTexture(scene, `glass_${glass}`, TW, TH, (ctx, w, h) => {
@@ -418,6 +419,30 @@ export function glassTexture(scene: Phaser.Scene, glass: string): string {
       ctx.fillStyle = 'rgba(235,245,250,0.3)';
       rounded(ctx, cx - 80, h - 26, 160, 10, 5);
       ctx.fill();
+    } else if (glass === 'margarita') {
+      // 마가리타: 넓은 림 → 잘록한 허리 → 작은 아랫보울 (2단)
+      ctx.beginPath();
+      ctx.moveTo(cx - 100, 14);
+      ctx.lineTo(cx - 30, 62);
+      ctx.lineTo(cx - 40, 80);
+      ctx.quadraticCurveTo(cx - 36, 108, cx, 112);
+      ctx.quadraticCurveTo(cx + 36, 108, cx + 40, 80);
+      ctx.lineTo(cx + 30, 62);
+      ctx.lineTo(cx + 100, 14);
+      ctx.fill();
+      ctx.stroke();
+      // 스템 + 베이스
+      ctx.beginPath();
+      ctx.moveTo(cx, 112);
+      ctx.lineTo(cx, 190);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - 52, 198);
+      ctx.lineTo(cx + 52, 198);
+      ctx.stroke();
+      // 소금 리밍 느낌의 림 하이라이트
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillRect(cx - 100, 12, 200, 3);
     } else {
       // V형 (쿠페/마티니)
       ctx.beginPath();

@@ -18,7 +18,7 @@ export interface RecipeStep {
   seconds?: number;
 }
 
-export type GlassType = 'highball' | 'rocks' | 'coupe' | 'martini';
+export type GlassType = 'highball' | 'rocks' | 'coupe' | 'martini' | 'margarita';
 
 export interface Recipe {
   id: string;
@@ -31,12 +31,19 @@ export interface Recipe {
   steps: RecipeStep[];
 }
 
+/** 조주 용기 */
+export type Vessel = 'glass' | 'shaker';
+
+/** 플레이어 행동 종류 — 레시피 스텝 + 얼음/스트레인 */
+export type MixActionKind = StepAction | 'ice' | 'strain';
+
 /** 플레이어가 조주 중 실제로 수행한 행동 로그 */
 export interface MixAction {
-  action: StepAction;
+  action: MixActionKind;
   ingredient?: string;
   amountMl?: number;
   seconds?: number;
+  vessel?: Vessel;
 }
 
 export interface ScoreLine {

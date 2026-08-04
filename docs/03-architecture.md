@@ -21,7 +21,8 @@ src/
     CustomerSystem.ts   # 페르소나 추첨·대화 선택·단골 레벨 (docs/04 참고)
     ShakeDetector.ts    # DeviceMotion 셰이크 감지 + 포인터 폴백
     StirDetector.ts     # 원형 드래그 각도 누적 감지
-    TiltDetector.ts     # DeviceOrientation 기울기 붓기 + 드래그 폴백
+    PourController.ts   # 프레스&홀드 붓기 (기울기 램프 + 놓은 뒤 관성)
+    TiltDetector.ts     # (구) 기울기 붓기 — 프리 푸어 고급 옵션용으로 보존
   scenes/               # Phaser 씬 — 표현/입력만 담당, 로직은 systems에 위임
     BootScene.ts        # 타이틀 + 세이브 슬롯 3개 선택/삭제
     BarScene.ts         # 바텐더 POV 운영 뷰 (HUD·손님 반응·채점 토스트·운영비 정산)
