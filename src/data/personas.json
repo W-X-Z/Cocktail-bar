@@ -6,7 +6,8 @@
       "dislikes": "절대 주문하지 않는 칵테일 id",
       "patienceMul": "기본 인내심(75초)에 곱해지는 배율",
       "tipMul": "팁 배율 (1.0 = 기본)",
-      "visitWeight": "등장 확률 가중치 (단골 레벨에 따라 추가 보정됨)"
+      "visitWeight": "등장 확률 가중치 (단골 레벨에 따라 추가 보정됨)",
+      "talks": "서빙 후 대화 상호작용 세트(3개). options: sympathize(호응)/advise(조언)/silence(침묵) + 답변 + 호감도 증감"
     }
   },
   "personas": [
@@ -67,7 +68,69 @@
           "늘 마시던 걸로 — 라고 말해보고 싶었어요.",
           "여기가 제 두 번째 사무실이에요."
         ]
-      }
+      },
+      "talks": [
+        {
+          "text": "부장이 또 제 기획을 자기 이름으로 올렸어요. 웃기죠?",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "그쵸? 진짜 너무하죠. …이해해줘서 고마워요.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "이직하라구요? 하… 그게 쉽나요.",
+              "affinity": -1
+            },
+            {
+              "kind": "silence",
+              "reply": "…묵묵히 들어주는 것도 고맙네요.",
+              "affinity": 0
+            }
+          ]
+        },
+        {
+          "text": "우리 딸이 요즘 아빠랑 말을 안 해요. 사춘기인가 봐요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "그럴 나이라구요? 하긴… 그렇겠죠.",
+              "affinity": 0
+            },
+            {
+              "kind": "advise",
+              "reply": "먼저 편지를 써보라… 오, 그거 좋은데요?",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…네, 뭐 그런 얘기였습니다.",
+              "affinity": 0
+            }
+          ]
+        },
+        {
+          "text": "사실 저 요즘 회사 그만두고 바 차리는 상상해요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "하하, 사장님이 응원해주니 진짜 할 것 같잖아요.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "현실적으로 어렵다… 역시 그렇겠죠? 하하…",
+              "affinity": -1
+            },
+            {
+              "kind": "silence",
+              "reply": "…농담이에요, 농담.",
+              "affinity": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "yuri_student",
@@ -129,7 +192,69 @@
           "시험 끝나면 무조건 여기죠!",
           "사장님 저 단골 맞죠? 서비스는요?"
         ]
-      }
+      },
+      "talks": [
+        {
+          "text": "저 오늘 발표에서 완전 망했어요. 교수님 앞에서 머리가 하얘졌어.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "그쵸?! 누구나 그럴 수 있죠?! 힝, 위로돼요.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "연습을 더 하라구요…? 지금 위로가 필요한데요.",
+              "affinity": -1
+            },
+            {
+              "kind": "silence",
+              "reply": "…듣고는 있는 거죠?",
+              "affinity": -1
+            }
+          ]
+        },
+        {
+          "text": "동아리 선배가 자꾸 저한테만 잡일 시켜요. 어떡하죠?",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "너무하죠?! 역시 제가 이상한 게 아니었어!",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "싫다고 말해보라구요? …맞아요. 말해볼래요!",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…사장님?",
+              "affinity": -1
+            }
+          ]
+        },
+        {
+          "text": "졸업하면 뭐 하지… 요즘 밤마다 그 생각뿐이에요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "다들 그렇다니까 좀 안심돼요.",
+              "affinity": 0
+            },
+            {
+              "kind": "advise",
+              "reply": "좋아하는 걸 먼저 찾으라… 어른 같은 말이네요. 고마워요.",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…칵테일이나 한 잔 더 할까.",
+              "affinity": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "marco_traveler",
@@ -185,7 +310,69 @@
           "한국 오면 무조건 여기부터 와요!",
           "친구들한테 다 소문냈어요!"
         ]
-      }
+      },
+      "talks": [
+        {
+          "text": "서울은 정말 놀라워요! 어제는 새벽까지 시장 구경했어요!",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "그쵸?! 이 도시 최고예요!",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "숨은 명소요? 오! 메모할게요!",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…한국 사람들은 조용하군요. 그것도 멋져요.",
+              "affinity": 0
+            }
+          ]
+        },
+        {
+          "text": "사실 이번 여행, 실연 때문에 떠나온 거예요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "고마워요… 여행이 약이 되네요.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "새 사랑을 찾으라구요? 하하, 너무 빨라요!",
+              "affinity": -1
+            },
+            {
+              "kind": "silence",
+              "reply": "…바텐더는 역시 좋은 청취자네요.",
+              "affinity": 1
+            }
+          ]
+        },
+        {
+          "text": "다음 주에 떠나요. 이 바가 제일 그리울 거예요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "또 올게요! 약속!",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "우리나라에도 바를 차리라구요? 하하, 생각해볼게요!",
+              "affinity": 0
+            },
+            {
+              "kind": "silence",
+              "reply": "…말없이 잔을 채워주는 이 느낌, 잊지 않을게요.",
+              "affinity": 1
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "seoyeon_designer",
@@ -246,7 +433,69 @@
           "여기 무드는 제가 보증해요.",
           "역시 퇴근 후엔 여기죠."
         ]
-      }
+      },
+      "talks": [
+        {
+          "text": "클라이언트가 '느낌 아시죠?'래요. 느낌만 백 번째예요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "역시 사장님은 아시는구나. 위로가 되네요.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "시안을 세 개 만들라구요? …더 일하란 소리잖아요.",
+              "affinity": -1
+            },
+            {
+              "kind": "silence",
+              "reply": "…조용히 마시고 싶었어요. 정답.",
+              "affinity": 1
+            }
+          ]
+        },
+        {
+          "text": "포트폴리오 사이트를 갈아엎는 중인데, 밤새 봐도 답이 없어요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "으, 공감만으론 픽셀이 안 움직여요.",
+              "affinity": 0
+            },
+            {
+              "kind": "advise",
+              "reply": "하나만 남기고 다 지우라… 미니멀. 그거네요.",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…생각할 시간을 주는 거죠? 좋아요.",
+              "affinity": 0
+            }
+          ]
+        },
+        {
+          "text": "사실 회사 그만두고 프리랜서 할까 고민 중이에요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "응원 고마워요. 근데 무섭긴 해요.",
+              "affinity": 0
+            },
+            {
+              "kind": "advise",
+              "reply": "부업으로 먼저 시작해보라… 현실적이네요. 좋아요.",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…역시 아직은 말할 때가 아니었나.",
+              "affinity": -1
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "park_boss",
@@ -304,7 +553,69 @@
           "우리 가게 손님들한테도 소문냈어.",
           "이 집은 내가 키웠지, 암."
         ]
-      }
+      },
+      "talks": [
+        {
+          "text": "요즘 젊은 손님들은 왜 우리 가게엔 안 오는지 몰라.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "그치? 요즘 애들이 뭘 몰라. …고맙네.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "SNS를 하라고? 어허, 나보고 그걸 배우라고?",
+              "affinity": -1
+            },
+            {
+              "kind": "silence",
+              "reply": "…자네도 할 말이 없구먼.",
+              "affinity": 0
+            }
+          ]
+        },
+        {
+          "text": "30년 장사하면서 제일 힘든 게 뭔지 알아? 사람이야, 사람.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "암, 자네는 알지. 역시 장사꾼이야.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "허허, 나한테 사람 관리를 가르치려고?",
+              "affinity": -1
+            },
+            {
+              "kind": "silence",
+              "reply": "…조용히 듣는 자세, 그게 장사의 기본이지. 합격.",
+              "affinity": 1
+            }
+          ]
+        },
+        {
+          "text": "우리 아들놈이 가게 안 물려받겠다고 하네.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "서운하지… 그래, 자네라도 알아주니 됐어.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "아들 인생은 아들 거라… 맞는 말이라 더 아프구먼.",
+              "affinity": 0
+            },
+            {
+              "kind": "silence",
+              "reply": "…술이나 한 잔 더 주게.",
+              "affinity": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "haneul_writer",
@@ -363,7 +674,69 @@
           "신작에 이 바가 나옵니다.",
           "제 지정석, 비워두셨죠?"
         ]
-      }
+      },
+      "talks": [
+        {
+          "text": "300페이지를 썼는데, 어제 다 지웠습니다.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "아깝다는 말은… 위로가 안 됩니다.",
+              "affinity": -1
+            },
+            {
+              "kind": "advise",
+              "reply": "백업을 하라는 조언은 이미 늦었죠.",
+              "affinity": 0
+            },
+            {
+              "kind": "silence",
+              "reply": "…이 침묵, 문장으로 쓰고 싶네요. 고맙습니다.",
+              "affinity": 1
+            }
+          ]
+        },
+        {
+          "text": "주인공이 말을 안 들어요. 제가 만든 인물인데도.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "작가들이 다 그렇다구요? …동업자 같은 위로네요.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "인물이 가고 싶은 대로 두라… 오. 그거 써먹겠습니다.",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…네. 생각을 정리했습니다.",
+              "affinity": 1
+            }
+          ]
+        },
+        {
+          "text": "가끔은 글보다 이 바의 소음이 더 좋은 문장 같아요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "하하, 그 리액션은 소음 축에도 못 들어요.",
+              "affinity": 0
+            },
+            {
+              "kind": "advise",
+              "reply": "녹음을 해두라구요? 낭만이 없으시네요.",
+              "affinity": -1
+            },
+            {
+              "kind": "silence",
+              "reply": "…그렇죠. 이렇게 조용히.",
+              "affinity": 1
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "minjun_trainer",
@@ -420,7 +793,69 @@
           "회원님들한테는 비밀인 곳이죠.",
           "사장님도 등 운동 하셔야 해요. 셰이킹에 좋아요."
         ]
-      }
+      },
+      "talks": [
+        {
+          "text": "오늘 회원님이 3개월 만에 첫 턱걸이 성공했어요! 제가 다 뿌듯해요!",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "그쵸?! 이 맛에 트레이너 하는 거예요!",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "다음 목표 설정이요? 오, 프로다운 조언!",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…어, 네. 아무튼 뿌듯했다구요.",
+              "affinity": -1
+            }
+          ]
+        },
+        {
+          "text": "몸은 안 힘든데, 사람 상대가 힘들어요. 노쇼가 너무 많아요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "맞죠? 하… 들어줘서 고마워요.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "노쇼 위약금이요? 매정해 보일까 봐… 근데 맞는 말이에요.",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…쇠질이나 하러 가야겠다.",
+              "affinity": 0
+            }
+          ]
+        },
+        {
+          "text": "사장님 어깨 좀 굽으신 것 같은데, 셰이킹 자세 때문인가?",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "하하, 인정하시는 거예요? 스트레칭 알려드릴게요!",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "저한테 조언을 하신다구요? 그건 제 전문인데!",
+              "affinity": 0
+            },
+            {
+              "kind": "silence",
+              "reply": "…부정 안 하시네. 다음에 폼롤러 가져올게요.",
+              "affinity": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "jieun_nurse",
@@ -478,7 +913,69 @@
           "오프 날엔 무조건 여기예요.",
           "동기들 다 데려왔잖아요, 제가."
         ]
-      }
+      },
+      "talks": [
+        {
+          "text": "오늘 담당 환자분이 퇴원하셨어요. 3개월 만에요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "그쵸! 이런 날은 축하받아야 해요!",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "저한테 쉬라는 조언은… 오늘은 안 통해요. 기쁜 날이라.",
+              "affinity": 0
+            },
+            {
+              "kind": "silence",
+              "reply": "…같이 조용히 기뻐해주는 거죠? 좋아요.",
+              "affinity": 1
+            }
+          ]
+        },
+        {
+          "text": "교대 근무 하다 보면 계절이 바뀌는 것도 몰라요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "위로 고마워요. 그래도 봄은 놓치기 싫은데.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "낮에 산책하라구요? 낮엔 자야 하는데요…",
+              "affinity": -1
+            },
+            {
+              "kind": "silence",
+              "reply": "…이 바에 오면 계절이 느껴져요. 신기하게.",
+              "affinity": 1
+            }
+          ]
+        },
+        {
+          "text": "가족들이 자꾸 결혼 얘기를 꺼내요. 피곤해 죽겠어요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "그쵸?! 내 인생인데! …사이다 같아요.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "좋은 사람 만나보라구요? 사장님까지 왜 그래요…",
+              "affinity": -1
+            },
+            {
+              "kind": "silence",
+              "reply": "…네, 조용한 게 최고예요.",
+              "affinity": 1
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "tom_teacher",
@@ -536,7 +1033,69 @@
           "마이 페이보릿 플레이스!",
           "학생들한텐 비밀이에요~"
         ]
-      }
+      },
+      "talks": [
+        {
+          "text": "오늘 학생이 저한테 한국어로 롱쿠키를 가르쳐줬어요. 아니, 농담요!",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "하하! 맞아요, 완전 재밌죠?!",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "발음 교정이요? 오~ 티처의 티처!",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…음, 한국식 리액션은 어렵네요.",
+              "affinity": -1
+            }
+          ]
+        },
+        {
+          "text": "고향 음식이 그리워요. 엄마의 파이… 아, 말하니까 더 그립다.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "생큐… 향수병엔 공감이 약이에요.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "직접 만들어보라구요? 오븐이 없어요, 하하…",
+              "affinity": 0
+            },
+            {
+              "kind": "silence",
+              "reply": "…이럴 땐 그냥 마시는 게 답이죠.",
+              "affinity": 0
+            }
+          ]
+        },
+        {
+          "text": "한국 생활 5년째인데, 아직도 정이 뭔지 잘 모르겠어요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "이 바에서 늘 챙겨주는 게 정이라구요? 오… 무브드…",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "사전 말고 몸으로 배우라… 딥하네요.",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…이 침묵도 정인가요? 한국 어려워요~",
+              "affinity": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "eunja_elder",
@@ -594,7 +1153,69 @@
           "여기가 내 사랑방이야.",
           "자네 보러 오는 재미로 살아."
         ]
-      }
+      },
+      "talks": [
+        {
+          "text": "우리 영감이 요즘 자꾸 옛날 얘기만 해. 늙었나 봐.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "호호, 자네가 맞장구는 잘 치는구먼.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "병원에 모시고 가보라고? 아직 정정해!",
+              "affinity": -1
+            },
+            {
+              "kind": "silence",
+              "reply": "…그래, 그냥 들어주면 돼. 잘하는구먼.",
+              "affinity": 1
+            }
+          ]
+        },
+        {
+          "text": "명동에 있던 그 바는 벌써 40년 전에 없어졌지.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "그 시절이 좋았지, 암. …자네랑 얘기하니 좋구먼.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "요즘 바도 좋다고? 여기니까 봐주는 거야.",
+              "affinity": 0
+            },
+            {
+              "kind": "silence",
+              "reply": "…조용히 옛 생각 하게 해주는구먼.",
+              "affinity": 1
+            }
+          ]
+        },
+        {
+          "text": "젊은 사장, 자네는 왜 이 장사를 시작했나?",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "허허, 대답 대신 웃는 게냐?",
+              "affinity": 0
+            },
+            {
+              "kind": "advise",
+              "reply": "꿈이 있어서라… 좋은 대답이야.",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…말 못 할 사연이 있나 보구먼. 알겠네.",
+              "affinity": 1
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "sera_singer",
@@ -657,7 +1278,69 @@
           "단골 무대보다 편한 곳은 여기뿐이에요.",
           "당신 칵테일이 그리워서 왔죠."
         ]
-      }
+      },
+      "talks": [
+        {
+          "text": "오늘 관객 중에 우는 분이 있었어요. 제 노래 때문에.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "고마워요. 근데 그 눈물의 의미, 아직 저도 몰라요.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "그 곡으로 앨범을 내라구요? 성급하네요.",
+              "affinity": -1
+            },
+            {
+              "kind": "silence",
+              "reply": "…당신의 침묵이 제일 좋은 박수예요.",
+              "affinity": 1
+            }
+          ]
+        },
+        {
+          "text": "목이 예전 같지 않아요. 가수한테는… 사형선고 같은 거죠.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "위로는 고맙지만, 위로로 낫진 않아요.",
+              "affinity": 0
+            },
+            {
+              "kind": "advise",
+              "reply": "좋은 이비인후과요? …현실적이라 좋네요. 알려줘요.",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…네. 그냥 이렇게 있어줘요.",
+              "affinity": 1
+            }
+          ]
+        },
+        {
+          "text": "다음 달에 첫 단독 공연이에요. 무섭냐구요? …무서워요.",
+          "options": [
+            {
+              "kind": "sympathize",
+              "reply": "떨리는 게 당연하다는 말, 오늘 제일 좋은 말이네요.",
+              "affinity": 1
+            },
+            {
+              "kind": "advise",
+              "reply": "리허설을 여기서 하라구요? 후후, 진심이에요?",
+              "affinity": 1
+            },
+            {
+              "kind": "silence",
+              "reply": "…조용한 응원, 받았어요.",
+              "affinity": 0
+            }
+          ]
+        }
+      ]
     }
   ]
 }

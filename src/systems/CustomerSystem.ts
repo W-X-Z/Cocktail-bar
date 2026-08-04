@@ -1,5 +1,5 @@
 import personasJson from '../data/personas.json';
-import type { DialogueKey, Persona } from './types';
+import type { DialogueKey, Persona, Talk, TalkKind } from './types';
 import { GameState } from './GameState';
 
 /**
@@ -49,13 +49,18 @@ export function regularLevel(personaId: string): RegularLevel {
   return best;
 }
 
-/** 서빙 품질 → 호감도 증감. 반환값: 레벨이 올랐으면 새 레벨 */
-export function recordServe(personaId: string, scoreTotal: number): RegularLevel | null {
+/** 호감도 증감 적용. 반환값: 레벨이 올랐으면 새 레벨 */
+export function applyAffinity(personaId: string, delta: number): RegularLevel | null {
   const before = regularLevel(personaId).level;
-  const delta = scoreTotal >= 0.85 ? 2 : scoreTotal >= 0.6 ? 1 : scoreTotal >= 0.35 ? 0 : -1;
   GameState.addAffinity(personaId, delta);
   const after = regularLevel(personaId);
   return after.level > before ? after : null;
+}
+
+/** 서빙 품질 → 호감도 증감. 반환값: 레벨이 올랐으면 새 레벨 */
+export function recordServe(personaId: string, scoreTotal: number): RegularLevel | null {
+  const delta = scoreTotal >= 0.85 ? 2 : scoreTotal >= 0.6 ? 1 : scoreTotal >= 0.35 ? 0 : -1;
+  return applyAffinity(personaId, delta);
 }
 
 /** 화나서 떠남 → 호감도 하락 */
@@ -103,4 +108,19 @@ export function line(
 /** 서빙 점수 → 반응 대사 키 */
 export function reactionKey(scoreTotal: number): DialogueKey {
   return scoreTotal >= 0.7 ? 'serveGood' : scoreTotal >= 0.4 ? 'serveOk' : 'serveBad';
+}
+
+/* ---------- 대화 상호작용 ---------- */
+
+export const TALK_LABELS: Record<TalkKind, string> = {
+  sympathize: '🙌 호응',
+  advise: '💡 조언',
+  silence: '🤫 침묵',
+};
+
+/** 이번 방문에 건넬 이야기 랜덤 선택 (talks가 없으면 null) */
+export function pickTalk(p: Persona, rng: () => number = Math.random): Talk | null {
+  const talks = p.talks ?? [];
+  if (talks.length === 0) return null;
+  return talks[Math.floor(rng() * talks.length)] ?? null;
 }

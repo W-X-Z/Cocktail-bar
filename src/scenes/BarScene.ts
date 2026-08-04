@@ -1,15 +1,18 @@
 import Phaser from 'phaser';
 import {
+  applyAffinity,
   line,
   pickPersona,
+  pickTalk,
   reactionKey,
   recordAngryLeave,
   recordServe,
   regularLevel,
+  TALK_LABELS,
 } from '../systems/CustomerSystem';
 import { GameState } from '../systems/GameState';
 import { createOrder } from '../systems/OrderSystem';
-import type { Order, Persona, ScoreLine } from '../systems/types';
+import type { Order, Persona, ScoreLine, Talk, TalkOption } from '../systems/types';
 import {
   bottleTexture,
   counterTexture,
@@ -61,12 +64,16 @@ export class BarScene extends Phaser.Scene {
   private hintText!: Phaser.GameObjects.Text;
   private toast: Phaser.GameObjects.Container | null = null;
   private dialogueCard: Phaser.GameObjects.Container | null = null;
+  private dialogueSticky = false;
 
   private seatX(i: number): number {
     return 120 + i * 165;
   }
-  /** 손님 얼굴 기준 y (카운터 뒤) */
-  private readonly seatY = 640;
+  /**
+   * 손님 버스트 중심 y. 초상화(144px)의 하단이 카운터 상단(786)에 맞물려
+   * 어깨가 카운터 뒤로 가려지도록 배치 — 목 잘린 채 떠 있는 느낌 방지.
+   */
+  private readonly seatY = 720;
 
   constructor() {
     super('Bar');
@@ -80,6 +87,7 @@ export class BarScene extends Phaser.Scene {
     this.nextSpawnIn = 2;
     this.toast = null;
     this.dialogueCard = null;
+    this.dialogueSticky = false;
 
     this.drawRoom();
     this.drawHud();
@@ -224,11 +232,14 @@ export class BarScene extends Phaser.Scene {
       .image(0, 0, portraitTexture(this, `portrait_${persona.id}`, persona.look))
       .setScale(3);
     c.add(sprite);
-    const nameText = txt(this, 0, 84, this.nameLabel(persona), 20, lv.level >= 2 ? '#ffd27a' : '#b09070', {
+    // 이름표는 카운터 앞면에 명찰처럼 (컨테이너 밖 — 카운터 위 depth로 별도 배치)
+    const nameText = txt(this, 0, 0, this.nameLabel(persona), 20, lv.level >= 2 ? '#ffd27a' : '#b09070', {
       fontStyle: 'bold',
       align: 'center',
-    }).setOrigin(0.5);
-    c.add(nameText);
+    })
+      .setOrigin(0.5)
+      .setDepth(22)
+      .setVisible(false);
     c.setDepth(10);
     this.tweens.add({ targets: sprite, y: -6, duration: 220, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
 
@@ -289,6 +300,7 @@ export class BarScene extends Phaser.Scene {
         if (customer.state === 'walking') customer.state = 'seated';
         this.tweens.killTweensOf(sprite);
         sprite.setY(0);
+        nameText.setPosition(sx, 806).setVisible(true);
         bubble.setVisible(true);
         bubble.setScale(0);
         bubbleText.setText(greetText);
@@ -372,32 +384,65 @@ export class BarScene extends Phaser.Scene {
     }
 
     this.showToast(data);
-    this.time.delayedCall(2200, () => this.removeCustomer(customer, false));
+
+    // 나쁘지 않게 마셨다면 말을 걸어올 수 있다 (65%)
+    const talk = s >= 0.35 && Math.random() < 0.65 ? pickTalk(customer.persona) : null;
+    if (talk) {
+      this.time.delayedCall(2000, () => this.startTalk(customer, talk));
+    } else {
+      this.time.delayedCall(2200, () => this.removeCustomer(customer, false));
+    }
   }
 
   /**
    * 대화 인터랙션 카드 (비주얼노벨식).
    * 픽셀 초상화를 크게 확대해 하단 카운터 위에 대사와 함께 띄운다.
+   * options가 있으면 선택지 버튼이 붙고, 선택 전까지 사라지지 않는다.
    */
-  private showDialogue(persona: Persona, text: string): void {
+  private showDialogue(
+    persona: Persona,
+    text: string,
+    options?: { label: string; onPick: () => void }[],
+  ): void {
+    if (this.dialogueSticky && !options) return; // 선택 대기 중엔 일반 대사가 덮지 않음
     this.dialogueCard?.destroy();
-    const card = this.add.container(0, 0).setDepth(49);
+    const interactive = !!options && options.length > 0;
+    this.dialogueSticky = interactive;
 
-    card.add(panel(this, W / 2 + 40, 985, W - 100, 190));
-    // 대형 초상화 (5배 확대 픽셀아트)
+    const card = this.add.container(0, 0).setDepth(49);
+    const panelH = interactive ? 226 : 190;
+    const panelY = interactive ? 967 : 985;
+    card.add(panel(this, W / 2 + 40, panelY, W - 100, panelH));
+
     const portrait = this.add
-      .image(120, 942, portraitTexture(this, `portrait_${persona.id}`, persona.look))
+      .image(120, panelY - 43, portraitTexture(this, `portrait_${persona.id}`, persona.look))
       .setScale(5);
     card.add(portrait);
     const lv = regularLevel(persona.id);
     card.add(
-      txt(this, 225, 915, `${this.nameLabel(persona)}  ·  ${persona.job}`, 24, lv.level >= 2 ? '#ffd27a' : '#e8a33d', {
-        fontStyle: 'bold',
-      }),
+      txt(
+        this,
+        225,
+        panelY - 70,
+        `${this.nameLabel(persona)}  ·  ${persona.job}`,
+        24,
+        lv.level >= 2 ? '#ffd27a' : '#e8a33d',
+        { fontStyle: 'bold' },
+      ),
     );
     card.add(
-      txt(this, 225, 952, text, 25, '#f2e6d0', { wordWrap: { width: 430 }, lineSpacing: 6 }),
+      txt(this, 225, panelY - 33, text, 24, '#f2e6d0', { wordWrap: { width: 430 }, lineSpacing: 5 }),
     );
+
+    if (interactive) {
+      options.forEach((opt, i) => {
+        const b = button(this, 254 + i * 162, panelY + 76, 150, 56, opt.label, () => {
+          this.dialogueSticky = false;
+          opt.onPick();
+        }, 0x5a7a9a);
+        card.add(b.container);
+      });
+    }
 
     card.setAlpha(0);
     portrait.setX(100);
@@ -405,15 +450,59 @@ export class BarScene extends Phaser.Scene {
     this.tweens.add({ targets: portrait, x: 120, duration: 220, ease: 'Back.out' });
 
     this.dialogueCard = card;
-    this.time.delayedCall(3000, () => {
-      if (this.dialogueCard === card) {
-        this.tweens.add({
-          targets: card,
-          alpha: 0,
-          duration: 300,
-          onComplete: () => card.destroy(),
-        });
-        this.dialogueCard = null;
+    if (!interactive) {
+      this.time.delayedCall(3000, () => {
+        if (this.dialogueCard === card) {
+          this.tweens.add({ targets: card, alpha: 0, duration: 300, onComplete: () => card.destroy() });
+          this.dialogueCard = null;
+        }
+      });
+    }
+  }
+
+  /** 서빙 후 손님이 말을 건다 — 호응/조언/침묵 선택 → 호감도 반영 */
+  private startTalk(customer: Customer, talk: Talk): void {
+    if (customer.state !== 'reacting') return;
+    customer.bubbleText.setText('💬');
+
+    let resolved = false;
+    const resolve = (opt: TalkOption) => {
+      if (resolved) return;
+      resolved = true;
+      this.dialogueSticky = false;
+      this.showDialogue(customer.persona, opt.reply);
+
+      if (opt.affinity !== 0) {
+        const icon = opt.affinity > 0 ? '💗 +1' : '💔 -1';
+        this.floatText(customer.container.x, this.seatY - 200, icon, opt.affinity > 0 ? '#ff9ec6' : '#8a8a9a');
+      }
+      const newLevel = applyAffinity(customer.persona.id, opt.affinity);
+      customer.nameText.setText(this.nameLabel(customer.persona));
+      if (newLevel) {
+        this.floatText(
+          customer.container.x,
+          this.seatY - 250,
+          `🎉 ${customer.persona.name}: ${newLevel.label}이 되었습니다!`,
+          '#ff9ec6',
+        );
+      }
+      this.time.delayedCall(2200, () => this.removeCustomer(customer, false));
+    };
+
+    this.showDialogue(
+      customer.persona,
+      talk.text,
+      talk.options.map((opt) => ({ label: TALK_LABELS[opt.kind], onPick: () => resolve(opt) })),
+    );
+
+    // 8초 무응답 → 침묵 취급 (침묵 선택지가 없으면 첫 번째 0점 선택지)
+    this.time.delayedCall(8000, () => {
+      if (!resolved) {
+        const fallback =
+          talk.options.find((o) => o.kind === 'silence') ??
+          talk.options.find((o) => o.affinity === 0) ??
+          talk.options[0]!;
+        resolve(fallback);
       }
     });
   }
@@ -482,6 +571,7 @@ export class BarScene extends Phaser.Scene {
     this.customers[customer.seatIndex] = null;
     customer.state = 'leaving';
     customer.bubble.setVisible(false);
+    customer.nameText.destroy();
     customer.container.disableInteractive();
     this.tweens.add({
       targets: customer.container,

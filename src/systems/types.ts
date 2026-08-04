@@ -88,6 +88,23 @@ export interface PersonaLook {
   earrings?: boolean;
 }
 
+/** 대화 상호작용 버튼 종류 */
+export type TalkKind = 'sympathize' | 'advise' | 'silence';
+
+export interface TalkOption {
+  kind: TalkKind;
+  /** 선택 시 손님의 답변 */
+  reply: string;
+  /** 호감도 증감 (-1 / 0 / +1) */
+  affinity: number;
+}
+
+/** 서빙 후 손님이 건네는 이야기 한 세트 */
+export interface Talk {
+  text: string;
+  options: TalkOption[];
+}
+
 export interface Persona {
   id: string;
   name: string;
@@ -99,6 +116,8 @@ export interface Persona {
   tipMul: number;
   visitWeight: number;
   dialogue: Record<DialogueKey, string[]>;
+  /** 대화 상호작용 세트 (없으면 상호작용 미발생) */
+  talks?: Talk[];
 }
 
 /** 단골 호감도 상태 (세이브에 저장) */
