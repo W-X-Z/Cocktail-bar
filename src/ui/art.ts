@@ -247,6 +247,7 @@ export function personFrontTexture(
   body: string,
   hair: string,
   skin = '#e8b890',
+  glasses = false,
 ): string {
   return ensureTexture(scene, key, 110, 130, (ctx, w, h) => {
     const cx = w / 2;
@@ -305,6 +306,21 @@ export function personFrontTexture(
     ctx.beginPath();
     ctx.arc(cx, 70, 8, Math.PI * 0.15, Math.PI * 0.85);
     ctx.stroke();
+    // 안경
+    if (glasses) {
+      ctx.strokeStyle = 'rgba(30,25,20,0.85)';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(cx - 12, 58, 8.5, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx + 12, 58, 8.5, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - 3.5, 58);
+      ctx.lineTo(cx + 3.5, 58);
+      ctx.stroke();
+    }
   });
 }
 

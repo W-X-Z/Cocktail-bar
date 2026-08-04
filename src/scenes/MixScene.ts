@@ -22,6 +22,8 @@ interface MixSceneData {
   tipEligible: boolean;
   patience: number;
   seatIndex: number;
+  /** 페르소나 팁 배율 × 단골 보너스 */
+  tipMul: number;
 }
 
 type MixMode = 'idle' | 'pour' | 'stir' | 'shake';
@@ -563,7 +565,7 @@ export class MixScene extends Phaser.Scene {
 
     const score = scoreMix(this.recipe, this.buildActions());
     const patience = this.sceneData.patience - this.mixSeconds / 150;
-    const pay = settle(this.recipe, score, patience, this.sceneData.tipEligible);
+    const pay = settle(this.recipe, score, patience, this.sceneData.tipEligible, this.sceneData.tipMul ?? 1);
     GameState.earn(pay.total);
 
     const worstLines = [...score.lines].sort((a, b) => a.ratio - b.ratio).slice(0, 3);

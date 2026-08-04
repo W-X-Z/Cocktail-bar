@@ -58,3 +58,42 @@ export interface Order {
   /** 원하는 술이 메뉴에 있어 팁 대상인지 */
   tipEligible: boolean;
 }
+
+/** 대화 상황 키 — personas.json의 dialogue 필드와 1:1 */
+export type DialogueKey =
+  | 'greet'
+  | 'order'
+  | 'orderFallback'
+  | 'serveGood'
+  | 'serveOk'
+  | 'serveBad'
+  | 'angry'
+  | 'regular';
+
+export interface PersonaLook {
+  body: string;
+  hair: string;
+  skin: string;
+  glasses: boolean;
+}
+
+export interface Persona {
+  id: string;
+  name: string;
+  job: string;
+  look: PersonaLook;
+  favorites: string[];
+  dislikes: string[];
+  patienceMul: number;
+  tipMul: number;
+  visitWeight: number;
+  dialogue: Record<DialogueKey, string[]>;
+}
+
+/** 단골 호감도 상태 (세이브에 저장) */
+export interface Relationship {
+  /** 방문 횟수 */
+  visits: number;
+  /** 호감도 포인트 (서빙 품질로 증감) */
+  affinity: number;
+}

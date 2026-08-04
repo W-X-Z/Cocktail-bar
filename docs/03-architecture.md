@@ -17,7 +17,8 @@ src/
   systems/              # ⚠ 엔진 비의존 순수 로직 — 유닛 테스트 가능, 엔진 교체 시 그대로 이식
     GameState.ts        # 돈/재고/메뉴/일차 상태 + localStorage 저장
     RecipeSystem.ts     # 레시피 조회, 제조 가능 여부, 채점(scoreMix)
-    OrderSystem.ts      # 손님 주문 생성(메뉴 내/외), 팁 계산
+    OrderSystem.ts      # 손님 주문 생성(페르소나 취향 반영), 팁 계산
+    CustomerSystem.ts   # 페르소나 추첨·대화 선택·단골 레벨 (docs/04 참고)
     ShakeDetector.ts    # DeviceMotion 셰이크 감지 + 포인터 폴백
     StirDetector.ts     # 원형 드래그 각도 누적 감지
     TiltDetector.ts     # DeviceOrientation 기울기 붓기 + 드래그 폴백

@@ -1,6 +1,6 @@
 import ingredientsJson from '../data/ingredients.json';
 import recipesJson from '../data/recipes.json';
-import type { Ingredient, Recipe } from './types';
+import type { Ingredient, Recipe, Relationship } from './types';
 
 const SAVE_PREFIX = 'cocktail-bar-save-v2-slot';
 export const SLOT_COUNT = 3;
@@ -34,6 +34,8 @@ interface SaveData {
   stockMl: Record<string, number>;
   menu: string[];
   dayRevenue: number;
+  /** personaId -> 단골 호감도 (구버전 세이브에는 없을 수 있음) */
+  relationships?: Record<string, Relationship>;
 }
 
 export interface SlotInfo {
@@ -55,6 +57,8 @@ class GameStateImpl {
   menu: string[] = [];
   /** 오늘 벌어들인 매출 (영업 종료 정산용) */
   dayRevenue = 0;
+  /** personaId -> 단골 호감도 */
+  relationships: Record<string, Relationship> = {};
 
   private currentSlot = 0;
 
@@ -99,6 +103,7 @@ class GameStateImpl {
       this.stockMl = data.stockMl;
       this.menu = data.menu.filter((id) => this.recipeById.has(id));
       this.dayRevenue = data.dayRevenue ?? 0;
+      this.relationships = data.relationships ?? {};
     } else {
       this.reset();
     }
@@ -136,6 +141,25 @@ class GameStateImpl {
       this.stockMl[id] = bottleSizeMl(this.ingredient(id));
     }
     this.menu = ['gin_tonic', 'screwdriver'];
+    this.relationships = {};
+    this.save();
+  }
+
+  /* ---------- 단골 호감도 ---------- */
+
+  relationship(personaId: string): Relationship {
+    return this.relationships[personaId] ?? { visits: 0, affinity: 0 };
+  }
+
+  recordVisit(personaId: string): void {
+    const rel = this.relationship(personaId);
+    this.relationships[personaId] = { ...rel, visits: rel.visits + 1 };
+    this.save();
+  }
+
+  addAffinity(personaId: string, delta: number): void {
+    const rel = this.relationship(personaId);
+    this.relationships[personaId] = { ...rel, affinity: Math.max(0, rel.affinity + delta) };
     this.save();
   }
 
@@ -206,6 +230,7 @@ class GameStateImpl {
       stockMl: this.stockMl,
       menu: this.menu,
       dayRevenue: this.dayRevenue,
+      relationships: this.relationships,
     };
     try {
       localStorage.setItem(`${SAVE_PREFIX}${this.currentSlot}`, JSON.stringify(data));
