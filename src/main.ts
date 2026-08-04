@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { BarScene } from './scenes/BarScene';
 import { BootScene } from './scenes/BootScene';
 import { MixScene } from './scenes/MixScene';
+import { PinballScene } from './scenes/PinballScene';
 import { PortraitPreviewScene } from './scenes/PortraitPreviewScene';
 import { ShopScene } from './scenes/ShopScene';
 import { COLORS, H, W } from './ui/theme';
@@ -23,7 +24,7 @@ const game = new Phaser.Game({
   },
   scene: debugPortraits
     ? [PortraitPreviewScene]
-    : [BootScene, BarScene, MixScene, ShopScene],
+    : [BootScene, BarScene, MixScene, ShopScene, PinballScene],
 });
 
 // E2E 테스트/디버깅용 훅

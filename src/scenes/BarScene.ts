@@ -14,6 +14,7 @@ import { GameState } from '../systems/GameState';
 import { createOrder } from '../systems/OrderSystem';
 import type { Order, Persona, ScoreLine, Talk, TalkOption } from '../systems/types';
 import {
+  arcadeTexture,
   bottleTexture,
   counterTexture,
   glowTexture,
@@ -142,6 +143,21 @@ export class BarScene extends Phaser.Scene {
     const neon = txt(this, W / 2, 160, '~ COCKTAIL BAR ~', 26, '#ff9ec6', { fontStyle: 'bold' }).setOrigin(0.5);
     neon.setShadow(0, 0, '#ff4f9e', 14);
     this.tweens.add({ targets: neon, alpha: 0.72, duration: 1300, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+
+    // 핀볼 오락기 (손님 기다리는 동안 미니게임)
+    const arcade = this.add.image(62, 700, arcadeTexture(this)).setDepth(9);
+    arcade.setInteractive({ useHandCursor: true });
+    arcade.on('pointerdown', () => {
+      if (!this.scene.isActive('Pinball')) this.scene.launch('Pinball');
+    });
+    this.add
+      .image(62, 660, glowTexture(this))
+      .setScale(1.1)
+      .setTint(0xff4f9e)
+      .setAlpha(0.25)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setDepth(8);
+    this.tweens.add({ targets: arcade, scale: 1.04, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
 
     // 바 카운터 (전경)
     this.add.image(W / 2, 940, counterTexture(this, 'bar_counter', W, 300)).setDepth(20);

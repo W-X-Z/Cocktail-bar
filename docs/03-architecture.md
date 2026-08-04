@@ -26,7 +26,8 @@ src/
   scenes/               # Phaser 씬 — 표현/입력만 담당, 로직은 systems에 위임
     BootScene.ts        # 타이틀 + 세이브 슬롯 3개 선택/삭제
     BarScene.ts         # 바텐더 POV 운영 뷰 (HUD·손님 반응·채점 토스트·운영비 정산)
-    MixScene.ts         # POV 조주 뷰 (틸트 붓기 게이지)
+    MixScene.ts         # POV 조주 뷰 (소품 인터랙션·프레스 붓기·셰이커 플로우)
+    PinballScene.ts     # 핀볼 미니게임 (Bar 위 오버레이, 손님 도착 알림)
     ShopScene.ts        # 발주 + 메뉴 등록
   ui/
     theme.ts            # 색상 팔레트, 폰트, 버튼/패널 팩토리

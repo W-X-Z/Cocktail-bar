@@ -555,6 +555,295 @@ export function spoonTexture(scene: Phaser.Scene): string {
   });
 }
 
+/* ---------- 바 소품 ---------- */
+
+/** 얼음통 (금속 버킷 + 얼음 + 집게) */
+export function iceBucketTexture(scene: Phaser.Scene): string {
+  return ensureTexture(scene, 'prop_ice_bucket', 110, 104, (ctx, w) => {
+    const cx = w / 2;
+    // 버킷 몸통
+    const g = ctx.createLinearGradient(cx - 40, 0, cx + 40, 0);
+    g.addColorStop(0, '#6f7d86');
+    g.addColorStop(0.3, '#dfe9ef');
+    g.addColorStop(0.6, '#aab8c2');
+    g.addColorStop(1, '#5d6a73');
+    ctx.beginPath();
+    ctx.moveTo(cx - 42, 38);
+    ctx.lineTo(cx - 32, 96);
+    ctx.quadraticCurveTo(cx, 104, cx + 32, 96);
+    ctx.lineTo(cx + 42, 38);
+    ctx.closePath();
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(30,40,48,0.6)';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    // 림
+    ctx.fillStyle = '#c8d4dc';
+    rounded(ctx, cx - 46, 32, 92, 10, 5);
+    ctx.fill();
+    ctx.stroke();
+    // 얼음 큐브들
+    const cube = (x: number, y: number, s: number, rot: number) => {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rot);
+      ctx.fillStyle = 'rgba(223,242,250,0.9)';
+      rounded(ctx, -s / 2, -s / 2, s, s, 4);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.fillRect(-s / 2 + 3, -s / 2 + 3, s * 0.3, 2);
+      ctx.restore();
+    };
+    cube(cx - 22, 26, 20, -0.2);
+    cube(cx + 4, 20, 22, 0.15);
+    cube(cx + 28, 28, 18, 0.4);
+    cube(cx - 2, 34, 16, -0.3);
+    // 집게
+    ctx.strokeStyle = '#e8c05a';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(cx + 34, 6);
+    ctx.lineTo(cx + 22, 26);
+    ctx.moveTo(cx + 40, 8);
+    ctx.lineTo(cx + 34, 26);
+    ctx.stroke();
+  });
+}
+
+/** 도구 통 (바스푼 + 지거 꽂힌 유리컵) */
+export function toolJarTexture(scene: Phaser.Scene): string {
+  return ensureTexture(scene, 'prop_tool_jar', 90, 132, (ctx, w, h) => {
+    const cx = w / 2;
+    // 바스푼 (트위스트 핸들)
+    ctx.strokeStyle = '#c8d2da';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    for (let y = 4; y < 74; y += 3) {
+      const x = cx - 14 + Math.sin(y * 0.4) * 2;
+      if (y === 4) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    // 지거 (모래시계 모양)
+    ctx.fillStyle = '#aab8c2';
+    ctx.beginPath();
+    ctx.moveTo(cx + 6, 22);
+    ctx.lineTo(cx + 26, 22);
+    ctx.lineTo(cx + 16, 44);
+    ctx.lineTo(cx + 24, 66);
+    ctx.lineTo(cx + 8, 66);
+    ctx.lineTo(cx + 16, 44);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(30,40,48,0.5)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // 유리컵
+    ctx.fillStyle = 'rgba(210,235,245,0.15)';
+    ctx.strokeStyle = 'rgba(235,245,250,0.8)';
+    ctx.lineWidth = 3;
+    rounded(ctx, cx - 30, 60, 60, h - 66, 6);
+    ctx.fill();
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(cx - 20, 68);
+    ctx.lineTo(cx - 20, h - 14);
+    ctx.stroke();
+  });
+}
+
+/** 민트 화분 (가니시) */
+export function mintPotTexture(scene: Phaser.Scene): string {
+  return ensureTexture(scene, 'prop_mint_pot', 84, 92, (ctx, w, h) => {
+    const cx = w / 2;
+    // 화분
+    const g = ctx.createLinearGradient(cx - 26, 0, cx + 26, 0);
+    g.addColorStop(0, '#a86a3a');
+    g.addColorStop(0.5, '#c88a4a');
+    g.addColorStop(1, '#8a5228');
+    ctx.beginPath();
+    ctx.moveTo(cx - 28, 54);
+    ctx.lineTo(cx - 20, h - 4);
+    ctx.lineTo(cx + 20, h - 4);
+    ctx.lineTo(cx + 28, 54);
+    ctx.closePath();
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(60,30,10,0.5)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#b87a3e';
+    rounded(ctx, cx - 31, 48, 62, 10, 4);
+    ctx.fill();
+    ctx.stroke();
+    // 민트 잎
+    const leaf = (x: number, y: number, s: number, rot: number, col: string) => {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rot);
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, s, s * 0.55, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(20,60,20,0.4)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(-s, 0);
+      ctx.lineTo(s, 0);
+      ctx.stroke();
+      ctx.restore();
+    };
+    leaf(cx - 14, 34, 13, -0.7, '#3e9a3e');
+    leaf(cx + 12, 30, 14, 0.6, '#48a848');
+    leaf(cx, 20, 15, -0.1, '#54b854');
+    leaf(cx - 22, 22, 11, -1.1, '#48a848');
+    leaf(cx + 24, 20, 11, 1.0, '#3e9a3e');
+  });
+}
+
+/** 커팅보드 + 라임 (장식) */
+export function citrusBoardTexture(scene: Phaser.Scene): string {
+  return ensureTexture(scene, 'prop_citrus_board', 150, 74, (ctx, w, h) => {
+    // 보드
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#b8834a');
+    g.addColorStop(1, '#8a5c2e');
+    rounded(ctx, 4, 22, w - 8, h - 28, 8);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(60,30,10,0.5)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    grain(ctx, 8, 24, w - 16, h - 32, 42);
+    // 라임 반쪽 (단면)
+    const lime = (x: number, y: number, r: number) => {
+      ctx.fillStyle = '#3e8a2e';
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#c8e878';
+      ctx.beginPath();
+      ctx.arc(x, y, r - 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(90,140,40,0.7)';
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < 6; i++) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        const a = (i / 6) * Math.PI * 2 + 0.3;
+        ctx.lineTo(x + Math.cos(a) * (r - 4), y + Math.sin(a) * (r - 4));
+        ctx.stroke();
+      }
+    };
+    lime(40, 34, 17);
+    lime(76, 28, 14);
+    // 웨지
+    ctx.fillStyle = '#c8e878';
+    ctx.beginPath();
+    ctx.moveTo(104, 40);
+    ctx.lineTo(134, 28);
+    ctx.lineTo(134, 46);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#3e8a2e';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(104, 40);
+    ctx.lineTo(134, 28);
+    ctx.stroke();
+  });
+}
+
+/** 접힌 바 타월 (장식) */
+export function towelTexture(scene: Phaser.Scene): string {
+  return ensureTexture(scene, 'prop_towel', 96, 40, (ctx, w, h) => {
+    rounded(ctx, 2, 6, w - 4, h - 10, 6);
+    ctx.fillStyle = '#e8e4da';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(120,110,90,0.5)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#b84a4a';
+    ctx.fillRect(6, 12, w - 12, 4);
+    ctx.fillRect(6, 24, w - 12, 4);
+    ctx.strokeStyle = 'rgba(120,110,90,0.35)';
+    ctx.beginPath();
+    ctx.moveTo(4, h / 2 + 2);
+    ctx.lineTo(w - 4, h / 2 + 2);
+    ctx.stroke();
+  });
+}
+
+/** 핀볼 오락기 (바 씬 장식 + 진입 버튼) */
+export function arcadeTexture(scene: Phaser.Scene): string {
+  return ensureTexture(scene, 'prop_arcade', 104, 170, (ctx, w, h) => {
+    const cx = w / 2;
+    // 캐비닛
+    const g = ctx.createLinearGradient(0, 0, w, 0);
+    g.addColorStop(0, '#4a2a5a');
+    g.addColorStop(0.5, '#6a3a7e');
+    g.addColorStop(1, '#3a2048');
+    rounded(ctx, 8, 26, w - 16, h - 30, 8);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    // 마퀴 (상단 간판)
+    rounded(ctx, 4, 4, w - 8, 26, 6);
+    ctx.fillStyle = '#ff4f9e';
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#ffe8f4';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('PINBALL', cx, 22);
+    // 스크린
+    rounded(ctx, 16, 38, w - 32, 56, 5);
+    ctx.fillStyle = '#120a1e';
+    ctx.fill();
+    ctx.stroke();
+    // 스크린 위 반짝이 (공/범퍼 느낌)
+    ctx.fillStyle = '#ffd75a';
+    ctx.beginPath();
+    ctx.arc(34, 58, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#5ad7ff';
+    ctx.beginPath();
+    ctx.arc(62, 70, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#ff5a8a';
+    ctx.beginPath();
+    ctx.arc(50, 50, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    // 컨트롤 패널
+    rounded(ctx, 14, 102, w - 28, 22, 4);
+    ctx.fillStyle = '#2a1636';
+    ctx.fill();
+    ctx.fillStyle = '#ff5a5a';
+    ctx.beginPath();
+    ctx.arc(30, 113, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#5aff8a';
+    ctx.beginPath();
+    ctx.arc(w - 30, 113, 6, 0, Math.PI * 2);
+    ctx.fill();
+    // 하단 몸통 라인
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(14, 132);
+    ctx.lineTo(w - 14, 132);
+    ctx.stroke();
+  });
+}
+
 /* ---------- UI ---------- */
 
 /** 라운드 버튼 (그라데이션 + 하이라이트) */
