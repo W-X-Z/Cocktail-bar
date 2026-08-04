@@ -22,7 +22,8 @@
         "hairStyle": "short",
         "outfit": "#3a4a6a",
         "collar": "tie",
-        "glasses": true
+        "glasses": true,
+        "build": "average"
       },
       "favorites": [
         "whiskey_highball",
@@ -145,7 +146,9 @@
         "collar": "plain",
         "lashes": true,
         "blush": true,
-        "lipstick": "#d4708a"
+        "lipstick": "#d4708a",
+        "build": "slim",
+        "petite": true
       },
       "favorites": [
         "screwdriver",
@@ -266,7 +269,8 @@
         "eyes": "#3a5a2a",
         "hairStyle": "curly",
         "outfit": "#4a8a5a",
-        "collar": "shirt"
+        "collar": "shirt",
+        "build": "broad"
       },
       "favorites": [
         "mojito",
@@ -388,7 +392,8 @@
         "glasses": true,
         "lashes": true,
         "lipstick": "#b05a6a",
-        "earrings": true
+        "earrings": true,
+        "build": "slim"
       },
       "favorites": [
         "cosmopolitan",
@@ -507,7 +512,8 @@
         "eyes": "#3a2a1a",
         "hairStyle": "slick",
         "outfit": "#6a3a3a",
-        "collar": "shirt"
+        "collar": "shirt",
+        "build": "heavy"
       },
       "favorites": [
         "negroni",
@@ -628,7 +634,8 @@
         "hairStyle": "curly",
         "outfit": "#2e2e3e",
         "collar": "turtle",
-        "glasses": true
+        "glasses": true,
+        "build": "slim"
       },
       "favorites": [
         "dry_martini",
@@ -748,7 +755,8 @@
         "eyes": "#2a1a10",
         "hairStyle": "short",
         "outfit": "#3a6a8a",
-        "collar": "plain"
+        "collar": "plain",
+        "build": "broad"
       },
       "favorites": [
         "gin_tonic",
@@ -870,7 +878,8 @@
         "collar": "plain",
         "lashes": true,
         "blush": true,
-        "lipstick": "#c87878"
+        "lipstick": "#c87878",
+        "build": "average"
       },
       "favorites": [
         "whiskey_sour",
@@ -988,7 +997,8 @@
         "hairStyle": "curly",
         "outfit": "#8a6a3a",
         "collar": "shirt",
-        "glasses": true
+        "glasses": true,
+        "build": "average"
       },
       "favorites": [
         "long_island_iced_tea",
@@ -1108,7 +1118,9 @@
         "hairStyle": "bun",
         "outfit": "#6a5a4a",
         "collar": "turtle",
-        "glasses": true
+        "glasses": true,
+        "build": "heavy",
+        "petite": true
       },
       "favorites": [
         "whiskey_highball",
@@ -1231,7 +1243,8 @@
         "lashes": true,
         "lipstick": "#c22a4a",
         "blush": true,
-        "earrings": true
+        "earrings": true,
+        "build": "slim"
       },
       "favorites": [
         "dry_martini",

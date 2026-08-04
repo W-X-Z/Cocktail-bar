@@ -19,7 +19,7 @@ import {
   glowTexture,
   vignetteTexture,
 } from '../ui/art';
-import { portraitTexture } from '../ui/portraits';
+import { portraitTexture, seatedTexture } from '../ui/portraits';
 import { button, COLORS, formatMoney, H, panel, txt, W } from '../ui/theme';
 
 const DAY_LENGTH_SEC = 150; // 실시간 150초 = 영업시간 20:00 → 02:00
@@ -70,10 +70,10 @@ export class BarScene extends Phaser.Scene {
     return 120 + i * 165;
   }
   /**
-   * 손님 버스트 중심 y. 초상화(144px)의 하단이 카운터 상단(786)에 맞물려
-   * 어깨가 카운터 뒤로 가려지도록 배치 — 목 잘린 채 떠 있는 느낌 방지.
+   * 손님 웨이스트샷 중심 y. 스프라이트(52×76 ×3 = 228px)의 하단이
+   * 카운터 상단(786) 뒤로 들어가 앉아 있는 실루엣이 되도록 배치.
    */
-  private readonly seatY = 720;
+  private readonly seatY = 682;
 
   constructor() {
     super('Bar');
@@ -227,9 +227,10 @@ export class BarScene extends Phaser.Scene {
     GameState.recordVisit(persona.id);
     const lv = regularLevel(persona.id);
 
-    const c = this.add.container(-70, this.seatY);
+    const c = this.add.container(-90, this.seatY);
+    // 좌석은 체형이 반영된 웨이스트샷 (대화 카드는 얼굴 클로즈업 유지)
     const sprite = this.add
-      .image(0, 0, portraitTexture(this, `portrait_${persona.id}`, persona.look))
+      .image(0, 0, seatedTexture(this, `seated_${persona.id}`, persona.look))
       .setScale(3);
     c.add(sprite);
     // 이름표는 카운터 앞면에 명찰처럼 (컨테이너 밖 — 카운터 위 depth로 별도 배치)
@@ -271,7 +272,7 @@ export class BarScene extends Phaser.Scene {
     const bubble = this.add.container(0, 0, [bubbleG, bubbleText, patienceBg, patienceBar]);
     bubble.setVisible(false);
     c.add(bubble);
-    bubble.setPosition(40, -130);
+    bubble.setPosition(40, -168);
 
     const patienceSec = BASE_PATIENCE_SEC * persona.patienceMul * (1 + lv.patienceBonus);
     const customer: Customer = {
@@ -315,7 +316,7 @@ export class BarScene extends Phaser.Scene {
       },
     });
 
-    c.setInteractive(new Phaser.Geom.Rectangle(-55, -70, 110, 160), Phaser.Geom.Rectangle.Contains);
+    c.setInteractive(new Phaser.Geom.Rectangle(-70, -114, 140, 230), Phaser.Geom.Rectangle.Contains);
     c.on('pointerdown', () => this.acceptOrder(customer));
   }
 

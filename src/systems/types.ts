@@ -72,6 +72,8 @@ export type DialogueKey =
 
 export type HairStyle = 'short' | 'slick' | 'bob' | 'long' | 'ponytail' | 'bun' | 'curly';
 export type CollarStyle = 'plain' | 'shirt' | 'tie' | 'scoop' | 'turtle';
+/** 체형 — 좌석 웨이스트샷의 어깨/허리 폭을 결정 */
+export type BodyBuild = 'slim' | 'average' | 'broad' | 'heavy';
 
 /** 픽셀 초상화 생성 파라미터 (ui/portraits.ts) */
 export interface PersonaLook {
@@ -81,6 +83,10 @@ export interface PersonaLook {
   hairStyle: HairStyle;
   outfit: string;
   collar: CollarStyle;
+  /** 체형 (기본 average) */
+  build?: BodyBuild;
+  /** 단신 (앉은 키가 낮아 보임) */
+  petite?: boolean;
   glasses?: boolean;
   lashes?: boolean;
   lipstick?: string;
