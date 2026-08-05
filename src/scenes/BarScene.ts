@@ -8,7 +8,6 @@ import {
   recordAngryLeave,
   recordServe,
   regularLevel,
-  TALK_LABELS,
 } from '../systems/CustomerSystem';
 import { GameState } from '../systems/GameState';
 import { createOrder } from '../systems/OrderSystem';
@@ -25,6 +24,8 @@ import { button, COLORS, formatMoney, H, panel, txt, W } from '../ui/theme';
 
 const DAY_LENGTH_SEC = 150; // 실시간 150초 = 영업시간 20:00 → 02:00
 const BASE_PATIENCE_SEC = 75;
+/** 바 월드 폭 — 화면(720)보다 넓고, 드래그로 가로 스크롤 */
+const WORLD_W = 1080;
 
 interface Customer {
   persona: Persona;
@@ -35,10 +36,16 @@ interface Customer {
   bubbleText: Phaser.GameObjects.Text;
   patienceBar: Phaser.GameObjects.Rectangle;
   order: Order;
-  patience: number; // 0~1
-  patienceSec: number; // 페르소나·단골 보정된 총 인내 시간
+  patience: number;
+  patienceSec: number;
   seatIndex: number;
-  state: 'walking' | 'seated' | 'mixing' | 'reacting' | 'leaving';
+  state: 'walking' | 'seated' | 'mixing' | 'reacting' | 'enjoying' | 'leaving';
+  /** 이번 방문에 마신 잔 수 */
+  drinksHad: number;
+  drinkColor: number;
+  drinkObj: Phaser.GameObjects.Container | null;
+  drinkLevel: number;
+  sipsLeft: number;
 }
 
 export interface MixResultPayload {
@@ -48,10 +55,11 @@ export interface MixResultPayload {
   scoreTotal: number;
   recipeName?: string;
   worstLines?: ScoreLine[];
+  drinkColor?: number;
   cancelled?: boolean;
 }
 
-/** 바텐더 POV 운영 씬 — 카운터 너머로 손님을 마주 본다 */
+/** 바텐더 POV 운영 씬 — 넓은 바를 드래그로 둘러보며 손님을 마주 본다 */
 export class BarScene extends Phaser.Scene {
   private customers: (Customer | null)[] = [null, null, null, null];
   private clockSec = 0;
@@ -68,12 +76,8 @@ export class BarScene extends Phaser.Scene {
   private dialogueSticky = false;
 
   private seatX(i: number): number {
-    return 120 + i * 165;
+    return 260 + i * 230;
   }
-  /**
-   * 손님 웨이스트샷 중심 y. 스프라이트(52×76 ×3 = 228px)의 하단이
-   * 카운터 상단(786) 뒤로 들어가 앉아 있는 실루엣이 되도록 배치.
-   */
   private readonly seatY = 682;
 
   constructor() {
@@ -90,10 +94,23 @@ export class BarScene extends Phaser.Scene {
     this.dialogueCard = null;
     this.dialogueSticky = false;
 
+    this.cameras.main.setBounds(0, 0, WORLD_W, H);
+    this.cameras.main.scrollX = 0;
+
     this.drawRoom();
     this.drawHud();
 
-    this.add.image(W / 2, H / 2, vignetteTexture(this, W, H)).setDepth(45);
+    this.add.image(W / 2, H / 2, vignetteTexture(this, W, H)).setDepth(45).setScrollFactor(0);
+
+    // 드래그로 가로 스크롤 (대화 선택 중에는 잠금)
+    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+      if (!p.isDown || this.dialogueSticky) return;
+      this.cameras.main.scrollX = Phaser.Math.Clamp(
+        this.cameras.main.scrollX - (p.x - p.prevPosition.x),
+        0,
+        WORLD_W - W,
+      );
+    });
 
     this.events.on(
       Phaser.Scenes.Events.WAKE,
@@ -104,11 +121,11 @@ export class BarScene extends Phaser.Scene {
   }
 
   private drawRoom(): void {
-    // 홀 배경 (손님 쪽 공간)
+    // 홀 배경
     const wallG = this.add.graphics();
     wallG.fillGradientStyle(0x241318, 0x241318, 0x160a10, 0x160a10, 1);
-    wallG.fillRect(0, 140, W, 660);
-    for (let x = 40; x < W; x += 160) {
+    wallG.fillRect(0, 140, WORLD_W, 660);
+    for (let x = 40; x < WORLD_W; x += 160) {
       this.add.rectangle(x + 60, 400, 120, 380, 0x2e1a20).setStrokeStyle(2, 0x000000, 0.3);
     }
     this.add.rectangle(60, 470, 110, 330, 0x0e0703).setStrokeStyle(3, COLORS.accent, 0.4);
@@ -124,31 +141,34 @@ export class BarScene extends Phaser.Scene {
         .setBlendMode(Phaser.BlendModes.ADD);
     }
 
-    // 머리 위 보틀 선반
-    this.add.image(W / 2, 64, counterTexture(this, 'wall_wood', W, 128, '#3a2113')).setDisplaySize(W, 128);
-    this.add.rectangle(W / 2, 128, W, 12, 0x1a0d06);
-    this.add.rectangle(W / 2, 96, W - 80, 12, 0x241206).setStrokeStyle(2, 0x000000, 0.4);
-    const shelfColors = ['#c87830', '#d81830', '#48a848', '#e8f4f0', '#3c2010', '#f0e8c8', '#8c2818', '#f8a828', '#5a7a9a', '#c8e878'];
-    shelfColors.forEach((c, i) => {
-      const key = bottleTexture(this, `deco_bottle_${i}`, c, i % 3 !== 1);
-      this.add.image(75 + i * 64, 92, key).setScale(0.6).setOrigin(0.5, 1);
-    });
+    // 머리 위 보틀 선반 (월드 전체 폭)
     this.add
-      .image(W / 2, 60, glowTexture(this))
-      .setScale(3.4, 0.9)
+      .image(WORLD_W / 2, 64, counterTexture(this, 'wall_wood_w', WORLD_W, 128, '#3a2113'))
+      .setDisplaySize(WORLD_W, 128);
+    this.add.rectangle(WORLD_W / 2, 128, WORLD_W, 12, 0x1a0d06);
+    this.add.rectangle(WORLD_W / 2, 96, WORLD_W - 80, 12, 0x241206).setStrokeStyle(2, 0x000000, 0.4);
+    const shelfColors = ['#c87830', '#d81830', '#48a848', '#e8f4f0', '#3c2010', '#f0e8c8', '#8c2818', '#f8a828', '#5a7a9a', '#c8e878'];
+    for (let i = 0; i * 64 < WORLD_W - 120; i++) {
+      const c = shelfColors[i % shelfColors.length]!;
+      const key = bottleTexture(this, `deco_bottle_${i % shelfColors.length}`, c, i % 3 !== 1);
+      this.add.image(75 + i * 64, 92, key).setScale(0.6).setOrigin(0.5, 1);
+    }
+    this.add
+      .image(WORLD_W / 2, 60, glowTexture(this))
+      .setScale(4.6, 0.9)
       .setTint(0xffb85a)
       .setAlpha(0.45)
       .setBlendMode(Phaser.BlendModes.ADD);
 
-    const neon = txt(this, W / 2, 160, '~ COCKTAIL BAR ~', 26, '#ff9ec6', { fontStyle: 'bold' }).setOrigin(0.5);
+    const neon = txt(this, WORLD_W / 2, 160, '~ COCKTAIL BAR ~', 26, '#ff9ec6', { fontStyle: 'bold' }).setOrigin(0.5);
     neon.setShadow(0, 0, '#ff4f9e', 14);
     this.tweens.add({ targets: neon, alpha: 0.72, duration: 1300, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
 
-    // 핀볼 오락기 (손님 기다리는 동안 미니게임)
+    // 핀볼 오락기
     const arcade = this.add.image(62, 700, arcadeTexture(this)).setDepth(9);
     arcade.setInteractive({ useHandCursor: true });
-    arcade.on('pointerdown', () => {
-      if (!this.scene.isActive('Pinball')) this.scene.launch('Pinball');
+    arcade.on('pointerup', (p: Phaser.Input.Pointer) => {
+      if (p.getDistance() < 16 && !this.scene.isActive('Pinball')) this.scene.launch('Pinball');
     });
     this.add
       .image(62, 660, glowTexture(this))
@@ -159,12 +179,12 @@ export class BarScene extends Phaser.Scene {
       .setDepth(8);
     this.tweens.add({ targets: arcade, scale: 1.04, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
 
-    // 바 카운터 (전경)
-    this.add.image(W / 2, 940, counterTexture(this, 'bar_counter', W, 300)).setDepth(20);
-    this.add.rectangle(W / 2, 786, W, 20, COLORS.woodLight).setDepth(20).setStrokeStyle(2, 0x000000, 0.35);
+    // 바 카운터 (월드 전체 폭)
+    this.add.image(WORLD_W / 2, 940, counterTexture(this, 'bar_counter_w', WORLD_W, 300)).setDepth(20);
+    this.add.rectangle(WORLD_W / 2, 786, WORLD_W, 20, COLORS.woodLight).setDepth(20).setStrokeStyle(2, 0x000000, 0.35);
     this.add
-      .image(W / 2, 830, glowTexture(this))
-      .setScale(3.6, 0.7)
+      .image(WORLD_W / 2, 830, glowTexture(this))
+      .setScale(5.2, 0.7)
       .setTint(0xffcf8a)
       .setAlpha(0.16)
       .setBlendMode(Phaser.BlendModes.ADD)
@@ -175,15 +195,24 @@ export class BarScene extends Phaser.Scene {
   }
 
   private drawHud(): void {
-    panel(this, W / 2, 205, W - 40, 74).setDepth(46);
-    this.dayText = txt(this, 56, 205, '', 28, '#e8a33d', { fontStyle: 'bold' }).setOrigin(0, 0.5).setDepth(46);
-    this.clockText = txt(this, W / 2, 205, '', 32, '#f2e6d0', { fontStyle: 'bold' }).setOrigin(0.5).setDepth(46);
-    this.moneyText = txt(this, W - 56, 205, '', 28, '#7fdc8a', { fontStyle: 'bold' }).setOrigin(1, 0.5).setDepth(46);
-    this.hintText = txt(this, W / 2, 262, '', 23, '#ff8a8a').setOrigin(0.5).setDepth(46);
+    panel(this, W / 2, 205, W - 40, 74).setDepth(46).setScrollFactor(0);
+    this.dayText = txt(this, 56, 205, '', 28, '#e8a33d', { fontStyle: 'bold' })
+      .setOrigin(0, 0.5)
+      .setDepth(46)
+      .setScrollFactor(0);
+    this.clockText = txt(this, W / 2, 205, '', 32, '#f2e6d0', { fontStyle: 'bold' })
+      .setOrigin(0.5)
+      .setDepth(46)
+      .setScrollFactor(0);
+    this.moneyText = txt(this, W - 56, 205, '', 28, '#7fdc8a', { fontStyle: 'bold' })
+      .setOrigin(1, 0.5)
+      .setDepth(46)
+      .setScrollFactor(0);
+    this.hintText = txt(this, W / 2, 262, '', 23, '#ff8a8a').setOrigin(0.5).setDepth(46).setScrollFactor(0);
 
-    button(this, W - 130, 1186, 208, 78, '영업 종료', () => this.endDay(), 0x8a5a2e).container.setDepth(46);
-    txt(this, 40, 1152, '손님을 탭하면 주문을 받습니다', 22, '#b09070').setDepth(46);
-    txt(this, 40, 1188, `메뉴 ${GameState.menu.length}종 영업 중`, 22, '#b09070').setDepth(46);
+    const endBtn = button(this, W - 130, 1186, 208, 78, '영업 종료', () => this.endDay(), 0x8a5a2e);
+    endBtn.container.setDepth(46).setScrollFactor(0, 0, true);
+    txt(this, 40, 1188, `메뉴 ${GameState.menu.length}종 영업 중`, 22, '#b09070').setDepth(46).setScrollFactor(0);
   }
 
   private clockLabel(): string {
@@ -233,7 +262,6 @@ export class BarScene extends Phaser.Scene {
     this.spawnCustomer(free, persona, order);
   }
 
-  /** 이름 + 단골 하트 라벨 */
   private nameLabel(persona: Persona): string {
     const lv = regularLevel(persona.id);
     return lv.level > 0 ? `${persona.name} ${'♥'.repeat(lv.level)}` : persona.name;
@@ -244,12 +272,10 @@ export class BarScene extends Phaser.Scene {
     const lv = regularLevel(persona.id);
 
     const c = this.add.container(-90, this.seatY);
-    // 좌석은 체형이 반영된 웨이스트샷 (대화 카드는 얼굴 클로즈업 유지)
     const sprite = this.add
       .image(0, 0, seatedTexture(this, `seated_${persona.id}`, persona.look))
       .setScale(3);
     c.add(sprite);
-    // 이름표는 카운터 앞면에 명찰처럼 (컨테이너 밖 — 카운터 위 depth로 별도 배치)
     const nameText = txt(this, 0, 0, this.nameLabel(persona), 20, lv.level >= 2 ? '#ffd27a' : '#b09070', {
       fontStyle: 'bold',
       align: 'center',
@@ -260,7 +286,6 @@ export class BarScene extends Phaser.Scene {
     c.setDepth(10);
     this.tweens.add({ targets: sprite, y: -6, duration: 220, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
 
-    // 말풍선 (인사 → 주문 순서로 갱신)
     const desired = GameState.recipe(order.desiredId);
     const ordered = GameState.recipe(order.orderedId);
     const greetText = line(persona, 'greet');
@@ -304,6 +329,11 @@ export class BarScene extends Phaser.Scene {
       patienceSec,
       seatIndex,
       state: 'walking',
+      drinksHad: 0,
+      drinkColor: 0xd8c8a8,
+      drinkObj: null,
+      drinkLevel: 1,
+      sipsLeft: 0,
     };
     this.customers[seatIndex] = customer;
 
@@ -324,8 +354,7 @@ export class BarScene extends Phaser.Scene {
         this.showDialogue(persona, greetText);
         this.tweens.add({ targets: bubble, scale: 1, duration: 260, ease: 'Back.out' });
         const worldX = sx + 40 + bw / 2;
-        if (worldX > W - 10) bubble.x = 40 - (worldX - (W - 10));
-        // 인사 후 주문으로 전환
+        if (worldX > WORLD_W - 10) bubble.x = 40 - (worldX - (WORLD_W - 10));
         this.time.delayedCall(1700, () => {
           if (customer.state === 'seated') bubbleText.setText(orderText);
         });
@@ -333,12 +362,14 @@ export class BarScene extends Phaser.Scene {
     });
 
     c.setInteractive(new Phaser.Geom.Rectangle(-70, -114, 140, 230), Phaser.Geom.Rectangle.Contains);
-    c.on('pointerdown', () => this.acceptOrder(customer));
+    c.on('pointerup', (p: Phaser.Input.Pointer) => {
+      if (p.getDistance() < 16) this.acceptOrder(customer);
+    });
   }
 
   private acceptOrder(customer: Customer): void {
     if (customer.state !== 'seated') return;
-    if (this.customers.some((c) => c?.state === 'mixing')) return; // 한 번에 한 잔
+    if (this.customers.some((c) => c?.state === 'mixing')) return;
     customer.state = 'mixing';
     customer.bubbleText.setText(`(조주 중…)\n${GameState.recipe(customer.order.orderedId).nameKo}`);
     const lv = regularLevel(customer.persona.id);
@@ -352,7 +383,6 @@ export class BarScene extends Phaser.Scene {
     });
   }
 
-  /** 조주 완료 → 손님 반응 + 단골 호감도 갱신을 메인 씬에서 연출 */
   private onMixDone(data: MixResultPayload): void {
     const customer = this.customers[data.seatIndex];
     if (!customer) return;
@@ -363,6 +393,8 @@ export class BarScene extends Phaser.Scene {
     }
 
     customer.state = 'reacting';
+    customer.drinksHad += 1;
+    customer.drinkColor = data.drinkColor ?? 0xd8c8a8;
     const s = data.scoreTotal;
     const face = s >= 0.85 ? '😍' : s >= 0.6 ? '🙂' : s >= 0.35 ? '😐' : '🤢';
     const reactionLine = line(customer.persona, reactionKey(s));
@@ -386,7 +418,6 @@ export class BarScene extends Phaser.Scene {
       }
     }
 
-    // 단골 호감도 갱신 + 레벨업 연출
     const newLevel = recordServe(customer.persona.id, s);
     customer.nameText.setText(this.nameLabel(customer.persona));
     if (newLevel) {
@@ -402,26 +433,126 @@ export class BarScene extends Phaser.Scene {
 
     this.showToast(data);
 
-    // 나쁘지 않게 마셨다면 말을 걸어올 수 있다 (65%)
+    // 반응/대화 후 → 잔을 즐기며 머무른다
     const talk = s >= 0.35 && Math.random() < 0.65 ? pickTalk(customer.persona) : null;
     if (talk) {
       this.time.delayedCall(2000, () => this.startTalk(customer, talk));
     } else {
-      this.time.delayedCall(2200, () => this.removeCustomer(customer, false));
+      this.time.delayedCall(2200, () => this.enterEnjoying(customer));
     }
   }
 
-  /**
-   * 대화 인터랙션 카드 (비주얼노벨식).
-   * 픽셀 초상화를 크게 확대해 하단 카운터 위에 대사와 함께 띄운다.
-   * options가 있으면 선택지 버튼이 붙고, 선택 전까지 사라지지 않는다.
-   */
+  /* ---------- 음료를 즐기며 머무르기 ---------- */
+
+  private enterEnjoying(customer: Customer): void {
+    if (this.customers[customer.seatIndex] !== customer) return;
+    if (customer.state === 'leaving') return;
+    if (this.dayOver) {
+      this.removeCustomer(customer, false);
+      return;
+    }
+    customer.state = 'enjoying';
+    customer.sprite.clearTint();
+    customer.bubble.setVisible(false);
+
+    // 코스터 위 음료
+    const gx = this.seatX(customer.seatIndex) + 90;
+    const drink = this.add.container(gx, 818).setDepth(22);
+    customer.drinkObj = drink;
+    customer.drinkLevel = 1;
+    customer.sipsLeft = 3 + Math.floor(Math.random() * 3); // 3~5모금
+    this.redrawDrink(customer);
+
+    this.scheduleSip(customer);
+  }
+
+  private redrawDrink(customer: Customer): void {
+    const drink = customer.drinkObj;
+    if (!drink) return;
+    drink.removeAll(true);
+    const g = this.add.graphics();
+    const h = 40;
+    const w = 30;
+    // 액체
+    const lh = (h - 8) * customer.drinkLevel;
+    g.fillStyle(customer.drinkColor, 0.95);
+    g.fillRect(-w / 2 + 3, h / 2 - 4 - lh, w - 6, lh);
+    // 잔
+    g.lineStyle(2.5, 0xe8f2f8, 0.85);
+    g.strokeRoundedRect(-w / 2, -h / 2, w, h, 4);
+    g.lineStyle(1.5, 0xffffff, 0.35);
+    g.lineBetween(-w / 2 + 6, -h / 2 + 4, -w / 2 + 6, h / 2 - 6);
+    drink.add(g);
+  }
+
+  private scheduleSip(customer: Customer): void {
+    this.time.delayedCall(3500 + Math.random() * 4000, () => {
+      if (this.customers[customer.seatIndex] !== customer || customer.state !== 'enjoying') return;
+      const drink = customer.drinkObj;
+      if (!drink) return;
+      // 잔을 들어 한 모금
+      this.tweens.add({
+        targets: drink,
+        y: 742,
+        angle: -16,
+        duration: 340,
+        yoyo: true,
+        ease: 'Sine.inOut',
+        onYoyo: () => {
+          customer.sipsLeft -= 1;
+          customer.drinkLevel = Math.max(0, customer.sipsLeft / (customer.sipsLeft + 1) * customer.drinkLevel);
+          this.redrawDrink(customer);
+        },
+        onComplete: () => {
+          this.tweens.add({ targets: customer.sprite, y: -4, duration: 140, yoyo: true });
+          if (customer.sipsLeft <= 0) {
+            customer.drinkLevel = 0;
+            this.redrawDrink(customer);
+            this.time.delayedCall(1600, () => this.finishDrink(customer));
+          } else {
+            this.scheduleSip(customer);
+          }
+        },
+      });
+    });
+  }
+
+  private finishDrink(customer: Customer): void {
+    if (this.customers[customer.seatIndex] !== customer || customer.state !== 'enjoying') return;
+    customer.drinkObj?.destroy();
+    customer.drinkObj = null;
+
+    // 한 잔 더? (최대 2잔)
+    if (!this.dayOver && customer.drinksHad < 2 && Math.random() < 0.45) {
+      const order = createOrder(customer.persona);
+      if (order) {
+        customer.order = order;
+        customer.state = 'seated';
+        customer.patience = 1;
+        customer.patienceBar.setVisible(true);
+        const ordered = GameState.recipe(order.orderedId);
+        const desired = GameState.recipe(order.desiredId);
+        const orderText = order.tipEligible
+          ? line(customer.persona, 'order', { drink: ordered.nameKo })
+          : line(customer.persona, 'orderFallback', { drink: ordered.nameKo, desired: desired.nameKo });
+        customer.bubble.setVisible(true);
+        customer.bubble.setScale(0);
+        customer.bubbleText.setText(orderText);
+        this.tweens.add({ targets: customer.bubble, scale: 1, duration: 260, ease: 'Back.out' });
+        return;
+      }
+    }
+    this.removeCustomer(customer, false);
+  }
+
+  /* ---------- 대화 ---------- */
+
   private showDialogue(
     persona: Persona,
     text: string,
     options?: { label: string; onPick: () => void }[],
   ): void {
-    if (this.dialogueSticky && !options) return; // 선택 대기 중엔 일반 대사가 덮지 않음
+    if (this.dialogueSticky && !options) return;
     this.dialogueCard?.destroy();
     const interactive = !!options && options.length > 0;
     this.dialogueSticky = interactive;
@@ -447,9 +578,7 @@ export class BarScene extends Phaser.Scene {
         { fontStyle: 'bold' },
       ),
     );
-    card.add(
-      txt(this, 225, panelY - 33, text, 24, '#f2e6d0', { wordWrap: { width: 430 }, lineSpacing: 5 }),
-    );
+    card.add(txt(this, 225, panelY - 33, text, 24, '#f2e6d0', { wordWrap: { width: 430 }, lineSpacing: 5 }));
 
     if (interactive) {
       options.forEach((opt, i) => {
@@ -461,6 +590,7 @@ export class BarScene extends Phaser.Scene {
       });
     }
 
+    card.setScrollFactor(0, 0, true);
     card.setAlpha(0);
     portrait.setX(100);
     this.tweens.add({ targets: card, alpha: 1, duration: 180 });
@@ -477,7 +607,6 @@ export class BarScene extends Phaser.Scene {
     }
   }
 
-  /** 서빙 후 손님이 말을 건다 — 호응/조언/침묵 선택 → 호감도 반영 */
   private startTalk(customer: Customer, talk: Talk): void {
     if (customer.state !== 'reacting') return;
     customer.bubbleText.setText('💬');
@@ -503,16 +632,18 @@ export class BarScene extends Phaser.Scene {
           '#ff9ec6',
         );
       }
-      this.time.delayedCall(2200, () => this.removeCustomer(customer, false));
+      this.time.delayedCall(2200, () => this.enterEnjoying(customer));
     };
 
     this.showDialogue(
       customer.persona,
       talk.text,
-      talk.options.map((opt) => ({ label: TALK_LABELS[opt.kind], onPick: () => resolve(opt) })),
+      talk.options.map((opt) => ({
+        label: { sympathize: '🙌 호응', advise: '💡 조언', silence: '🤫 침묵' }[opt.kind],
+        onPick: () => resolve(opt),
+      })),
     );
 
-    // 8초 무응답 → 침묵 취급 (침묵 선택지가 없으면 첫 번째 0점 선택지)
     this.time.delayedCall(8000, () => {
       if (!resolved) {
         const fallback =
@@ -524,7 +655,6 @@ export class BarScene extends Phaser.Scene {
     });
   }
 
-  /** 채점 요약 토스트 (탭하면 닫힘) */
   private showToast(data: MixResultPayload): void {
     this.toast?.destroy();
     const lines = data.worstLines ?? [];
@@ -546,6 +676,7 @@ export class BarScene extends Phaser.Scene {
       toast.destroy();
       if (this.toast === toast) this.toast = null;
     });
+    toast.setScrollFactor(0, 0, true);
     this.toast = toast;
     this.time.delayedCall(4500, () => {
       if (this.toast === toast) {
@@ -556,7 +687,7 @@ export class BarScene extends Phaser.Scene {
   }
 
   private floatText(x: number, y: number, message: string, color = '#7fdc8a'): void {
-    const t = txt(this, Math.min(Math.max(x, 180), W - 180), y, message, 28, color, { fontStyle: 'bold' })
+    const t = txt(this, Math.min(Math.max(x, 180), WORLD_W - 180), y, message, 28, color, { fontStyle: 'bold' })
       .setOrigin(0.5)
       .setDepth(48);
     this.tweens.add({ targets: t, y: y - 80, alpha: 0, duration: 2400, onComplete: () => t.destroy() });
@@ -577,7 +708,7 @@ export class BarScene extends Phaser.Scene {
         recordAngryLeave(customer.persona.id);
         customer.nameText.setText(this.nameLabel(customer.persona));
         const c = customer;
-        c.state = 'reacting'; // 화난 대사를 잠깐 보여주고 떠남
+        c.state = 'reacting';
         this.time.delayedCall(1400, () => this.removeCustomer(c, true));
       }
     }
@@ -589,10 +720,11 @@ export class BarScene extends Phaser.Scene {
     customer.state = 'leaving';
     customer.bubble.setVisible(false);
     customer.nameText.destroy();
+    customer.drinkObj?.destroy();
     customer.container.disableInteractive();
     this.tweens.add({
       targets: customer.container,
-      x: -70,
+      x: -90,
       alpha: angry ? 0.6 : 1,
       duration: 1100,
       ease: 'Sine.inOut',
@@ -604,7 +736,9 @@ export class BarScene extends Phaser.Scene {
     if (this.dayOver) return;
     this.dayOver = true;
     for (const c of this.customers) {
-      if (c && (c.state === 'seated' || c.state === 'walking')) this.removeCustomer(c, false);
+      if (c && (c.state === 'seated' || c.state === 'walking' || c.state === 'enjoying')) {
+        this.removeCustomer(c, false);
+      }
     }
     const closedDay = GameState.day;
     const settle = GameState.closeDay();
@@ -630,5 +764,6 @@ export class BarScene extends Phaser.Scene {
       this.scene.start('Shop');
     });
     overlay.add(shopBtn.container);
+    overlay.setScrollFactor(0, 0, true);
   }
 }
