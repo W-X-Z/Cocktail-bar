@@ -17,9 +17,11 @@ export const COLORS = {
   panel: 0x1e1016,
   panelLight: 0x2e1a24,
   bubble: 0xf7f1e3,
+  /** 네온 핑크 — 면 채우기 금지, 보더·텍스트·글로우 전용 (docs/05-ui-style.md) */
+  neon: 0xff4f9a,
 };
 
-export const FONT = "Galmuri11, 'Trebuchet MS', sans-serif";
+export const FONT = 'Galmuri11, sans-serif';
 
 export function hex(color: number): string {
   return `#${color.toString(16).padStart(6, '0')}`;
@@ -71,7 +73,8 @@ export function button(
   image.setInteractive({ useHandCursor: true });
   image.on('pointerdown', () => {
     if (!enabled) return;
-    scene.tweens.add({ targets: container, scale: 0.94, duration: 60, yoyo: true });
+    // 뎁스만큼 가라앉는 프레스 (코지 UI 관례)
+    scene.tweens.add({ targets: container, y: y + 4, duration: 60, yoyo: true });
     onClick();
   });
   return {

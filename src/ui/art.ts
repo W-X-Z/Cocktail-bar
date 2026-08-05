@@ -850,25 +850,18 @@ export function arcadeTexture(scene: Phaser.Scene): string {
 export function buttonTexture(scene: Phaser.Scene, w: number, h: number, color: string): string {
   const key = `btn_${color.replace('#', '')}_${w}x${h}`;
   return ensureTexture(scene, key, w, h, (ctx) => {
-    const r = Math.min(12, h / 4);
+    const r = 8; // radius 토큰 고정 (docs/05-ui-style.md)
     const depth = 5;
     // 하단 뎁스 레이어
     rounded(ctx, 1, depth, w - 2, h - depth - 1, r);
     ctx.fillStyle = shade(color, -0.42);
     ctx.fill();
-    // 본체
+    // 본체 (광택·하이라이트 없음 — 뎁스 레이어만으로 충분)
     rounded(ctx, 1, 1, w - 2, h - depth - 1, r);
     ctx.fillStyle = color;
     ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.22)';
+    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
     ctx.lineWidth = 1.5;
-    ctx.stroke();
-    // 상단 미세 하이라이트 라인
-    ctx.strokeStyle = 'rgba(255,255,255,0.16)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(r + 2, 2.5);
-    ctx.lineTo(w - r - 2, 2.5);
     ctx.stroke();
   });
 }

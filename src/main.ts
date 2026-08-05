@@ -29,6 +29,9 @@ const game = new Phaser.Game({
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
+  render: {
+    roundPixels: true, // 픽셀 폰트/아트 선명도
+  },
   input: {
     activePointers: 2,
   },
