@@ -19,7 +19,7 @@ export const COLORS = {
   bubble: 0xf7f1e3,
 };
 
-export const FONT = 'Trebuchet MS, Arial, sans-serif';
+export const FONT = "Galmuri11, 'Trebuchet MS', sans-serif";
 
 export function hex(color: number): string {
   return `#${color.toString(16).padStart(6, '0')}`;
@@ -40,7 +40,7 @@ export function txt(
     color,
     ...style,
   });
-  t.setShadow(0, 2, 'rgba(0,0,0,0.55)', 3);
+  t.setShadow(0, 1, 'rgba(0,0,0,0.45)', 2);
   return t;
 }
 
@@ -63,8 +63,8 @@ export function button(
   color = COLORS.accent,
 ): Btn {
   const image = scene.add.image(0, 0, buttonTexture(scene, w, h, hex(color)));
-  const label = txt(scene, 0, 0, text, Math.min(30, h * 0.42), '#241308', { fontStyle: 'bold' }).setOrigin(0.5);
-  label.setShadow(0, 1, 'rgba(255,255,255,0.25)', 0);
+  const label = txt(scene, 0, -2, text, Math.min(28, h * 0.38), '#1c1008', { fontStyle: 'bold' }).setOrigin(0.5);
+  label.setShadow(0, 0, 'rgba(0,0,0,0)', 0);
   const container = scene.add.container(x, y, [image, label]);
   container.setSize(w, h);
   let enabled = true;

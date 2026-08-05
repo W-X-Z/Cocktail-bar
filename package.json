@@ -12,6 +12,7 @@
     "@capacitor/android": "^8.5.0",
     "@capacitor/cli": "^8.5.0",
     "@capacitor/core": "^8.5.0",
+    "galmuri": "^2.40.3",
     "typescript": "~6.0.2",
     "vite": "^8.2.0"
   },

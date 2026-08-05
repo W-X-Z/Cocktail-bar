@@ -846,49 +846,55 @@ export function arcadeTexture(scene: Phaser.Scene): string {
 
 /* ---------- UI ---------- */
 
-/** 라운드 버튼 (그라데이션 + 하이라이트) */
+/** 라운드 버튼 — 플랫 + 하단 뎁스 (촌스러운 광택/굵은 테두리 제거) */
 export function buttonTexture(scene: Phaser.Scene, w: number, h: number, color: string): string {
   const key = `btn_${color.replace('#', '')}_${w}x${h}`;
   return ensureTexture(scene, key, w, h, (ctx) => {
-    const r = Math.min(18, h / 3);
-    const g = ctx.createLinearGradient(0, 0, 0, h);
-    g.addColorStop(0, shade(color, 0.22));
-    g.addColorStop(0.5, color);
-    g.addColorStop(1, shade(color, -0.28));
-    rounded(ctx, 2, 2, w - 4, h - 4, r);
-    ctx.fillStyle = g;
+    const r = Math.min(12, h / 4);
+    const depth = 5;
+    // 하단 뎁스 레이어
+    rounded(ctx, 1, depth, w - 2, h - depth - 1, r);
+    ctx.fillStyle = shade(color, -0.42);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.45)';
-    ctx.lineWidth = 3;
+    // 본체
+    rounded(ctx, 1, 1, w - 2, h - depth - 1, r);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.22)';
+    ctx.lineWidth = 1.5;
     ctx.stroke();
-    // 상단 하이라이트
-    const hi = ctx.createLinearGradient(0, 2, 0, h * 0.45);
-    hi.addColorStop(0, 'rgba(255,255,255,0.35)');
-    hi.addColorStop(1, 'rgba(255,255,255,0)');
-    rounded(ctx, 5, 4, w - 10, h * 0.42, r * 0.8);
-    ctx.fillStyle = hi;
-    ctx.fill();
+    // 상단 미세 하이라이트 라인
+    ctx.strokeStyle = 'rgba(255,255,255,0.16)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(r + 2, 2.5);
+    ctx.lineTo(w - r - 2, 2.5);
+    ctx.stroke();
   });
 }
 
-/** 라운드 패널 */
+/** 라운드 패널 — 플랫 다크 글래스 */
 export function panelTexture(scene: Phaser.Scene, w: number, h: number, opts?: { border?: string; fill?: string }): string {
-  const fill = opts?.fill ?? '#1e1016';
+  const fill = opts?.fill ?? '#170d12';
   const border = opts?.border ?? '#e8a33d';
   const key = `panel_${fill.replace('#', '')}_${border.replace('#', '')}_${w}x${h}`;
   return ensureTexture(scene, key, w, h, (ctx) => {
-    const g = ctx.createLinearGradient(0, 0, 0, h);
-    g.addColorStop(0, shade(fill, 0.1));
-    g.addColorStop(1, shade(fill, -0.25));
-    rounded(ctx, 2, 2, w - 4, h - 4, 14);
-    ctx.fillStyle = g;
-    ctx.globalAlpha = 0.97;
+    rounded(ctx, 1.5, 1.5, w - 3, h - 3, 14);
+    ctx.fillStyle = fill;
+    ctx.globalAlpha = 0.96;
     ctx.fill();
     ctx.globalAlpha = 1;
     ctx.strokeStyle = border;
-    ctx.globalAlpha = 0.55;
-    ctx.lineWidth = 2.5;
+    ctx.globalAlpha = 0.32;
+    ctx.lineWidth = 1.5;
     ctx.stroke();
     ctx.globalAlpha = 1;
+    // 상단 미세 라인
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(16, 3);
+    ctx.lineTo(w - 16, 3);
+    ctx.stroke();
   });
 }
