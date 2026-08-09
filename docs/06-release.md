@@ -9,7 +9,7 @@
 | `cocktail-bar-debug-apk` | 기기 테스트용 (디버그 서명, 스토어 업로드 불가) |
 | `cocktail-bar-release-aab` | **플레이스토어 업로드용** — secrets 설정 시 업로드 키로 서명됨 |
 
-- 앱 ID `com.wxz.cocktailbar`, 이름 "Cocktail Bar"
+- 앱 ID `com.wxz.cocktailbar`(유지 — 변경 시 스토어 업데이트 불가), 이름 "소문의 낙원"
 - versionCode = 워크플로 run number (자동 증가), versionName = `0.1.<run>`
 - 아이콘/스플래시: `resources/icon.png`(1024) · `splash.png`(2732) → CI에서 `@capacitor/assets`로 전체 해상도 생성
 
@@ -30,7 +30,7 @@
 ## Play Console 업로드 절차
 
 1. https://play.google.com/console — 개발자 계정 (최초 $25)
-2. 앱 만들기 → 이름 "Cocktail Bar", 게임/시뮬레이션, 무료
+2. 앱 만들기 → 이름 "소문의 낙원", 게임/시뮬레이션, 무료
 3. **Play App Signing 동의** (기본값 — Google이 앱 서명 키 관리, 우리는 업로드 키만 사용)
 4. 내부 테스트 트랙 → AAB 업로드 (`cocktail-bar-release-aab` 아티팩트 zip 해제 후 `app-release.aab`)
 5. 필수 설문/항목:

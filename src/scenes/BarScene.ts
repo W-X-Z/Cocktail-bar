@@ -160,7 +160,7 @@ export class BarScene extends Phaser.Scene {
       .setAlpha(0.45)
       .setBlendMode(Phaser.BlendModes.ADD);
 
-    const neon = txt(this, WORLD_W / 2, 160, '~ COCKTAIL BAR ~', 26, '#ff9ec6', { fontStyle: 'bold' }).setOrigin(0.5);
+    const neon = txt(this, WORLD_W / 2, 160, '~ 소문의 낙원 ~', 26, '#ff9ec6', { fontStyle: 'bold' }).setOrigin(0.5);
     neon.setShadow(0, 0, '#ff4f9e', 14);
     this.tweens.add({ targets: neon, alpha: 0.72, duration: 1300, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
 

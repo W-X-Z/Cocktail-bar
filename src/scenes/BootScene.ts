@@ -38,10 +38,11 @@ export class BootScene extends Phaser.Scene {
       .setTint(0xff4f9e)
       .setAlpha(0.4)
       .setBlendMode(Phaser.BlendModes.ADD);
-    const title = txt(this, W / 2, H * 0.28, 'COCKTAIL BAR', 74, '#ffd7ea', {
+    const title = txt(this, W / 2, H * 0.28, '소문의 낙원', 78, '#ffd7ea', {
       fontStyle: 'bold',
     }).setOrigin(0.5);
     title.setShadow(0, 0, '#ff4f9e', 18);
+    txt(this, W / 2, H * 0.335, 'COCKTAIL BAR STORY', 24, '#b07a94', { fontStyle: 'bold' }).setOrigin(0.5);
     this.tweens.add({
       targets: title,
       alpha: 0.78,
@@ -50,7 +51,7 @@ export class BootScene extends Phaser.Scene {
       repeat: -1,
       ease: 'Sine.inOut',
     });
-    txt(this, W / 2, H * 0.35, '슬롯을 선택해 시작하세요', 26, '#b09070').setOrigin(0.5);
+    txt(this, W / 2, H * 0.378, '슬롯을 선택해 시작하세요', 26, '#b09070').setOrigin(0.5);
 
     this.add.image(W / 2, H / 2, vignetteTexture(this, W, H));
 
