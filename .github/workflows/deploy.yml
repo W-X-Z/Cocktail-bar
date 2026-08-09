@@ -50,6 +50,8 @@ jobs:
         run: npx cap add android
       - name: Sync web assets
         run: npx cap sync android
+      - name: App icon & splash
+        run: npx --yes @capacitor/assets generate --android --assetPath resources || echo "::warning::asset generate failed"
       - name: Build debug APK
         run: cd android && chmod +x gradlew && ./gradlew assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
@@ -57,3 +59,54 @@ jobs:
           name: cocktail-bar-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
+
+  # 플레이스토어 업로드용 릴리즈 AAB (서명 키는 GitHub Secrets)
+  release-aab:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npm run build
+      - name: Generate Android project
+        run: npx cap add android
+      - name: Sync web assets
+        run: npx cap sync android
+      - name: App icon & splash
+        run: npx --yes @capacitor/assets generate --android --assetPath resources || echo "::warning::asset generate failed"
+      - name: Set version (run_number 기반 자동 증가)
+        run: |
+          sed -i "s/versionCode 1$/versionCode ${{ github.run_number }}/" android/app/build.gradle
+          sed -i "s/versionName \"1.0\"$/versionName \"0.1.${{ github.run_number }}\"/" android/app/build.gradle
+          grep -E "versionCode|versionName" android/app/build.gradle
+      - name: Build release AAB
+        run: cd android && chmod +x gradlew && ./gradlew bundleRelease --no-daemon
+      - name: Sign AAB (secrets 설정 시)
+        env:
+          KS_B64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+        run: |
+          AAB=android/app/build/outputs/bundle/release/app-release.aab
+          if [ -n "$KS_B64" ] && [ -n "$KS_PASS" ]; then
+            echo "$KS_B64" | base64 -d > /tmp/upload.p12
+            jarsigner -keystore /tmp/upload.p12 -storetype PKCS12 -storepass "$KS_PASS" \
+              -sigalg SHA256withRSA -digestalg SHA-256 "$AAB" upload
+            jarsigner -verify "$AAB" && echo "✅ signed"
+            rm /tmp/upload.p12
+          else
+            echo "::warning::UPLOAD_KEYSTORE_BASE64 / UPLOAD_KEYSTORE_PASSWORD secrets가 없어 서명되지 않은 AAB입니다 (docs/06-release.md 참고)"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cocktail-bar-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 60

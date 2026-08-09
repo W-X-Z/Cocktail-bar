@@ -26,3 +26,8 @@ dist-ssr
 # Capacitor native project (generated in CI)
 android
 ios
+
+# 서명 키 (절대 커밋 금지)
+*.p12
+*.keystore
+*.jks
