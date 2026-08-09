@@ -105,6 +105,7 @@ export class MixScene extends Phaser.Scene {
   private recipeOverlay!: Phaser.GameObjects.Container;
   private transferBtn: Btn | null = null;
   private props: Phaser.GameObjects.Image[] = [];
+  private shakerLabel: Phaser.GameObjects.Text | null = null;
 
   constructor() {
     super('Mix');
@@ -134,6 +135,7 @@ export class MixScene extends Phaser.Scene {
     this.bottleImgs = new Map();
     this.transferBtn = null;
     this.props = [];
+    this.shakerLabel = null;
   }
 
   private vessel(): Vessel {
@@ -312,36 +314,50 @@ export class MixScene extends Phaser.Scene {
       .setVisible(false);
   }
 
-  /** 카운터 위 도구·장식 소품 */
+  /** 카운터 위 도구·장식 소품 — 라벨은 레시피 문구와 같은 단어만 */
   private drawProps(): void {
     // 장식 (인터랙션 없음)
     this.add.image(120, 1030, citrusBoardTexture(this)).setDepth(2);
     this.add.image(655, 1065, towelTexture(this)).setDepth(2).setAngle(-4);
+
+    const label = (x: number, y: number, word: string) =>
+      txt(this, x, y, word, 18, '#b09070').setOrigin(0.5).setDepth(4);
 
     // 도구통 → 스터
     this.toolJar = this.add.image(505, 940, toolJarTexture(this)).setDepth(4);
     this.toolJar.setInteractive({ useHandCursor: true });
     this.toolJar.on('pointerdown', () => this.toggleStir());
     this.props.push(this.toolJar);
+    label(505, 1022, '스터');
 
     // 얼음통 → 얼음
     this.iceBucket = this.add.image(615, 955, iceBucketTexture(this)).setDepth(4);
     this.iceBucket.setInteractive({ useHandCursor: true });
     this.iceBucket.on('pointerdown', () => this.addIce());
     this.props.push(this.iceBucket);
+    label(615, 1022, '얼음');
 
     // 민트 화분 → 가니시
     this.mintPot = this.add.image(668, 862, mintPotTexture(this)).setDepth(4);
     this.mintPot.setInteractive({ useHandCursor: true });
     this.mintPot.on('pointerdown', () => this.addMint());
-    if (GameState.stockOf('mint') < 1) this.mintPot.setAlpha(0.35);
+    const mintLabel = label(668, 798, '가니시');
+    if (GameState.stockOf('mint') < 1) {
+      this.mintPot.setAlpha(0.35);
+      mintLabel.setAlpha(0.35);
+    }
     this.props.push(this.mintPot);
 
     // 미니 셰이커 (빌드/스터 레시피에서 실수로 흔들 수도 있게)
     this.miniShaker = this.add.image(88, 930, shakerTexture(this)).setScale(0.55).setDepth(4);
     this.miniShaker.setInteractive({ useHandCursor: true });
     this.miniShaker.on('pointerdown', () => this.toggleShake());
-    if (this.isShake) this.miniShaker.setVisible(false);
+    if (this.isShake) {
+      this.miniShaker.setVisible(false);
+      this.shakerLabel = label(GLASS_X, GLASS_Y - 200, '셰이크');
+    } else {
+      label(88, 1018, '셰이크');
+    }
     this.props.push(this.miniShaker);
   }
 
@@ -454,6 +470,7 @@ export class MixScene extends Phaser.Scene {
     }
     this.transferring = true;
     this.setMode('idle');
+    this.shakerLabel?.setVisible(false);
 
     this.tweens.add({
       targets: this.glassImg,
@@ -832,6 +849,7 @@ export class MixScene extends Phaser.Scene {
       this.tweens.killTweensOf([this.shakerImg, this.glassImg]);
       this.shakerImg.setPosition(GLASS_X, GLASS_Y - 40).setRotation(0).setAlpha(1).setScale(1);
       this.glassImg.setPosition(600, GLASS_Y + 10).setScale(0.5).setAlpha(0.75);
+      this.shakerLabel?.setVisible(true);
     }
     this.setMode('idle');
     this.liquid.clear();
