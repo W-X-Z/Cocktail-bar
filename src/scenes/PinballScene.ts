@@ -111,7 +111,6 @@ export class PinballScene extends Phaser.Scene {
     this.flipperG = this.add.graphics();
     this.ball = this.add.circle(0, 0, BALL_R, 0xe8eef4).setStrokeStyle(2, 0x8a98a4);
 
-    txt(this, W / 2, 1180, '◀ 왼쪽 터치        오른쪽 터치 ▶', 22, '#8a7a9a').setOrigin(0.5);
 
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       if (p.y < 260) return;
@@ -147,7 +146,7 @@ export class PinballScene extends Phaser.Scene {
         .rectangle(W / 2, 320, 520, 90, 0xd84343, 0.95)
         .setStrokeStyle(3, 0xffffff, 0.6);
       banner.add(bg);
-      banner.add(txt(this, W / 2 - 90, 320, '🔔 손님이 기다려요!', 28, '#ffffff', { fontStyle: 'bold' }).setOrigin(0.5));
+      banner.add(txt(this, W / 2 - 90, 320, '🔔 손님 도착!', 28, '#ffffff', { fontStyle: 'bold' }).setOrigin(0.5));
       const go = button(this, W / 2 + 170, 320, 140, 60, '바로 가기', () => this.scene.stop(), 0xffd75a);
       banner.add(go.container);
       this.tweens.add({ targets: bg, alpha: 0.75, duration: 500, yoyo: true, repeat: -1 });
@@ -319,7 +318,7 @@ export class PinballScene extends Phaser.Scene {
     p.add(panel(this, W / 2, 640, 480, 330));
     p.add(txt(this, W / 2, 540, 'GAME OVER', 44, '#ff9ec6', { fontStyle: 'bold' }).setOrigin(0.5));
     p.add(txt(this, W / 2, 610, `점수 ${this.score.toLocaleString()}`, 32, '#ffd75a', { fontStyle: 'bold' }).setOrigin(0.5));
-    p.add(txt(this, W / 2, 655, `최고 기록 ${best.toLocaleString()}`, 24, '#b09070').setOrigin(0.5));
+    p.add(txt(this, W / 2, 655, `최고 ${best.toLocaleString()}`, 24, '#b09070').setOrigin(0.5));
     const retry = button(this, W / 2 - 105, 730, 180, 70, '다시하기', () => {
       this.overPanel?.destroy();
       this.ballsLeft = 3;

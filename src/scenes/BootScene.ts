@@ -51,21 +51,11 @@ export class BootScene extends Phaser.Scene {
       repeat: -1,
       ease: 'Sine.inOut',
     });
-    txt(this, W / 2, H * 0.378, '슬롯을 선택해 시작하세요', 26, '#b09070').setOrigin(0.5);
 
     this.add.image(W / 2, H / 2, vignetteTexture(this, W, H));
 
     this.drawSlots();
 
-    txt(
-      this,
-      W / 2,
-      H * 0.93,
-      '붓기는 기기를 기울여서, 셰이킹은 흔들어서!\n(데스크톱: 드래그로 대체)',
-      22,
-      '#9a8a7a',
-      { align: 'center' },
-    ).setOrigin(0.5);
   }
 
   private drawSlots(): void {

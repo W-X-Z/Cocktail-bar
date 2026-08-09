@@ -36,7 +36,7 @@ export class ShopScene extends Phaser.Scene {
 
     // 탭
     button(this, 190, 210, 300, 76, '📦 발주', () => this.switchTab('order'));
-    button(this, 530, 210, 300, 76, '📖 메뉴 등록', () => this.switchTab('menu'), 0x5a7a9a);
+    button(this, 530, 210, 300, 76, '📖 메뉴', () => this.switchTab('menu'), 0x5a7a9a);
 
     // 리스트 영역 (마스크 + 드래그 스크롤)
     this.listContainer = this.add.container(0, LIST_TOP);
@@ -61,7 +61,6 @@ export class ShopScene extends Phaser.Scene {
       this.listContainer.y = LIST_TOP + this.scrollY;
     });
 
-    txt(this, W / 2, 1210, '드래그로 스크롤 · 메뉴에 있는 술만 손님이 팁을 줍니다', 22, '#9a8a7a').setOrigin(0.5);
 
     this.rebuildList();
   }
@@ -165,6 +164,6 @@ export class ShopScene extends Phaser.Scene {
   }
 
   override update(): void {
-    this.moneyText.setText(`보유 자금 ${formatMoney(GameState.money)}  ·  Day ${GameState.day}`);
+    this.moneyText.setText(`${formatMoney(GameState.money)} · Day ${GameState.day}`);
   }
 }

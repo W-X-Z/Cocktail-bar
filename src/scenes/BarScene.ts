@@ -129,7 +129,6 @@ export class BarScene extends Phaser.Scene {
       this.add.rectangle(x + 60, 400, 120, 380, 0x2e1a20).setStrokeStyle(2, 0x000000, 0.3);
     }
     this.add.rectangle(60, 470, 110, 330, 0x0e0703).setStrokeStyle(3, COLORS.accent, 0.4);
-    txt(this, 60, 330, '입구', 20, '#b09070').setOrigin(0.5);
     for (let i = 0; i < 4; i++) {
       this.add.rectangle(this.seatX(i) + 90, 320, 4, 60, 0x0a0506);
       this.add.circle(this.seatX(i) + 90, 360, 16, 0xffc878, 0.9).setStrokeStyle(2, 0x8a5a20);
@@ -212,7 +211,7 @@ export class BarScene extends Phaser.Scene {
 
     const endBtn = button(this, W - 130, 1186, 208, 78, '영업 종료', () => this.endDay(), 0x8a5a2e);
     endBtn.container.setDepth(46).setScrollFactor(0, 0, true);
-    txt(this, 40, 1188, `메뉴 ${GameState.menu.length}종 영업 중`, 22, '#b09070').setDepth(46).setScrollFactor(0);
+    txt(this, 40, 1188, `메뉴 ${GameState.menu.length}종`, 22, '#b09070').setDepth(46).setScrollFactor(0);
   }
 
   private clockLabel(): string {
@@ -251,7 +250,7 @@ export class BarScene extends Phaser.Scene {
     const persona = pickPersona(activeIds);
     const order = createOrder(persona);
     if (!order) {
-      this.hintText.setText('재고 부족으로 손님을 받을 수 없어요 — 영업 종료 후 발주하세요!');
+      this.hintText.setText('재고 부족! 발주 필요');
       this.spawnTimer = 0;
       this.nextSpawnIn = 5;
       return;
@@ -371,7 +370,7 @@ export class BarScene extends Phaser.Scene {
     if (customer.state !== 'seated') return;
     if (this.customers.some((c) => c?.state === 'mixing')) return;
     customer.state = 'mixing';
-    customer.bubbleText.setText(`(조주 중…)\n${GameState.recipe(customer.order.orderedId).nameKo}`);
+    customer.bubbleText.setText('조주 중…');
     const lv = regularLevel(customer.persona.id);
     this.scene.sleep();
     this.scene.run('Mix', {
@@ -388,7 +387,7 @@ export class BarScene extends Phaser.Scene {
     if (!customer) return;
     if (data.cancelled) {
       customer.state = 'seated';
-      customer.bubbleText.setText(`${GameState.recipe(customer.order.orderedId).nameKo} 기다리는 중…`);
+      customer.bubbleText.setText('기다리는 중…');
       return;
     }
 
@@ -425,7 +424,7 @@ export class BarScene extends Phaser.Scene {
         this.floatText(
           customer.container.x,
           this.seatY - 240,
-          `🎉 ${customer.persona.name}: ${newLevel.label}이 되었습니다!`,
+          `🎉 ${newLevel.label}!`,
           '#ff9ec6',
         );
       });
@@ -628,7 +627,7 @@ export class BarScene extends Phaser.Scene {
         this.floatText(
           customer.container.x,
           this.seatY - 250,
-          `🎉 ${customer.persona.name}: ${newLevel.label}이 되었습니다!`,
+          `🎉 ${newLevel.label}!`,
           '#ff9ec6',
         );
       }
@@ -751,7 +750,7 @@ export class BarScene extends Phaser.Scene {
     );
     overlay.add(txt(this, W / 2 - 220, H / 2 - 130, '오늘 매출', 26, '#b09070'));
     overlay.add(txt(this, W / 2 + 220, H / 2 - 130, `+${formatMoney(settle.revenue)}`, 26, '#7fdc8a').setOrigin(1, 0));
-    overlay.add(txt(this, W / 2 - 220, H / 2 - 88, '운영비 (임대료·공과금)', 26, '#b09070'));
+    overlay.add(txt(this, W / 2 - 220, H / 2 - 88, '운영비', 26, '#b09070'));
     overlay.add(txt(this, W / 2 + 220, H / 2 - 88, `-${formatMoney(settle.cost)}`, 26, '#ff8a8a').setOrigin(1, 0));
     overlay.add(txt(this, W / 2 - 220, H / 2 - 46, '순익', 26, '#f2e6d0', { fontStyle: 'bold' }));
     overlay.add(
