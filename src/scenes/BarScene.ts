@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { Bgm } from '../audio/bgm';
 import {
   applyAffinity,
   line,
@@ -212,6 +213,11 @@ export class BarScene extends Phaser.Scene {
     const endBtn = button(this, W - 130, 1186, 208, 78, '영업 종료', () => this.endDay(), 0x8a5a2e);
     endBtn.container.setDepth(46).setScrollFactor(0, 0, true);
     txt(this, 40, 1188, `메뉴 ${GameState.menu.length}종`, 22, '#b09070').setDepth(46).setScrollFactor(0);
+
+    const bgmBtn = button(this, 232, 1216, 96, 64, Bgm.muted ? '🔇' : '🔊', () => {
+      bgmBtn.label.setText(Bgm.toggleMute() ? '🔇' : '🔊');
+    }, 0x5a7a9a);
+    bgmBtn.container.setDepth(46).setScrollFactor(0, 0, true);
   }
 
   private clockLabel(): string {

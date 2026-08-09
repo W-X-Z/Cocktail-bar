@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { Bgm } from '../audio/bgm';
 import { GameState, SLOT_COUNT } from '../systems/GameState';
 import { bottleTexture, glowTexture, vignetteTexture } from '../ui/art';
 import { button, COLORS, formatMoney, H, panel, txt, W } from '../ui/theme';
@@ -56,6 +57,9 @@ export class BootScene extends Phaser.Scene {
 
     this.drawSlots();
 
+    const bgmBtn = button(this, W / 2, H - 80, 110, 66, Bgm.muted ? '🔇' : '🔊', () => {
+      bgmBtn.label.setText(Bgm.toggleMute() ? '🔇' : '🔊');
+    }, 0x5a7a9a);
   }
 
   private drawSlots(): void {

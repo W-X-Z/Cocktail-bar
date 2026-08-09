@@ -402,7 +402,7 @@ export class MixScene extends Phaser.Scene {
     this.icedVessels.add(v);
     this.pulse(this.iceBucket);
     // 얼음이 용기로 날아가는 연출
-    const cube = this.add.rectangle(615, 930, 18, 18, 0xdff2fa, 0.9).setStrokeStyle(2, 0xffffff, 0.7).setDepth(7);
+    const cube = this.add.rectangle(615, 930, 30, 30, 0xdff2fa, 0.9).setStrokeStyle(2, 0xffffff, 0.7).setDepth(7);
     const targetX = v === 'shaker' ? GLASS_X : GLASS_X;
     const targetY = v === 'shaker' ? GLASS_Y - 150 : GLASS_Y - 40;
     this.tweens.add({
@@ -776,12 +776,12 @@ export class MixScene extends Phaser.Scene {
       if (this.icedVessels.has('glass')) {
         const hh = geom.maxH * glassVisibleFrac;
         const iy = bottomY - hh + 12;
-        this.drawIceCube(GLASS_X - 26, iy, 20);
-        this.drawIceCube(GLASS_X + 8, iy + 8, 17);
+        this.drawIceCube(GLASS_X - 38, iy, 34);
+        this.drawIceCube(GLASS_X + 4, iy + 12, 28);
       }
     } else if (this.icedVessels.has('glass') && !this.isShake) {
-      this.drawIceCube(GLASS_X - 22, bottomY - 22, 20);
-      this.drawIceCube(GLASS_X + 4, bottomY - 16, 17);
+      this.drawIceCube(GLASS_X - 38, bottomY - 38, 34);
+      this.drawIceCube(GLASS_X + 2, bottomY - 30, 28);
     }
 
     if (this.garnishes.has('mint')) {
@@ -805,18 +805,18 @@ export class MixScene extends Phaser.Scene {
         this.liquid.fillRoundedRect(gx + 3, gy + gh / 2 - gh * frac + 3, 10, Math.max(4, gh * frac - 6), 3);
       }
       if (this.icedVessels.has('shaker')) {
-        this.drawIceCube(gx - 4, gy - gh / 2 - 22, 16);
+        this.drawIceCube(gx - 8, gy - gh / 2 - 32, 26);
       }
     }
   }
 
   private drawIceCube(x: number, y: number, size: number): void {
     this.liquid.fillStyle(0xdff2fa, 0.55);
-    this.liquid.fillRoundedRect(x, y, size, size, 4);
-    this.liquid.lineStyle(1.5, 0xffffff, 0.6);
-    this.liquid.strokeRoundedRect(x, y, size, size, 4);
+    this.liquid.fillRoundedRect(x, y, size, size, 6);
+    this.liquid.lineStyle(2, 0xffffff, 0.6);
+    this.liquid.strokeRoundedRect(x, y, size, size, 6);
     this.liquid.fillStyle(0xffffff, 0.5);
-    this.liquid.fillRect(x + 3, y + 3, size * 0.3, 2);
+    this.liquid.fillRect(x + 4, y + 4, size * 0.35, 3);
   }
 
   /* ---------- 마무리 ---------- */

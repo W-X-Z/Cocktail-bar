@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { Bgm } from './audio/bgm';
 import { BarScene } from './scenes/BarScene';
 import { BootScene } from './scenes/BootScene';
 import { MixScene } from './scenes/MixScene';
@@ -39,6 +40,9 @@ const game = new Phaser.Game({
     ? [PortraitPreviewScene]
     : [BootScene, BarScene, MixScene, ShopScene, PinballScene],
 });
+
+// 자동재생 정책: 첫 터치에서 BGM 시작, 이후 탭마다 resume 보장
+window.addEventListener('pointerdown', () => Bgm.start());
 
 // E2E 테스트/디버깅용 훅
 declare global {
