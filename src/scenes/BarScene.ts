@@ -23,7 +23,7 @@ import {
 import { portraitTexture, seatedTexture } from '../ui/portraits';
 import { button, COLORS, formatMoney, H, panel, txt, W } from '../ui/theme';
 
-const DAY_LENGTH_SEC = 150; // 실시간 150초 = 영업시간 20:00 → 02:00
+const DAY_LENGTH_SEC = 240; // 실시간 240초 = 영업시간 20:00 → 02:00
 const BASE_PATIENCE_SEC = 75;
 /** 바 월드 폭 — 화면(720)보다 넓고, 드래그로 가로 스크롤 */
 const WORLD_W = 1080;
@@ -66,7 +66,7 @@ export class BarScene extends Phaser.Scene {
   private clockSec = 0;
   private dayOver = false;
   private spawnTimer = 0;
-  private nextSpawnIn = 2;
+  private nextSpawnIn = 3;
 
   private moneyText!: Phaser.GameObjects.Text;
   private clockText!: Phaser.GameObjects.Text;
@@ -90,7 +90,7 @@ export class BarScene extends Phaser.Scene {
     this.clockSec = 0;
     this.dayOver = false;
     this.spawnTimer = 0;
-    this.nextSpawnIn = 2;
+    this.nextSpawnIn = 3;
     this.toast = null;
     this.dialogueCard = null;
     this.dialogueSticky = false;
@@ -269,7 +269,9 @@ export class BarScene extends Phaser.Scene {
     }
     this.hintText.setText('');
     this.spawnTimer = 0;
-    this.nextSpawnIn = 10 + Math.random() * 10;
+    // 바쁠수록 다음 손님이 늦게 온다: 손님 1명 16~24초, 2명 24~32초, 3명 32~40초
+    const busyAfter = activeIds.length + 1;
+    this.nextSpawnIn = 8 + busyAfter * 8 + Math.random() * 8;
     this.spawnCustomer(free, persona, order);
   }
 
