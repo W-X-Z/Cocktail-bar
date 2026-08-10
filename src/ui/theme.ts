@@ -61,7 +61,7 @@ export function button(
   w: number,
   h: number,
   text: string,
-  onClick: () => void,
+  onClick: (p: Phaser.Input.Pointer) => void,
   color = COLORS.accent,
 ): Btn {
   const image = scene.add.image(0, 0, buttonTexture(scene, w, h, hex(color)));
@@ -71,11 +71,11 @@ export function button(
   container.setSize(w, h);
   let enabled = true;
   image.setInteractive({ useHandCursor: true });
-  image.on('pointerdown', () => {
+  image.on('pointerdown', (p: Phaser.Input.Pointer) => {
     if (!enabled) return;
     // 뎁스만큼 가라앉는 프레스 (코지 UI 관례)
     scene.tweens.add({ targets: container, y: y + 4, duration: 60, yoyo: true });
-    onClick();
+    onClick(p);
   });
   return {
     container,

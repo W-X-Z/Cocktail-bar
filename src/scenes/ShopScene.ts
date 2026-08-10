@@ -28,15 +28,16 @@ export class ShopScene extends Phaser.Scene {
 
     this.add.rectangle(W / 2, H / 2, W, H, COLORS.bg);
     this.add.image(W / 2, H / 2, vignetteTexture(this, W, H)).setAlpha(0.6);
-    panel(this, W / 2, 80, W - 30, 120);
-    txt(this, 40, 52, '발주 & 메뉴 관리', 38, '#e8a33d', { fontStyle: 'bold' });
-    this.moneyText = txt(this, 40, 102, '', 28, '#5fbf67', { fontStyle: 'bold' });
+    // 상단 UI는 리스트(나중에 생성돼 디스플레이 순서상 위)보다 높은 뎁스 — 마스크된 행이 탭/버튼 클릭을 가로채지 않게
+    panel(this, W / 2, 80, W - 30, 120).setDepth(10);
+    txt(this, 40, 52, '발주 & 메뉴 관리', 38, '#e8a33d', { fontStyle: 'bold' }).setDepth(10);
+    this.moneyText = txt(this, 40, 102, '', 28, '#5fbf67', { fontStyle: 'bold' }).setDepth(10);
 
-    button(this, W - 130, 80, 200, 80, '영업 시작 ▶', () => this.scene.start('Bar'), COLORS.ok);
+    button(this, W - 130, 80, 200, 80, '영업 시작 ▶', () => this.scene.start('Bar'), COLORS.ok).container.setDepth(10);
 
     // 탭
-    button(this, 190, 210, 300, 76, '📦 발주', () => this.switchTab('order'));
-    button(this, 530, 210, 300, 76, '📖 메뉴', () => this.switchTab('menu'), 0x5a7a9a);
+    button(this, 190, 210, 300, 76, '📦 발주', () => this.switchTab('order')).container.setDepth(10);
+    button(this, 530, 210, 300, 76, '📖 메뉴', () => this.switchTab('menu'), 0x5a7a9a).container.setDepth(10);
 
     // 리스트 영역 (마스크 + 드래그 스크롤)
     this.listContainer = this.add.container(0, LIST_TOP);
@@ -103,7 +104,8 @@ export class ShopScene extends Phaser.Scene {
         180,
         64,
         formatMoney(ing.price),
-        () => {
+        (p) => {
+          if (p.y < LIST_TOP || p.y > LIST_BOTTOM) return; // 마스크 밖(스크롤로 가려진) 행 무시
           if (GameState.buyBottle(ing.id)) this.rebuildList();
         },
         affordable ? COLORS.accent : 0x555555,
@@ -149,7 +151,8 @@ export class ShopScene extends Phaser.Scene {
         160,
         64,
         onMenu ? '내리기' : '등록',
-        () => {
+        (p) => {
+          if (p.y < LIST_TOP || p.y > LIST_BOTTOM) return; // 마스크 밖 행 무시
           GameState.toggleMenu(recipe.id);
           this.rebuildList();
         },

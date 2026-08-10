@@ -774,10 +774,11 @@ export class MixScene extends Phaser.Scene {
       }
 
       if (this.icedVessels.has('glass')) {
+        // 수면에 뜨되, 액체가 얕으면 바닥 안착 위치 아래로는 내려가지 않게
         const hh = geom.maxH * glassVisibleFrac;
         const iy = bottomY - hh + 12;
-        this.drawIceCube(GLASS_X - 38, iy, 34);
-        this.drawIceCube(GLASS_X + 4, iy + 12, 28);
+        this.drawIceCube(GLASS_X - 38, Math.min(iy, bottomY - 38), 34);
+        this.drawIceCube(GLASS_X + 4, Math.min(iy + 12, bottomY - 30), 28);
       }
     } else if (this.icedVessels.has('glass') && !this.isShake) {
       this.drawIceCube(GLASS_X - 38, bottomY - 38, 34);

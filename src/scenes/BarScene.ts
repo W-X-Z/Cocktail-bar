@@ -218,6 +218,12 @@ export class BarScene extends Phaser.Scene {
       bgmBtn.label.setText(Bgm.toggleMute() ? '🔇' : '🔊');
     }, 0x5a7a9a);
     bgmBtn.container.setDepth(46).setScrollFactor(0, 0, true);
+
+    const titleBtn = button(this, 366, 1216, 130, 64, '타이틀', () => {
+      GameState.save();
+      this.scene.start('Boot');
+    }, 0x6a5a7a);
+    titleBtn.container.setDepth(46).setScrollFactor(0, 0, true);
   }
 
   private clockLabel(): string {
