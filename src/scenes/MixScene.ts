@@ -52,6 +52,15 @@ const LIQUID_GEOM: Record<string, { kind: 'rect' | 'tri'; halfW: number; bottom:
   margarita: { kind: 'tri', halfW: 84, bottom: -38, maxH: 96 },
 };
 
+const GARNISH_SHORT: Record<string, string> = {
+  lemon_slice: '레몬',
+  lime_wedge: '라임',
+  orange_slice: '오렌지',
+  cherry: '체리',
+  olive: '올리브',
+  mint: '민트',
+};
+
 interface CheckItem {
   t: Phaser.GameObjects.Text;
   base: string;
@@ -106,6 +115,8 @@ export class MixScene extends Phaser.Scene {
   private transferBtn: Btn | null = null;
   private props: Phaser.GameObjects.Image[] = [];
   private shakerLabel: Phaser.GameObjects.Text | null = null;
+  private garnishPicker: Phaser.GameObjects.Container | null = null;
+  private recipeViewed = false;
 
   constructor() {
     super('Mix');
@@ -136,6 +147,8 @@ export class MixScene extends Phaser.Scene {
     this.transferBtn = null;
     this.props = [];
     this.shakerLabel = null;
+    this.garnishPicker = null;
+    this.recipeViewed = false;
   }
 
   private vessel(): Vessel {
@@ -196,6 +209,7 @@ export class MixScene extends Phaser.Scene {
   }
 
   private onPressDown(p: Phaser.Input.Pointer): void {
+    if (this.garnishPicker) return; // 픽커 열림 중에는 붓기 입력 무시
     if (this.finished || this.transferring || !this.inWorkspace(p) || this.overProp(p)) return;
     // 도구 모드 중에 빈 곳을 누르면 모드 해제
     if (this.mode !== 'idle') {
@@ -246,24 +260,24 @@ export class MixScene extends Phaser.Scene {
       const col = idx % cols;
       const row = Math.floor(idx / cols);
       const x = 30 + cellW * col + cellW / 2;
-      const y = 190 + row * 118;
+      const y = 200 + row * 142;
 
       const bg = this.add
-        .rectangle(x, y, cellW - 12, 108, COLORS.panelLight, 0.9)
+        .rectangle(x, y, cellW - 12, 132, COLORS.panelLight, 0.9)
         .setStrokeStyle(2, COLORS.accent, 0.22);
       bg.setInteractive({ useHandCursor: true });
       bg.on('pointerdown', () => this.selectBottle(ing.id));
       this.bottleBgs.set(ing.id, bg);
 
       const bottleKey = bottleTexture(this, `bottle_${ing.id}`, ing.color, ing.type !== 'mixer');
-      const img = this.add.image(x - cellW / 2 + 34, y + 2, bottleKey).setScale(0.62);
+      const img = this.add.image(x - cellW / 2 + 36, y + 2, bottleKey).setScale(0.44);
       this.bottleImgs.set(ing.id, img);
 
-      txt(this, x - cellW / 2 + 62, y - 28, ing.nameKo, 20, '#f2e6d0');
-      const stockText = txt(this, x - cellW / 2 + 62, y + 2, '', 18, '#b09070');
+      txt(this, x - cellW / 2 + 68, y - 32, ing.nameKo, 20, '#f2e6d0');
+      const stockText = txt(this, x - cellW / 2 + 68, y - 2, '', 18, '#b09070');
       this.stockTexts.set(ing.id, stockText);
     });
-    this.shelfBottomY = 190 + (Math.ceil(items.length / cols) - 1) * 118 + 54;
+    this.shelfBottomY = 200 + (Math.ceil(items.length / cols) - 1) * 142 + 66;
   }
 
   private selectBottle(id: string): void {
@@ -276,7 +290,7 @@ export class MixScene extends Phaser.Scene {
       const img = this.bottleImgs.get(bid);
       if (img) {
         this.tweens.killTweensOf(img);
-        this.tweens.add({ targets: img, scale: sel ? 0.72 : 0.62, duration: 120 });
+        this.tweens.add({ targets: img, scale: sel ? 0.52 : 0.44, duration: 120 });
       }
     }
     this.pourBottle.setTexture(`bottle_${id}`);
@@ -304,7 +318,7 @@ export class MixScene extends Phaser.Scene {
     this.stream = this.add.graphics().setDepth(5);
     this.pourBottle = this.add
       .image(GLASS_X + 140, GLASS_Y - 245, bottleTexture(this, 'bottle_gin', '#e8f4f0'))
-      .setScale(1.1)
+      .setScale(0.85)
       .setDepth(6)
       .setVisible(false);
 
@@ -337,15 +351,11 @@ export class MixScene extends Phaser.Scene {
     this.props.push(this.iceBucket);
     label(615, 1022, '얼음');
 
-    // 민트 화분 → 가니시
+    // 민트 화분 → 가니시 트레이 (레몬·라임·오렌지·체리·올리브·민트 픽커)
     this.mintPot = this.add.image(668, 862, mintPotTexture(this)).setDepth(4);
     this.mintPot.setInteractive({ useHandCursor: true });
-    this.mintPot.on('pointerdown', () => this.addMint());
-    const mintLabel = label(668, 798, '가니시');
-    if (GameState.stockOf('mint') < 1) {
-      this.mintPot.setAlpha(0.35);
-      mintLabel.setAlpha(0.35);
-    }
+    this.mintPot.on('pointerdown', () => this.toggleGarnishPicker());
+    label(668, 798, '가니시');
     this.props.push(this.mintPot);
 
     // 미니 셰이커 (빌드/스터 레시피에서 실수로 흔들 수도 있게)
@@ -363,7 +373,9 @@ export class MixScene extends Phaser.Scene {
 
   private drawActions(): void {
     button(this, 95, 1210, 150, 76, '레시피 📖', () => {
-      this.recipeOverlay.setVisible(!this.recipeOverlay.visible);
+      const show = !this.recipeOverlay.visible;
+      if (show) this.recipeViewed = true; // 열람 시 점수 80% 보정
+      this.recipeOverlay.setVisible(show);
     }, 0x5a7a9a).container.setDepth(61);
 
     button(this, 245, 1210, 130, 76, '버리기', () => this.discard(), 0x8a4a3a).container.setDepth(61);
@@ -421,24 +433,72 @@ export class MixScene extends Phaser.Scene {
     });
   }
 
-  private addMint(): void {
+  /** 가니시 픽커 열기/닫기 — 보유한 가니시를 골라 잔에 얹는다 */
+  private toggleGarnishPicker(): void {
+    if (this.finished || this.transferring) return;
+    this.pulse(this.mintPot);
+    if (this.garnishPicker) {
+      this.closeGarnishPicker();
+      return;
+    }
+    const items = GameState.ingredients.filter((i) => i.type === 'garnish');
+    const c = this.add.container(0, 0).setDepth(30);
+
+    // 뒤 배경 탭 → 닫기 (아래 소품/붓기 입력 차단)
+    const backdrop = this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.25);
+    backdrop.setInteractive();
+    backdrop.on('pointerdown', () => this.closeGarnishPicker());
+    c.add(backdrop);
+
+    const cols = 3;
+    const bw = 120;
+    const bh = 66;
+    const gap = 8;
+    const x0 = W / 2 - ((bw + gap) * cols - gap) / 2;
+    const y0 = 600;
+    items.forEach((ing, i) => {
+      const bx = x0 + (i % cols) * (bw + gap) + bw / 2;
+      const by = y0 + Math.floor(i / cols) * (bh + gap);
+      const stock = GameState.stockOf(ing.id);
+      const usable = stock >= 1 && !this.garnishes.has(ing.id);
+
+      const bg = this.add.rectangle(bx, by, bw, bh, 0x2a1620, 0.97).setStrokeStyle(2, COLORS.accent, usable ? 0.6 : 0.2);
+      bg.setInteractive({ useHandCursor: true });
+      bg.on('pointerdown', () => this.addGarnish(ing.id));
+      const color = Phaser.Display.Color.HexStringToColor(ing.color).color;
+      const dot = this.add.circle(bx - bw / 2 + 20, by, 11, color).setStrokeStyle(2, 0xffffff, 0.4);
+      const name = txt(this, bx - bw / 2 + 38, by - 15, GARNISH_SHORT[ing.id] ?? ing.nameKo, 19, '#f2e6d0');
+      const cnt = txt(this, bx - bw / 2 + 38, by + 8, `${Math.round(stock)}회`, 15, '#9a8a7a');
+      if (!usable) [bg, dot, name, cnt].forEach((o) => o.setAlpha(0.35));
+      c.add([bg, dot, name, cnt]);
+    });
+    this.garnishPicker = c;
+  }
+
+  private closeGarnishPicker(): void {
+    this.garnishPicker?.destroy();
+    this.garnishPicker = null;
+  }
+
+  private addGarnish(id: string): void {
     if (this.transferring || this.finished) return;
-    if (GameState.stockOf('mint') < 1 || this.garnishes.has('mint')) {
+    if (GameState.stockOf(id) < 1 || this.garnishes.has(id)) {
       this.shakeHead(this.mintPot);
       return;
     }
-    GameState.consume('mint', 1);
-    this.garnishes.add('mint');
-    this.pulse(this.mintPot);
-    const leaf = this.add.circle(668, 840, 10, 0x48a848).setDepth(7);
+    GameState.consume(id, 1);
+    this.garnishes.add(id);
+    this.closeGarnishPicker();
+    const color = Phaser.Display.Color.HexStringToColor(GameState.ingredient(id).color).color;
+    const dot = this.add.circle(668, 840, 10, color).setDepth(7);
     this.tweens.add({
-      targets: leaf,
+      targets: dot,
       x: GLASS_X + 34,
       y: GLASS_Y - 150,
       duration: 420,
       ease: 'Quad.in',
       onComplete: () => {
-        leaf.destroy();
+        dot.destroy();
         this.redrawLiquid();
       },
     });
@@ -785,13 +845,15 @@ export class MixScene extends Phaser.Scene {
       this.drawIceCube(GLASS_X + 2, bottomY - 30, 28);
     }
 
-    if (this.garnishes.has('mint')) {
-      const topY = bottomY - geom.maxH - 10;
-      this.liquid.fillStyle(0x48a848, 1);
-      this.liquid.fillCircle(GLASS_X + 30, topY, 12);
-      this.liquid.fillCircle(GLASS_X + 44, topY - 8, 9);
-      this.liquid.fillStyle(0x66c866, 1);
-      this.liquid.fillCircle(GLASS_X + 36, topY - 4, 6);
+    if (this.garnishes.size > 0) {
+      const topY = bottomY - geom.maxH - 6;
+      // 첫 가니시는 림 오른쪽, 둘째는 왼쪽 (조주기능사식 슬라이스+체리 조합 대응)
+      const slots = [GLASS_X + geom.halfW - 8, GLASS_X - geom.halfW + 8, GLASS_X];
+      let i = 0;
+      for (const g of this.garnishes) {
+        this.drawGarnish(g, slots[Math.min(i, 2)]!, topY);
+        i++;
+      }
     }
 
     if (this.isShake && !this.transferred) {
@@ -808,6 +870,54 @@ export class MixScene extends Phaser.Scene {
       if (this.icedVessels.has('shaker')) {
         this.drawIceCube(gx - 8, gy - gh / 2 - 32, 26);
       }
+    }
+  }
+
+  /** 가니시 종류별 렌더 (잔 림 기준 좌표) */
+  private drawGarnish(id: string, x: number, y: number): void {
+    const g = this.liquid;
+    if (id === 'lemon_slice' || id === 'orange_slice' || id === 'lime_wedge') {
+      const rind = { lemon_slice: 0xd8b820, orange_slice: 0xd87818, lime_wedge: 0x5a9830 }[id]!;
+      const flesh = { lemon_slice: 0xf8e048, orange_slice: 0xf8a030, lime_wedge: 0x8cc848 }[id]!;
+      const light = { lemon_slice: 0xfdf2b0, orange_slice: 0xffd090, lime_wedge: 0xc8e8a0 }[id]!;
+      g.fillStyle(rind, 1);
+      g.fillCircle(x, y - 8, 16);
+      g.fillStyle(flesh, 1);
+      g.fillCircle(x, y - 8, 13);
+      // 과육 세그먼트
+      g.lineStyle(1.6, light, 0.9);
+      for (let k = 0; k < 4; k++) {
+        const a = (k / 4) * Math.PI;
+        g.lineBetween(x - Math.cos(a) * 11, y - 8 - Math.sin(a) * 11, x + Math.cos(a) * 11, y - 8 + Math.sin(a) * 11);
+      }
+      g.fillStyle(light, 0.9);
+      g.fillCircle(x, y - 8, 3);
+      // 림에 꽂힌 홈
+      g.fillStyle(0x170d12, 0.55);
+      g.fillRect(x - 1.5, y - 2, 3, 8);
+    } else if (id === 'cherry') {
+      g.lineStyle(2, 0x7a4a20, 1);
+      g.lineBetween(x, y - 26, x + 6, y - 10);
+      g.fillStyle(0xd02040, 1);
+      g.fillCircle(x + 6, y - 6, 9);
+      g.fillStyle(0xf87090, 0.9);
+      g.fillCircle(x + 3, y - 9, 3);
+    } else if (id === 'olive') {
+      // 픽에 꽂힌 올리브
+      g.lineStyle(2, 0xe8e0d0, 1);
+      g.lineBetween(x - 10, y - 30, x + 8, y - 2);
+      g.fillStyle(0x7a9a40, 1);
+      g.fillEllipse(x, y - 14, 20, 15);
+      g.fillStyle(0xa8c060, 0.8);
+      g.fillEllipse(x - 3, y - 17, 7, 5);
+      g.fillStyle(0xc84030, 1);
+      g.fillCircle(x + 5, y - 12, 3);
+    } else if (id === 'mint') {
+      g.fillStyle(0x48a848, 1);
+      g.fillCircle(x - 4, y - 10, 12);
+      g.fillCircle(x + 10, y - 18, 9);
+      g.fillStyle(0x66c866, 1);
+      g.fillCircle(x + 2, y - 14, 6);
     }
   }
 
@@ -872,7 +982,9 @@ export class MixScene extends Phaser.Scene {
     if (this.finished || this.transferring) return;
     this.finished = true;
 
-    const score = scoreMix(this.recipe, this.buildActions());
+    const raw = scoreMix(this.recipe, this.buildActions());
+    // 레시피를 보지 않고 만들어야 만점 — 열람 시 80% 보정
+    const score = this.recipeViewed ? { ...raw, total: raw.total * 0.8 } : raw;
     const patience = this.sceneData.patience - this.mixSeconds / 150;
     const pay = settle(this.recipe, score, patience, this.sceneData.tipEligible, this.sceneData.tipMul ?? 1);
     GameState.earn(pay.total);
@@ -886,6 +998,7 @@ export class MixScene extends Phaser.Scene {
       scoreTotal: score.total,
       recipeName: this.recipe.nameKo,
       worstLines,
+      recipePeeked: this.recipeViewed,
     });
     this.scene.stop();
   }

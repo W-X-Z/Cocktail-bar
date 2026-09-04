@@ -1,7 +1,7 @@
 {
   "_meta": {
     "source": "IBA official cocktail list (2020/2024), cross-checked 2026-08-03",
-    "note": "ml 계량은 IBA 스펙 기준. shake/stir 시간은 게임 플레이용으로 단축 조정. muddle/rim은 MVP에서 생략. 셰이크 레시피는 셰이커 조리 후 잔에 따르기(스트레인), 얼음은 레시피별 요구 위치가 다름(RecipeSystem.iceExpectation).",
+    "note": "ml 계량은 IBA 스펙 기준. shake/stir 시간은 게임 플레이용으로 단축 조정. muddle/rim은 MVP에서 생략. 셰이크 레시피는 셰이커 조리 후 잔에 따르기(스트레인), 얼음은 레시피별 요구 위치가 다름(RecipeSystem.iceExpectation). 가니시는 조주기능사 실기 스펙 기준 (2026-09 반영, 리밍·필 트위스트는 생략).",
     "simplifications": [
       "Old Fashioned: 각설탕+물+머들 → 설탕시럽 10ml로 대체",
       "Cosmopolitan: 시트론 보드카 → 보드카로 대체",
@@ -33,6 +33,10 @@
         {
           "action": "stir",
           "seconds": 3
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lemon_slice"
         }
       ]
     },
@@ -63,6 +67,10 @@
         {
           "action": "stir",
           "seconds": 3
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lemon_slice"
         }
       ]
     },
@@ -88,6 +96,10 @@
         {
           "action": "stir",
           "seconds": 3
+        },
+        {
+          "action": "garnish",
+          "ingredient": "orange_slice"
         }
       ]
     },
@@ -113,6 +125,10 @@
         {
           "action": "stir",
           "seconds": 2
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lemon_slice"
         }
       ]
     },
@@ -173,6 +189,14 @@
         {
           "action": "shake",
           "seconds": 6
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lemon_slice"
+        },
+        {
+          "action": "garnish",
+          "ingredient": "cherry"
         }
       ]
     },
@@ -203,6 +227,10 @@
         {
           "action": "shake",
           "seconds": 6
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lime_wedge"
         }
       ]
     },
@@ -233,6 +261,14 @@
         {
           "action": "stir",
           "seconds": 8
+        },
+        {
+          "action": "garnish",
+          "ingredient": "orange_slice"
+        },
+        {
+          "action": "garnish",
+          "ingredient": "cherry"
         }
       ]
     },
@@ -263,6 +299,10 @@
         {
           "action": "stir",
           "seconds": 5
+        },
+        {
+          "action": "garnish",
+          "ingredient": "orange_slice"
         }
       ]
     },
@@ -288,6 +328,10 @@
         {
           "action": "stir",
           "seconds": 10
+        },
+        {
+          "action": "garnish",
+          "ingredient": "olive"
         }
       ]
     },
@@ -318,6 +362,10 @@
         {
           "action": "stir",
           "seconds": 10
+        },
+        {
+          "action": "garnish",
+          "ingredient": "cherry"
         }
       ]
     },
@@ -353,6 +401,10 @@
         {
           "action": "shake",
           "seconds": 6
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lime_wedge"
         }
       ]
     },
@@ -365,10 +417,6 @@
       "glass": "highball",
       "method": "build",
       "steps": [
-        {
-          "action": "garnish",
-          "ingredient": "mint"
-        },
         {
           "action": "pour",
           "ingredient": "lime_juice",
@@ -392,6 +440,14 @@
         {
           "action": "stir",
           "seconds": 3
+        },
+        {
+          "action": "garnish",
+          "ingredient": "mint"
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lime_wedge"
         }
       ]
     },
@@ -477,6 +533,10 @@
         {
           "action": "stir",
           "seconds": 3
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lemon_slice"
         }
       ]
     }

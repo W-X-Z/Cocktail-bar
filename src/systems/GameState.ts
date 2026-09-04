@@ -36,6 +36,8 @@ interface SaveData {
   dayRevenue: number;
   /** personaId -> 단골 호감도 (구버전 세이브에는 없을 수 있음) */
   relationships?: Record<string, Relationship>;
+  /** 시작 안내 팝업을 본 적 있는지 (구버전 세이브에는 없을 수 있음) */
+  tutorialSeen?: boolean;
 }
 
 export interface SlotInfo {
@@ -59,6 +61,8 @@ class GameStateImpl {
   dayRevenue = 0;
   /** personaId -> 단골 호감도 */
   relationships: Record<string, Relationship> = {};
+  /** 시작 안내 팝업 표시 여부 */
+  tutorialSeen = false;
 
   private currentSlot = 0;
 
@@ -104,9 +108,15 @@ class GameStateImpl {
       this.menu = data.menu.filter((id) => this.recipeById.has(id));
       this.dayRevenue = data.dayRevenue ?? 0;
       this.relationships = data.relationships ?? {};
+      this.tutorialSeen = data.tutorialSeen ?? false;
     } else {
       this.reset();
     }
+  }
+
+  markTutorialSeen(): void {
+    this.tutorialSeen = true;
+    this.save();
   }
 
   deleteSlot(slot: number): void {
@@ -137,11 +147,12 @@ class GameStateImpl {
     this.day = 1;
     this.dayRevenue = 0;
     this.stockMl = {};
-    for (const id of ['gin', 'tonic', 'vodka', 'orange_juice']) {
+    for (const id of ['gin', 'tonic', 'vodka', 'orange_juice', 'lemon_slice', 'orange_slice']) {
       this.stockMl[id] = bottleSizeMl(this.ingredient(id));
     }
     this.menu = ['gin_tonic', 'screwdriver'];
     this.relationships = {};
+    this.tutorialSeen = false;
     this.save();
   }
 
@@ -231,6 +242,7 @@ class GameStateImpl {
       menu: this.menu,
       dayRevenue: this.dayRevenue,
       relationships: this.relationships,
+      tutorialSeen: this.tutorialSeen,
     };
     try {
       localStorage.setItem(`${SAVE_PREFIX}${this.currentSlot}`, JSON.stringify(data));

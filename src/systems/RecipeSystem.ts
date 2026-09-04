@@ -164,6 +164,21 @@ export function scoreMix(recipe: Recipe, actions: MixAction[]): MixScore {
     });
   }
 
+  // 5-1) 레시피에 없는 가니시 (소폭 감점)
+  const expectedGarnish = new Set(
+    recipe.steps.filter((s) => s.action === 'garnish' && s.ingredient).map((s) => s.ingredient!),
+  );
+  for (const g of garnished) {
+    if (!expectedGarnish.has(g)) {
+      extraPenalty += 0.05;
+      lines.push({
+        label: `가니시(${GameState.ingredient(g).nameKo})`,
+        ratio: 0,
+        detail: '불필요한 가니시',
+      });
+    }
+  }
+
   const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 1);
   let total =
     avg(pourScores) * 0.55 +

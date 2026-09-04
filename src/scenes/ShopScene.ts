@@ -87,7 +87,7 @@ export class ShopScene extends Phaser.Scene {
       row.add(this.add.rectangle(W / 2, 0, W - 40, ROW_H - 10, COLORS.panelLight).setStrokeStyle(1, COLORS.accent, 0.2));
 
       const bottleKey = bottleTexture(this, `bottle_${ing.id}`, ing.color, ing.type !== 'mixer');
-      row.add(this.add.image(70, 0, bottleKey).setScale(0.55));
+      row.add(this.add.image(70, 0, bottleKey).setScale(0.28));
 
       const typeLabel = { spirit: '기주', liqueur: '리큐르', mixer: '믹서', garnish: '가니시', other: '기타' }[ing.type];
       row.add(txt(this, 110, -32, `${ing.nameKo}`, 26, '#f2e6d0', { fontStyle: 'bold' }));

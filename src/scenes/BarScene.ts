@@ -58,6 +58,8 @@ export interface MixResultPayload {
   worstLines?: ScoreLine[];
   drinkColor?: number;
   cancelled?: boolean;
+  /** 조주 중 레시피 오버레이를 열었는지 (점수 80% 보정 표시용) */
+  recipePeeked?: boolean;
 }
 
 /** 바텐더 POV 운영 씬 — 넓은 바를 드래그로 둘러보며 손님을 마주 본다 */
@@ -75,6 +77,7 @@ export class BarScene extends Phaser.Scene {
   private toast: Phaser.GameObjects.Container | null = null;
   private dialogueCard: Phaser.GameObjects.Container | null = null;
   private dialogueSticky = false;
+  private introOpen = false;
 
   private seatX(i: number): number {
     return 260 + i * 230;
@@ -103,9 +106,11 @@ export class BarScene extends Phaser.Scene {
 
     this.add.image(W / 2, H / 2, vignetteTexture(this, W, H)).setDepth(45).setScrollFactor(0);
 
+    if (!GameState.tutorialSeen) this.showIntro();
+
     // 드래그로 가로 스크롤 (대화 선택 중에는 잠금)
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
-      if (!p.isDown || this.dialogueSticky) return;
+      if (!p.isDown || this.dialogueSticky || this.introOpen) return;
       this.cameras.main.scrollX = Phaser.Math.Clamp(
         this.cameras.main.scrollX - (p.x - p.prevPosition.x),
         0,
@@ -172,7 +177,7 @@ export class BarScene extends Phaser.Scene {
     });
     this.add
       .image(62, 660, glowTexture(this))
-      .setScale(1.1)
+      .setScale(0.58)
       .setTint(0xff4f9e)
       .setAlpha(0.25)
       .setBlendMode(Phaser.BlendModes.ADD)
@@ -234,9 +239,39 @@ export class BarScene extends Phaser.Scene {
     return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
   }
 
+  /** 첫 영업 전 조작 안내 — 닫기 전까지 시계·손님 정지 */
+  private showIntro(): void {
+    this.introOpen = true;
+    const c = this.add.container(0, 0).setDepth(70).setScrollFactor(0, 0, true);
+    const dim = this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.6);
+    dim.setInteractive();
+    c.add(dim);
+    c.add(panel(this, W / 2, H / 2 - 20, 560, 560));
+    c.add(txt(this, W / 2, H / 2 - 250, '🍸 첫 영업', 34, '#e8a33d', { fontStyle: 'bold' }).setOrigin(0.5));
+    const rows: Array<[string, string]> = [
+      ['🪑', '손님 탭 → 주문'],
+      ['🍾', '병 꾹 → 붓기'],
+      ['📳', '폰 흔들기 → 셰이킹'],
+      ['🥄', '도구통 탭 → 스터'],
+      ['🧊', '얼음통·가니시 탭'],
+      ['📖', '레시피 보면 80%'],
+    ];
+    rows.forEach(([icon, text], i) => {
+      const y = H / 2 - 180 + i * 58;
+      c.add(txt(this, W / 2 - 220, y, icon, 30).setOrigin(0.5));
+      c.add(txt(this, W / 2 - 180, y - 15, text, 26, '#f2e6d0'));
+    });
+    const start = button(this, W / 2, H / 2 + 210, 280, 80, '영업 시작', () => {
+      GameState.markTutorialSeen();
+      c.destroy();
+      this.introOpen = false;
+    }, COLORS.ok);
+    c.add(start.container);
+  }
+
   override update(_time: number, deltaMs: number): void {
     const dt = deltaMs / 1000;
-    if (!this.dayOver) {
+    if (!this.dayOver && !this.introOpen) {
       this.clockSec += dt;
       if (this.clockSec >= DAY_LENGTH_SEC) {
         this.endDay();
@@ -671,7 +706,8 @@ export class BarScene extends Phaser.Scene {
   private showToast(data: MixResultPayload): void {
     this.toast?.destroy();
     const lines = data.worstLines ?? [];
-    const h = 96 + lines.length * 34;
+    const extra = data.recipePeeked ? 1 : 0;
+    const h = 96 + (lines.length + extra) * 34;
     const toast = this.add.container(0, 0).setDepth(47);
     const bg = panel(this, W / 2, 330 + h / 2 - 40, 620, h);
     toast.add(bg);
@@ -680,9 +716,12 @@ export class BarScene extends Phaser.Scene {
         fontStyle: 'bold',
       }).setOrigin(0.5),
     );
+    if (data.recipePeeked) {
+      toast.add(txt(this, W / 2, 356, '📖 레시피 참고 · 80%', 21, '#b09070').setOrigin(0.5));
+    }
     lines.forEach((l, i) => {
       const color = l.ratio >= 0.9 ? '#7fdc8a' : l.ratio >= 0.5 ? '#ffd27a' : '#ff8a8a';
-      toast.add(txt(this, W / 2, 356 + i * 34, `${l.label}: ${l.detail}`, 21, color).setOrigin(0.5));
+      toast.add(txt(this, W / 2, 356 + (i + extra) * 34, `${l.label}: ${l.detail}`, 21, color).setOrigin(0.5));
     });
     bg.setInteractive();
     bg.on('pointerdown', () => {

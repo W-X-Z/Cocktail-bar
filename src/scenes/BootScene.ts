@@ -28,7 +28,7 @@ export class BootScene extends Phaser.Scene {
       const key = bottleTexture(this, `deco_bottle_${i}`, c, i % 3 !== 1);
       this.add
         .image(120 + i * 80, H * 0.13, key)
-        .setScale(1.05)
+        .setScale(0.55)
         .setAlpha(0.5);
     });
 

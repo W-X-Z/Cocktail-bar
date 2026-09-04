@@ -175,6 +175,46 @@
       "type": "garnish",
       "price": 4000,
       "color": "#48a848"
+    },
+    {
+      "id": "lemon_slice",
+      "name": "Lemon Slice",
+      "nameKo": "레몬 슬라이스",
+      "type": "garnish",
+      "price": 3000,
+      "color": "#f8e048"
+    },
+    {
+      "id": "lime_wedge",
+      "name": "Lime Wedge",
+      "nameKo": "라임 웨지",
+      "type": "garnish",
+      "price": 3000,
+      "color": "#8cc848"
+    },
+    {
+      "id": "orange_slice",
+      "name": "Orange Slice",
+      "nameKo": "오렌지 슬라이스",
+      "type": "garnish",
+      "price": 3000,
+      "color": "#f8a030"
+    },
+    {
+      "id": "cherry",
+      "name": "Maraschino Cherry",
+      "nameKo": "체리",
+      "type": "garnish",
+      "price": 5000,
+      "color": "#d02040"
+    },
+    {
+      "id": "olive",
+      "name": "Green Olive",
+      "nameKo": "올리브",
+      "type": "garnish",
+      "price": 5000,
+      "color": "#7a9a40"
     }
   ]
 }

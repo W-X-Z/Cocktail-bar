@@ -327,9 +327,13 @@ export function personFrontTexture(
 /* ---------- 보틀 / 잔 ---------- */
 
 export function bottleTexture(scene: Phaser.Scene, key: string, liquid: string, tall = true): string {
-  const W = 56;
-  const H = tall ? 150 : 120;
-  return ensureTexture(scene, key, W, H, (ctx, w, h) => {
+  // 2× 해상도로 렌더 (크게 표시해도 선명) — 표시 크기는 씬에서 setScale로 조절
+  const W = 112;
+  const H = tall ? 300 : 240;
+  return ensureTexture(scene, key, W, H, (ctx) => {
+    ctx.scale(2, 2);
+    const w = W / 2;
+    const h = H / 2;
     const cx = w / 2;
     const bodyW = 19;
     const neckW = 7;
@@ -339,52 +343,92 @@ export function bottleTexture(scene: Phaser.Scene, key: string, liquid: string, 
     const bodyTop = h * 0.44;
     const bottom = h - 6;
 
-    // 실루엣
-    ctx.beginPath();
-    ctx.moveTo(cx - neckW, neckTop);
-    ctx.lineTo(cx - neckW, shoulderY);
-    ctx.bezierCurveTo(cx - neckW, bodyTop, cx - bodyW, bodyTop - 8, cx - bodyW, bodyTop + 6);
-    ctx.lineTo(cx - bodyW, bottom - 8);
-    ctx.quadraticCurveTo(cx - bodyW, bottom, cx - bodyW + 8, bottom);
-    ctx.lineTo(cx + bodyW - 8, bottom);
-    ctx.quadraticCurveTo(cx + bodyW, bottom, cx + bodyW, bottom - 8);
-    ctx.lineTo(cx + bodyW, bodyTop + 6);
-    ctx.bezierCurveTo(cx + bodyW, bodyTop - 8, cx + neckW, bodyTop, cx + neckW, shoulderY);
-    ctx.lineTo(cx + neckW, neckTop);
-    ctx.closePath();
+    const silhouette = () => {
+      ctx.beginPath();
+      ctx.moveTo(cx - neckW, neckTop);
+      ctx.lineTo(cx - neckW, shoulderY);
+      ctx.bezierCurveTo(cx - neckW, bodyTop, cx - bodyW, bodyTop - 8, cx - bodyW, bodyTop + 6);
+      ctx.lineTo(cx - bodyW, bottom - 8);
+      ctx.quadraticCurveTo(cx - bodyW, bottom, cx - bodyW + 8, bottom);
+      ctx.lineTo(cx + bodyW - 8, bottom);
+      ctx.quadraticCurveTo(cx + bodyW, bottom, cx + bodyW, bottom - 8);
+      ctx.lineTo(cx + bodyW, bodyTop + 6);
+      ctx.bezierCurveTo(cx + bodyW, bodyTop - 8, cx + neckW, bodyTop, cx + neckW, shoulderY);
+      ctx.lineTo(cx + neckW, neckTop);
+      ctx.closePath();
+    };
 
+    // 1) 빈 유리 (목 부분은 액체 위 헤드스페이스)
+    silhouette();
+    const glassG = ctx.createLinearGradient(cx - bodyW, 0, cx + bodyW, 0);
+    glassG.addColorStop(0, 'rgba(210,225,225,0.5)');
+    glassG.addColorStop(0.5, 'rgba(235,245,245,0.35)');
+    glassG.addColorStop(1, 'rgba(150,170,175,0.55)');
+    ctx.fillStyle = glassG;
+    ctx.fill();
+
+    // 2) 액체 (어깨 아래부터 — 병 안에 담긴 느낌)
+    ctx.save();
+    silhouette();
+    ctx.clip();
+    const fillTop = shoulderY - 4;
     const g = ctx.createLinearGradient(cx - bodyW, 0, cx + bodyW, 0);
     g.addColorStop(0, shade(liquid, 0.3));
     g.addColorStop(0.45, liquid);
     g.addColorStop(1, shade(liquid, -0.42));
     ctx.fillStyle = g;
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.4)';
-    ctx.lineWidth = 2;
+    ctx.fillRect(cx - bodyW, fillTop, bodyW * 2, bottom - fillTop);
+    // 액체 표면 라인
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fillRect(cx - neckW - 1, fillTop, neckW * 2 + 2, 1.6);
+    // 바닥 유리 두께
+    ctx.fillStyle = 'rgba(255,255,255,0.16)';
+    ctx.fillRect(cx - bodyW, bottom - 4, bodyW * 2, 4);
+    ctx.restore();
+
+    // 3) 외곽선
+    silhouette();
+    ctx.strokeStyle = 'rgba(0,0,0,0.42)';
+    ctx.lineWidth = 1.6;
     ctx.stroke();
 
-    // 유리 반사
-    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+    // 4) 유리 반사 (좌측 세로 + 어깨 곡면)
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
     rounded(ctx, cx - bodyW + 5, bodyTop + 4, 5, bottom - bodyTop - 16, 3);
     ctx.fill();
-
-    // 라벨
-    ctx.fillStyle = 'rgba(244,236,216,0.92)';
-    rounded(ctx, cx - bodyW + 4, h * 0.58, bodyW * 2 - 8, h * 0.17, 3);
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.beginPath();
+    ctx.ellipse(cx - 6, bodyTop - 1, 7, 3, -0.5, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(90,60,30,0.5)';
-    ctx.lineWidth = 1.5;
-    rounded(ctx, cx - bodyW + 6.5, h * 0.58 + 3, bodyW * 2 - 13, h * 0.17 - 6, 2);
-    ctx.stroke();
-    ctx.fillStyle = 'rgba(90,60,30,0.55)';
-    ctx.fillRect(cx - bodyW + 9, h * 0.58 + h * 0.06, bodyW * 2 - 18, 2.5);
-    ctx.fillRect(cx - bodyW + 12, h * 0.58 + h * 0.06 + 6, bodyW * 2 - 24, 2);
 
-    // 캡
+    // 5) 라벨 (테두리 + 문양 줄 + 액체색 포인트 밴드)
+    ctx.fillStyle = 'rgba(244,236,216,0.94)';
+    rounded(ctx, cx - bodyW + 4, h * 0.56, bodyW * 2 - 8, h * 0.2, 3);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(90,60,30,0.55)';
+    ctx.lineWidth = 1.2;
+    rounded(ctx, cx - bodyW + 6.5, h * 0.56 + 3, bodyW * 2 - 13, h * 0.2 - 6, 2);
+    ctx.stroke();
+    ctx.fillStyle = shade(liquid, -0.25);
+    ctx.fillRect(cx - bodyW + 7, h * 0.56 + 5, bodyW * 2 - 14, 4);
+    ctx.fillStyle = 'rgba(90,60,30,0.6)';
+    ctx.fillRect(cx - bodyW + 9, h * 0.56 + h * 0.075, bodyW * 2 - 18, 2.5);
+    ctx.fillRect(cx - bodyW + 12, h * 0.56 + h * 0.075 + 5.5, bodyW * 2 - 24, 1.8);
+    ctx.fillRect(cx - bodyW + 14, h * 0.56 + h * 0.075 + 10, bodyW * 2 - 28, 1.4);
+
+    // 6) 넥 라벨 (작은 리본)
+    ctx.fillStyle = shade(liquid, -0.3);
+    ctx.fillRect(cx - neckW - 0.5, shoulderY - 12, neckW * 2 + 1, 6);
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.fillRect(cx - neckW - 0.5, shoulderY - 12, neckW * 2 + 1, 1.4);
+
+    // 7) 캡 + 캡슐 링
     ctx.fillStyle = '#2c2c34';
     rounded(ctx, cx - neckW - 1.5, capTop, neckW * 2 + 3, neckTop - capTop + 4, 2.5);
     ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+    ctx.fillStyle = '#1a1a20';
+    ctx.fillRect(cx - neckW - 1.5, neckTop - 1, neckW * 2 + 3, 2.2);
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
     ctx.fillRect(cx - neckW + 1, capTop + 2, 3, neckTop - capTop);
   });
 }
