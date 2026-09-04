@@ -9,16 +9,28 @@ export interface Ingredient {
   color: string;
 }
 
-export type StepAction = 'pour' | 'stir' | 'shake' | 'garnish';
+export type StepAction = 'pour' | 'stir' | 'shake' | 'garnish' | 'rim';
 
 export interface RecipeStep {
   action: StepAction;
   ingredient?: string;
   amountMl?: number;
   seconds?: number;
+  /** true면 섞지 않고 위에 띄우는 붓기 (플로팅/레이어링) */
+  float?: boolean;
 }
 
-export type GlassType = 'highball' | 'rocks' | 'coupe' | 'martini' | 'margarita';
+export type GlassType =
+  | 'highball'
+  | 'rocks'
+  | 'coupe'
+  | 'martini'
+  | 'margarita'
+  | 'liqueur'
+  | 'sour'
+  | 'pilsner'
+  | 'collins'
+  | 'wine';
 
 export interface Recipe {
   id: string;
@@ -44,6 +56,8 @@ export interface MixAction {
   amountMl?: number;
   seconds?: number;
   vessel?: Vessel;
+  /** pour 전용: 끝까지 살살 부어 층이 유지됐는지 (플로팅 판정) */
+  gentle?: boolean;
 }
 
 export interface ScoreLine {

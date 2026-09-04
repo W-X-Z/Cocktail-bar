@@ -433,6 +433,41 @@ export function bottleTexture(scene: Phaser.Scene, key: string, liquid: string, 
   });
 }
 
+/** 리밍 접시 (소금·설탕) */
+export function rimDishTexture(scene: Phaser.Scene): string {
+  return ensureTexture(scene, 'prop_rim_dish', 120, 74, (ctx, w, h) => {
+    const cx = w / 2;
+    // 접시
+    ctx.fillStyle = '#8a97a2';
+    ctx.beginPath();
+    ctx.ellipse(cx, h - 22, 54, 16, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#b8c4ce';
+    ctx.beginPath();
+    ctx.ellipse(cx, h - 25, 46, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // 소금 무더기 (왼쪽 흰색) + 설탕 무더기 (오른쪽 미색)
+    ctx.fillStyle = '#f7f7f7';
+    ctx.beginPath();
+    ctx.ellipse(cx - 20, h - 30, 20, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#efe3cc';
+    ctx.beginPath();
+    ctx.ellipse(cx + 20, h - 28, 18, 9, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // 알갱이
+    for (let i = 0; i < 26; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const r = Math.random();
+      ctx.fillStyle = i % 2 ? 'rgba(255,255,255,0.9)' : 'rgba(220,205,175,0.9)';
+      ctx.fillRect(cx - 20 + (i % 2 ? 40 : 0) + Math.cos(a) * 14 * r, h - 30 + Math.sin(a) * 6 * r, 2, 2);
+    }
+  });
+}
+
 /** POV 유리잔. 내부 좌표계는 씬의 잔 지오메트리와 1:1 (액체는 씬에서 별도로 그림) */
 export function glassTexture(scene: Phaser.Scene, glass: string): string {
   const specs: Record<string, { w: number; h: number }> = {
@@ -441,6 +476,11 @@ export function glassTexture(scene: Phaser.Scene, glass: string): string {
     coupe: { w: 220, h: 220 },
     martini: { w: 220, h: 220 },
     margarita: { w: 230, h: 220 },
+    liqueur: { w: 100, h: 160 },
+    sour: { w: 150, h: 215 },
+    pilsner: { w: 180, h: 250 },
+    collins: { w: 150, h: 260 },
+    wine: { w: 180, h: 225 },
   };
   const { w: TW, h: TH } = specs[glass] ?? specs['rocks']!;
   return ensureTexture(scene, `glass_${glass}`, TW, TH, (ctx, w, h) => {
@@ -487,6 +527,82 @@ export function glassTexture(scene: Phaser.Scene, glass: string): string {
       // 소금 리밍 느낌의 림 하이라이트
       ctx.fillStyle = 'rgba(255,255,255,0.5)';
       ctx.fillRect(cx - 100, 12, 200, 3);
+    } else if (glass === 'collins') {
+      // 톨 콜린스
+      rounded(ctx, cx - 55, 8, 110, h - 20, 8);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(235,245,250,0.3)';
+      rounded(ctx, cx - 51, h - 22, 102, 8, 4);
+      ctx.fill();
+    } else if (glass === 'liqueur') {
+      // 리큐르/셰리 글라스 (푸스카페·B-52)
+      ctx.beginPath();
+      ctx.moveTo(cx - 28, 8);
+      ctx.lineTo(cx - 22, 92);
+      ctx.lineTo(cx + 22, 92);
+      ctx.lineTo(cx + 28, 8);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, 92);
+      ctx.lineTo(cx, h - 14);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - 26, h - 8);
+      ctx.lineTo(cx + 26, h - 8);
+      ctx.stroke();
+    } else if (glass === 'sour') {
+      // 사워 글라스: 튤립 보울 + 스템
+      ctx.beginPath();
+      ctx.moveTo(cx - 45, 10);
+      ctx.bezierCurveTo(cx - 52, 70, cx - 30, 120, cx, 124);
+      ctx.bezierCurveTo(cx + 30, 120, cx + 52, 70, cx + 45, 10);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, 124);
+      ctx.lineTo(cx, h - 18);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - 40, h - 10);
+      ctx.lineTo(cx + 40, h - 10);
+      ctx.stroke();
+    } else if (glass === 'pilsner') {
+      // 풋티드 필스너 (싱가폴 슬링·선라이즈)
+      ctx.beginPath();
+      ctx.moveTo(cx - 70, 8);
+      ctx.lineTo(cx - 20, 196);
+      ctx.lineTo(cx + 20, 196);
+      ctx.lineTo(cx + 70, 8);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, 196);
+      ctx.lineTo(cx, h - 16);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - 45, h - 8);
+      ctx.lineTo(cx + 45, h - 8);
+      ctx.stroke();
+    } else if (glass === 'wine') {
+      // 화이트와인 글라스 (키르)
+      ctx.beginPath();
+      ctx.moveTo(cx - 48, 10);
+      ctx.bezierCurveTo(cx - 56, 80, cx - 34, 118, cx, 122);
+      ctx.bezierCurveTo(cx + 34, 118, cx + 56, 80, cx + 48, 10);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, 122);
+      ctx.lineTo(cx, h - 18);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - 44, h - 10);
+      ctx.lineTo(cx + 44, h - 10);
+      ctx.stroke();
     } else {
       // V형 (쿠페/마티니)
       ctx.beginPath();
@@ -513,9 +629,9 @@ export function glassTexture(scene: Phaser.Scene, glass: string): string {
     ctx.strokeStyle = 'rgba(255,255,255,0.35)';
     ctx.lineWidth = 6;
     ctx.beginPath();
-    if (glass === 'highball') {
-      ctx.moveTo(cx - 48, 26);
-      ctx.lineTo(cx - 48, h - 40);
+    if (glass === 'highball' || glass === 'collins') {
+      ctx.moveTo(cx - 38, 26);
+      ctx.lineTo(cx - 38, h - 40);
     } else if (glass === 'rocks') {
       ctx.moveTo(cx - 62, 26);
       ctx.lineTo(cx - 62, h - 44);

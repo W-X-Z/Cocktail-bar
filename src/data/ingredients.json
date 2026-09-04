@@ -215,6 +215,254 @@
       "type": "garnish",
       "price": 5000,
       "color": "#7a9a40"
+    },
+    {
+      "id": "brandy",
+      "name": "Brandy",
+      "nameKo": "브랜디",
+      "type": "spirit",
+      "price": 45000,
+      "color": "#d8903c"
+    },
+    {
+      "id": "scotch",
+      "name": "Scotch Whisky",
+      "nameKo": "스카치 위스키",
+      "type": "spirit",
+      "price": 35000,
+      "color": "#d09030"
+    },
+    {
+      "id": "drambuie",
+      "name": "Drambuie",
+      "nameKo": "드람뷔이",
+      "type": "liqueur",
+      "price": 55000,
+      "color": "#d8a030"
+    },
+    {
+      "id": "creme_menthe_g",
+      "name": "Creme de Menthe (G)",
+      "nameKo": "크렘 드 민트(G)",
+      "type": "liqueur",
+      "price": 22000,
+      "color": "#30a060"
+    },
+    {
+      "id": "creme_cacao_b",
+      "name": "Creme de Cacao (B)",
+      "nameKo": "크렘 드 카카오(B)",
+      "type": "liqueur",
+      "price": 22000,
+      "color": "#6a4020"
+    },
+    {
+      "id": "creme_cacao_w",
+      "name": "Creme de Cacao (W)",
+      "nameKo": "크렘 드 카카오(W)",
+      "type": "liqueur",
+      "price": 22000,
+      "color": "#efe6d8"
+    },
+    {
+      "id": "cherry_brandy",
+      "name": "Cherry Flavored Brandy",
+      "nameKo": "체리 브랜디",
+      "type": "liqueur",
+      "price": 28000,
+      "color": "#a02030"
+    },
+    {
+      "id": "baileys",
+      "name": "Bailey's Irish Cream",
+      "nameKo": "베일리스",
+      "type": "liqueur",
+      "price": 33000,
+      "color": "#d8c0a0"
+    },
+    {
+      "id": "grand_marnier",
+      "name": "Grand Marnier",
+      "nameKo": "그랑 마니에르",
+      "type": "liqueur",
+      "price": 55000,
+      "color": "#c87828"
+    },
+    {
+      "id": "midori",
+      "name": "Melon Liqueur",
+      "nameKo": "미도리(멜론)",
+      "type": "liqueur",
+      "price": 30000,
+      "color": "#88d048"
+    },
+    {
+      "id": "malibu",
+      "name": "Coconut Rum",
+      "nameKo": "말리부(코코넛)",
+      "type": "liqueur",
+      "price": 23000,
+      "color": "#f0ead8"
+    },
+    {
+      "id": "banana_liqueur",
+      "name": "Banana Liqueur",
+      "nameKo": "바나나 리큐르",
+      "type": "liqueur",
+      "price": 22000,
+      "color": "#f0d848"
+    },
+    {
+      "id": "apple_pucker",
+      "name": "Apple Pucker",
+      "nameKo": "애플 퍼커",
+      "type": "liqueur",
+      "price": 22000,
+      "color": "#a8d838"
+    },
+    {
+      "id": "benedictine",
+      "name": "Benedictine DOM",
+      "nameKo": "베네딕틴",
+      "type": "liqueur",
+      "price": 55000,
+      "color": "#c89030"
+    },
+    {
+      "id": "apricot_brandy",
+      "name": "Apricot Flavored Brandy",
+      "nameKo": "애프리콧 브랜디",
+      "type": "liqueur",
+      "price": 28000,
+      "color": "#e09040"
+    },
+    {
+      "id": "apple_brandy",
+      "name": "Apple Brandy",
+      "nameKo": "애플 브랜디",
+      "type": "liqueur",
+      "price": 48000,
+      "color": "#cc8830"
+    },
+    {
+      "id": "sloe_gin",
+      "name": "Sloe Gin",
+      "nameKo": "슬로 진",
+      "type": "liqueur",
+      "price": 30000,
+      "color": "#c03050"
+    },
+    {
+      "id": "cassis",
+      "name": "Creme de Cassis",
+      "nameKo": "크렘 드 카시스",
+      "type": "liqueur",
+      "price": 25000,
+      "color": "#701838"
+    },
+    {
+      "id": "milk",
+      "name": "Milk",
+      "nameKo": "우유",
+      "type": "mixer",
+      "price": 3000,
+      "color": "#f4f0e8"
+    },
+    {
+      "id": "grenadine",
+      "name": "Grenadine Syrup",
+      "nameKo": "그레나딘 시럽",
+      "type": "mixer",
+      "price": 8000,
+      "color": "#c01830"
+    },
+    {
+      "id": "pineapple_juice",
+      "name": "Pineapple Juice",
+      "nameKo": "파인애플 주스",
+      "type": "mixer",
+      "price": 4000,
+      "color": "#f0d060"
+    },
+    {
+      "id": "grapefruit_juice",
+      "name": "Grapefruit Juice",
+      "nameKo": "자몽 주스",
+      "type": "mixer",
+      "price": 5000,
+      "color": "#f0a878"
+    },
+    {
+      "id": "sweet_sour",
+      "name": "Sweet & Sour Mix",
+      "nameKo": "스윗&사워 믹스",
+      "type": "mixer",
+      "price": 8000,
+      "color": "#e8d890"
+    },
+    {
+      "id": "ginger_ale",
+      "name": "Ginger Ale",
+      "nameKo": "진저에일",
+      "type": "mixer",
+      "price": 3000,
+      "color": "#e8d8a8"
+    },
+    {
+      "id": "white_wine",
+      "name": "White Wine",
+      "nameKo": "화이트 와인",
+      "type": "mixer",
+      "price": 15000,
+      "color": "#e8e0b0"
+    },
+    {
+      "id": "lemon_peel",
+      "name": "Lemon Peel Twist",
+      "nameKo": "레몬 필",
+      "type": "garnish",
+      "price": 3000,
+      "color": "#e8d048"
+    },
+    {
+      "id": "pineapple_wedge",
+      "name": "Pineapple Wedge",
+      "nameKo": "파인애플 웨지",
+      "type": "garnish",
+      "price": 4000,
+      "color": "#f0d060"
+    },
+    {
+      "id": "apple_slice",
+      "name": "Apple Slice",
+      "nameKo": "사과 슬라이스",
+      "type": "garnish",
+      "price": 3000,
+      "color": "#b8d868"
+    },
+    {
+      "id": "nutmeg",
+      "name": "Nutmeg Powder",
+      "nameKo": "너트메그",
+      "type": "garnish",
+      "price": 5000,
+      "color": "#b08050"
+    },
+    {
+      "id": "salt",
+      "name": "Salt (Rimming)",
+      "nameKo": "소금(리밍)",
+      "type": "garnish",
+      "price": 2000,
+      "color": "#f5f5f5"
+    },
+    {
+      "id": "sugar",
+      "name": "Sugar (Rimming)",
+      "nameKo": "설탕(리밍)",
+      "type": "garnish",
+      "price": 2000,
+      "color": "#f0e6d0"
     }
   ]
 }

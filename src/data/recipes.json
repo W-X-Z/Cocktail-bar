@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "source": "IBA official cocktail list (2020/2024), cross-checked 2026-08-03",
-    "note": "ml 계량은 IBA 스펙 기준. shake/stir 시간은 게임 플레이용으로 단축 조정. muddle/rim은 MVP에서 생략. 셰이크 레시피는 셰이커 조리 후 잔에 따르기(스트레인), 얼음은 레시피별 요구 위치가 다름(RecipeSystem.iceExpectation). 가니시는 조주기능사 실기 스펙 기준 (2026-09 반영, 리밍·필 트위스트는 생략).",
+    "source": "IBA + 조주기능사 실기 표준 레시피 (블렌더·전통주 종목 제외), 2026-09 정리",
+    "note": "oz 계량은 1oz=30ml 환산. shake/stir 시간은 게임용 단축. 셰이크 레시피는 셰이커 조리 후 잔에 따르기. 피즈/슬링류는 스트레인 후 탄산 토핑. float=True 스텝은 살살 부어 층 유지(플로팅), rim 스텝은 소금/설탕 리밍. 가니시·잔은 조주기능사 실기 스펙 기준. 제외: 블렌더 4종(마이타이·피냐콜라다·블루하와이안·버진프루트펀치), 전통주 5종.",
     "simplifications": [
       "Old Fashioned: 각설탕+물+머들 → 설탕시럽 10ml로 대체",
       "Cosmopolitan: 시트론 보드카 → 보드카로 대체",
@@ -52,12 +52,12 @@
         {
           "action": "pour",
           "ingredient": "white_rum",
-          "amountMl": 50
+          "amountMl": 45
         },
         {
           "action": "pour",
           "ingredient": "lime_juice",
-          "amountMl": 10
+          "amountMl": 15
         },
         {
           "action": "pour",
@@ -114,7 +114,7 @@
       "steps": [
         {
           "action": "pour",
-          "ingredient": "bourbon",
+          "ingredient": "rye",
           "amountMl": 45
         },
         {
@@ -144,17 +144,17 @@
         {
           "action": "pour",
           "ingredient": "white_rum",
-          "amountMl": 60
+          "amountMl": 53
         },
         {
           "action": "pour",
           "ingredient": "lime_juice",
-          "amountMl": 20
+          "amountMl": 22
         },
         {
           "action": "pour",
           "ingredient": "sugar_syrup",
-          "amountMl": 10
+          "amountMl": 5
         },
         {
           "action": "shake",
@@ -168,7 +168,7 @@
       "nameKo": "위스키 사워",
       "tier": 2,
       "basePrice": 15000,
-      "glass": "rocks",
+      "glass": "sour",
       "method": "shake",
       "steps": [
         {
@@ -179,16 +179,21 @@
         {
           "action": "pour",
           "ingredient": "lemon_juice",
-          "amountMl": 25
+          "amountMl": 15
         },
         {
           "action": "pour",
           "ingredient": "sugar_syrup",
-          "amountMl": 20
+          "amountMl": 5
         },
         {
           "action": "shake",
           "seconds": 6
+        },
+        {
+          "action": "pour",
+          "ingredient": "soda",
+          "amountMl": 30
         },
         {
           "action": "garnish",
@@ -210,14 +215,18 @@
       "method": "shake",
       "steps": [
         {
+          "action": "rim",
+          "ingredient": "salt"
+        },
+        {
           "action": "pour",
           "ingredient": "tequila",
-          "amountMl": 50
+          "amountMl": 45
         },
         {
           "action": "pour",
           "ingredient": "triple_sec",
-          "amountMl": 20
+          "amountMl": 15
         },
         {
           "action": "pour",
@@ -245,6 +254,11 @@
       "steps": [
         {
           "action": "pour",
+          "ingredient": "bourbon",
+          "amountMl": 45
+        },
+        {
+          "action": "pour",
           "ingredient": "sugar_syrup",
           "amountMl": 10
         },
@@ -252,11 +266,6 @@
           "action": "pour",
           "ingredient": "angostura",
           "amountMl": 2
-        },
-        {
-          "action": "pour",
-          "ingredient": "bourbon",
-          "amountMl": 45
         },
         {
           "action": "stir",
@@ -284,17 +293,17 @@
         {
           "action": "pour",
           "ingredient": "gin",
-          "amountMl": 30
+          "amountMl": 22
         },
         {
           "action": "pour",
           "ingredient": "campari",
-          "amountMl": 30
+          "amountMl": 22
         },
         {
           "action": "pour",
           "ingredient": "sweet_vermouth",
-          "amountMl": 30
+          "amountMl": 22
         },
         {
           "action": "stir",
@@ -302,7 +311,7 @@
         },
         {
           "action": "garnish",
-          "ingredient": "orange_slice"
+          "ingredient": "lemon_peel"
         }
       ]
     },
@@ -346,18 +355,18 @@
       "steps": [
         {
           "action": "pour",
-          "ingredient": "rye",
-          "amountMl": 50
+          "ingredient": "bourbon",
+          "amountMl": 45
         },
         {
           "action": "pour",
           "ingredient": "sweet_vermouth",
-          "amountMl": 20
+          "amountMl": 22
         },
         {
           "action": "pour",
           "ingredient": "angostura",
-          "amountMl": 1
+          "amountMl": 2
         },
         {
           "action": "stir",
@@ -381,7 +390,7 @@
         {
           "action": "pour",
           "ingredient": "vodka",
-          "amountMl": 40
+          "amountMl": 30
         },
         {
           "action": "pour",
@@ -396,7 +405,7 @@
         {
           "action": "pour",
           "ingredient": "cranberry_juice",
-          "amountMl": 30
+          "amountMl": 15
         },
         {
           "action": "shake",
@@ -404,7 +413,7 @@
         },
         {
           "action": "garnish",
-          "ingredient": "lime_wedge"
+          "ingredient": "lemon_peel"
         }
       ]
     },
@@ -492,12 +501,12 @@
       "steps": [
         {
           "action": "pour",
-          "ingredient": "vodka",
+          "ingredient": "gin",
           "amountMl": 15
         },
         {
           "action": "pour",
-          "ingredient": "tequila",
+          "ingredient": "vodka",
           "amountMl": 15
         },
         {
@@ -507,7 +516,7 @@
         },
         {
           "action": "pour",
-          "ingredient": "gin",
+          "ingredient": "tequila",
           "amountMl": 15
         },
         {
@@ -517,18 +526,13 @@
         },
         {
           "action": "pour",
-          "ingredient": "lemon_juice",
-          "amountMl": 25
-        },
-        {
-          "action": "pour",
-          "ingredient": "sugar_syrup",
-          "amountMl": 30
+          "ingredient": "sweet_sour",
+          "amountMl": 45
         },
         {
           "action": "pour",
           "ingredient": "cola",
-          "amountMl": 40
+          "amountMl": 60
         },
         {
           "action": "stir",
@@ -537,6 +541,716 @@
         {
           "action": "garnish",
           "ingredient": "lemon_slice"
+        }
+      ]
+    },
+    {
+      "id": "black_russian",
+      "name": "Black Russian",
+      "nameKo": "블랙 러시안",
+      "tier": 1,
+      "basePrice": 12000,
+      "glass": "rocks",
+      "method": "build",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "vodka",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "coffee_liqueur",
+          "amountMl": 15
+        },
+        {
+          "action": "stir",
+          "seconds": 3
+        }
+      ]
+    },
+    {
+      "id": "rusty_nail",
+      "name": "Rusty Nail",
+      "nameKo": "러스티 네일",
+      "tier": 2,
+      "basePrice": 15000,
+      "glass": "rocks",
+      "method": "build",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "scotch",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "drambuie",
+          "amountMl": 15
+        },
+        {
+          "action": "stir",
+          "seconds": 3
+        }
+      ]
+    },
+    {
+      "id": "seabreeze",
+      "name": "Seabreeze",
+      "nameKo": "씨브리즈",
+      "tier": 1,
+      "basePrice": 12000,
+      "glass": "highball",
+      "method": "build",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "vodka",
+          "amountMl": 45
+        },
+        {
+          "action": "pour",
+          "ingredient": "cranberry_juice",
+          "amountMl": 90
+        },
+        {
+          "action": "pour",
+          "ingredient": "grapefruit_juice",
+          "amountMl": 15
+        },
+        {
+          "action": "stir",
+          "seconds": 3
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lime_wedge"
+        }
+      ]
+    },
+    {
+      "id": "moscow_mule",
+      "name": "Moscow Mule",
+      "nameKo": "모스코 뮬",
+      "tier": 1,
+      "basePrice": 13000,
+      "glass": "highball",
+      "method": "build",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "vodka",
+          "amountMl": 45
+        },
+        {
+          "action": "pour",
+          "ingredient": "lime_juice",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "ginger_ale",
+          "amountMl": 120
+        },
+        {
+          "action": "stir",
+          "seconds": 3
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lime_wedge"
+        }
+      ]
+    },
+    {
+      "id": "sidecar",
+      "name": "Sidecar",
+      "nameKo": "사이드카",
+      "tier": 2,
+      "basePrice": 16000,
+      "glass": "coupe",
+      "method": "shake",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "brandy",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "triple_sec",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "lemon_juice",
+          "amountMl": 8
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        }
+      ]
+    },
+    {
+      "id": "apple_martini",
+      "name": "Apple Martini",
+      "nameKo": "애플 마티니",
+      "tier": 2,
+      "basePrice": 14000,
+      "glass": "martini",
+      "method": "shake",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "vodka",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "apple_pucker",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "lime_juice",
+          "amountMl": 15
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        },
+        {
+          "action": "garnish",
+          "ingredient": "apple_slice"
+        }
+      ]
+    },
+    {
+      "id": "new_york",
+      "name": "New York",
+      "nameKo": "뉴욕",
+      "tier": 2,
+      "basePrice": 14000,
+      "glass": "coupe",
+      "method": "shake",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "bourbon",
+          "amountMl": 45
+        },
+        {
+          "action": "pour",
+          "ingredient": "lime_juice",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "sugar_syrup",
+          "amountMl": 5
+        },
+        {
+          "action": "pour",
+          "ingredient": "grenadine",
+          "amountMl": 3
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lemon_peel"
+        }
+      ]
+    },
+    {
+      "id": "apricot_cocktail",
+      "name": "Apricot Cocktail",
+      "nameKo": "애프리콧 칵테일",
+      "tier": 2,
+      "basePrice": 14000,
+      "glass": "coupe",
+      "method": "shake",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "apricot_brandy",
+          "amountMl": 45
+        },
+        {
+          "action": "pour",
+          "ingredient": "gin",
+          "amountMl": 5
+        },
+        {
+          "action": "pour",
+          "ingredient": "lemon_juice",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "orange_juice",
+          "amountMl": 15
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        }
+      ]
+    },
+    {
+      "id": "honeymoon",
+      "name": "Honeymoon Cocktail",
+      "nameKo": "허니문 칵테일",
+      "tier": 3,
+      "basePrice": 16000,
+      "glass": "coupe",
+      "method": "shake",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "apple_brandy",
+          "amountMl": 22
+        },
+        {
+          "action": "pour",
+          "ingredient": "benedictine",
+          "amountMl": 22
+        },
+        {
+          "action": "pour",
+          "ingredient": "triple_sec",
+          "amountMl": 8
+        },
+        {
+          "action": "pour",
+          "ingredient": "lemon_juice",
+          "amountMl": 15
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        }
+      ]
+    },
+    {
+      "id": "grasshopper",
+      "name": "Grasshopper",
+      "nameKo": "그래스호퍼",
+      "tier": 2,
+      "basePrice": 13000,
+      "glass": "coupe",
+      "method": "shake",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "creme_menthe_g",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "creme_cacao_w",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "milk",
+          "amountMl": 30
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        }
+      ]
+    },
+    {
+      "id": "brandy_alexander",
+      "name": "Brandy Alexander",
+      "nameKo": "브랜디 알렉산더",
+      "tier": 2,
+      "basePrice": 15000,
+      "glass": "coupe",
+      "method": "shake",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "brandy",
+          "amountMl": 22
+        },
+        {
+          "action": "pour",
+          "ingredient": "creme_cacao_b",
+          "amountMl": 22
+        },
+        {
+          "action": "pour",
+          "ingredient": "milk",
+          "amountMl": 22
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        },
+        {
+          "action": "garnish",
+          "ingredient": "nutmeg"
+        }
+      ]
+    },
+    {
+      "id": "bacardi",
+      "name": "Bacardi Cocktail",
+      "nameKo": "바카디 칵테일",
+      "tier": 2,
+      "basePrice": 13000,
+      "glass": "coupe",
+      "method": "shake",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "white_rum",
+          "amountMl": 53
+        },
+        {
+          "action": "pour",
+          "ingredient": "lime_juice",
+          "amountMl": 22
+        },
+        {
+          "action": "pour",
+          "ingredient": "grenadine",
+          "amountMl": 5
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        }
+      ]
+    },
+    {
+      "id": "june_bug",
+      "name": "June Bug",
+      "nameKo": "준벅",
+      "tier": 2,
+      "basePrice": 13000,
+      "glass": "collins",
+      "method": "shake",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "midori",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "malibu",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "banana_liqueur",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "pineapple_juice",
+          "amountMl": 60
+        },
+        {
+          "action": "pour",
+          "ingredient": "sweet_sour",
+          "amountMl": 60
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        },
+        {
+          "action": "garnish",
+          "ingredient": "pineapple_wedge"
+        },
+        {
+          "action": "garnish",
+          "ingredient": "cherry"
+        }
+      ]
+    },
+    {
+      "id": "gin_fizz",
+      "name": "Gin Fizz",
+      "nameKo": "진 피즈",
+      "tier": 2,
+      "basePrice": 12000,
+      "glass": "highball",
+      "method": "shake",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "gin",
+          "amountMl": 45
+        },
+        {
+          "action": "pour",
+          "ingredient": "lemon_juice",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "sugar_syrup",
+          "amountMl": 5
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        },
+        {
+          "action": "pour",
+          "ingredient": "soda",
+          "amountMl": 60
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lemon_slice"
+        }
+      ]
+    },
+    {
+      "id": "singapore_sling",
+      "name": "Singapore Sling",
+      "nameKo": "싱가폴 슬링",
+      "tier": 3,
+      "basePrice": 15000,
+      "glass": "pilsner",
+      "method": "shake",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "gin",
+          "amountMl": 45
+        },
+        {
+          "action": "pour",
+          "ingredient": "lemon_juice",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "sugar_syrup",
+          "amountMl": 5
+        },
+        {
+          "action": "shake",
+          "seconds": 6
+        },
+        {
+          "action": "pour",
+          "ingredient": "soda",
+          "amountMl": 60
+        },
+        {
+          "action": "pour",
+          "ingredient": "cherry_brandy",
+          "amountMl": 15,
+          "float": true
+        },
+        {
+          "action": "garnish",
+          "ingredient": "orange_slice"
+        },
+        {
+          "action": "garnish",
+          "ingredient": "cherry"
+        }
+      ]
+    },
+    {
+      "id": "kir",
+      "name": "Kir",
+      "nameKo": "키르",
+      "tier": 1,
+      "basePrice": 11000,
+      "glass": "wine",
+      "method": "build",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "white_wine",
+          "amountMl": 90
+        },
+        {
+          "action": "pour",
+          "ingredient": "cassis",
+          "amountMl": 15
+        },
+        {
+          "action": "stir",
+          "seconds": 3
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lemon_peel"
+        }
+      ]
+    },
+    {
+      "id": "tequila_sunrise",
+      "name": "Tequila Sunrise",
+      "nameKo": "데킬라 선라이즈",
+      "tier": 2,
+      "basePrice": 13000,
+      "glass": "pilsner",
+      "method": "build",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "tequila",
+          "amountMl": 45
+        },
+        {
+          "action": "pour",
+          "ingredient": "orange_juice",
+          "amountMl": 90
+        },
+        {
+          "action": "stir",
+          "seconds": 3
+        },
+        {
+          "action": "pour",
+          "ingredient": "grenadine",
+          "amountMl": 15,
+          "float": true
+        }
+      ]
+    },
+    {
+      "id": "pousse_cafe",
+      "name": "Pousse Café",
+      "nameKo": "푸스 카페",
+      "tier": 3,
+      "basePrice": 12000,
+      "glass": "liqueur",
+      "method": "build",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "grenadine",
+          "amountMl": 10
+        },
+        {
+          "action": "pour",
+          "ingredient": "creme_menthe_g",
+          "amountMl": 10,
+          "float": true
+        },
+        {
+          "action": "pour",
+          "ingredient": "brandy",
+          "amountMl": 10,
+          "float": true
+        }
+      ]
+    },
+    {
+      "id": "b52",
+      "name": "B-52",
+      "nameKo": "B-52",
+      "tier": 3,
+      "basePrice": 14000,
+      "glass": "liqueur",
+      "method": "build",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "coffee_liqueur",
+          "amountMl": 20
+        },
+        {
+          "action": "pour",
+          "ingredient": "baileys",
+          "amountMl": 20,
+          "float": true
+        },
+        {
+          "action": "pour",
+          "ingredient": "grand_marnier",
+          "amountMl": 20,
+          "float": true
+        }
+      ]
+    },
+    {
+      "id": "fresh_lemon_squash",
+      "name": "Fresh Lemon Squash",
+      "nameKo": "레몬 스쿼시",
+      "tier": 1,
+      "basePrice": 8000,
+      "glass": "highball",
+      "method": "build",
+      "steps": [
+        {
+          "action": "pour",
+          "ingredient": "lemon_juice",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "sugar_syrup",
+          "amountMl": 10
+        },
+        {
+          "action": "pour",
+          "ingredient": "soda",
+          "amountMl": 120
+        },
+        {
+          "action": "stir",
+          "seconds": 3
+        },
+        {
+          "action": "garnish",
+          "ingredient": "lemon_slice"
+        }
+      ]
+    },
+    {
+      "id": "kiss_of_fire",
+      "name": "Kiss of Fire",
+      "nameKo": "키스 오브 파이어",
+      "tier": 3,
+      "basePrice": 14000,
+      "glass": "coupe",
+      "method": "shake",
+      "steps": [
+        {
+          "action": "rim",
+          "ingredient": "sugar"
+        },
+        {
+          "action": "pour",
+          "ingredient": "vodka",
+          "amountMl": 30
+        },
+        {
+          "action": "pour",
+          "ingredient": "sloe_gin",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "dry_vermouth",
+          "amountMl": 15
+        },
+        {
+          "action": "pour",
+          "ingredient": "lemon_juice",
+          "amountMl": 5
+        },
+        {
+          "action": "shake",
+          "seconds": 6
         }
       ]
     }

@@ -246,22 +246,23 @@ export class BarScene extends Phaser.Scene {
     const dim = this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.6);
     dim.setInteractive();
     c.add(dim);
-    c.add(panel(this, W / 2, H / 2 - 20, 560, 560));
-    c.add(txt(this, W / 2, H / 2 - 250, '🍸 첫 영업', 34, '#e8a33d', { fontStyle: 'bold' }).setOrigin(0.5));
+    c.add(panel(this, W / 2, H / 2 - 20, 560, 620));
+    c.add(txt(this, W / 2, H / 2 - 280, '🍸 첫 영업', 34, '#e8a33d', { fontStyle: 'bold' }).setOrigin(0.5));
     const rows: Array<[string, string]> = [
       ['🪑', '손님 탭 → 주문'],
       ['🍾', '병 꾹 → 붓기'],
       ['📳', '폰 흔들기 → 셰이킹'],
       ['🥄', '도구통 탭 → 스터'],
-      ['🧊', '얼음통·가니시 탭'],
+      ['🧊', '얼음통·가니시·리밍 탭'],
+      ['🥂', '살살 부으면 플로팅'],
       ['📖', '레시피 보면 80%'],
     ];
     rows.forEach(([icon, text], i) => {
-      const y = H / 2 - 180 + i * 58;
+      const y = H / 2 - 216 + i * 56;
       c.add(txt(this, W / 2 - 220, y, icon, 30).setOrigin(0.5));
       c.add(txt(this, W / 2 - 180, y - 15, text, 26, '#f2e6d0'));
     });
-    const start = button(this, W / 2, H / 2 + 210, 280, 80, '영업 시작', () => {
+    const start = button(this, W / 2, H / 2 + 232, 280, 80, '영업 시작', () => {
       GameState.markTutorialSeen();
       c.destroy();
       this.introOpen = false;

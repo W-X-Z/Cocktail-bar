@@ -9,7 +9,15 @@ import { GameState } from './GameState';
  */
 export function iceExpectation(recipe: Recipe): Vessel | 'none' {
   if (recipe.method === 'shake') return 'shaker';
-  if (recipe.glass === 'highball' || recipe.glass === 'rocks') return 'glass';
+  if (
+    recipe.glass === 'highball' ||
+    recipe.glass === 'rocks' ||
+    recipe.glass === 'collins' ||
+    recipe.glass === 'pilsner'
+  ) {
+    // 푸스카페·B-52(리큐르), 키르(와인)는 빌드여도 얼음 없음 — 위 목록에 없음
+    return 'glass';
+  }
   return 'none';
 }
 
@@ -49,9 +57,17 @@ export function scoreMix(recipe: Recipe, actions: MixAction[]): MixScore {
   const icedVessels = new Set<Vessel>();
   let strained = false;
 
+  const gentleBy = new Map<string, boolean>();
+  const pourIndex = new Map<string, number>();
+  const rimmed = new Set<string>();
+  let pourSeq = 0;
   for (const a of actions) {
     if (a.action === 'pour' && a.ingredient) {
       pouredBy.set(a.ingredient, (pouredBy.get(a.ingredient) ?? 0) + (a.amountMl ?? 0));
+      if (!pourIndex.has(a.ingredient)) pourIndex.set(a.ingredient, pourSeq++);
+      gentleBy.set(a.ingredient, (gentleBy.get(a.ingredient) ?? true) && (a.gentle ?? false));
+    } else if (a.action === 'rim' && a.ingredient) {
+      rimmed.add(a.ingredient);
     } else if (a.action === 'shake') {
       shakeSec += a.seconds ?? 0;
     } else if (a.action === 'stir') {
@@ -124,6 +140,25 @@ export function scoreMix(recipe: Recipe, actions: MixAction[]): MixScore {
     lines.push({ label: '셰이킹', ratio: 0, detail: '이 레시피는 흔들지 않아요' });
   }
 
+  // 3-0) 플로팅: float 스텝은 (a) 살살 부어 층 유지 (b) 이전 재료보다 나중에 부어야 함
+  const pourSteps = recipe.steps.filter((s) => s.action === 'pour' && s.ingredient);
+  for (let i = 0; i < pourSteps.length; i++) {
+    const step = pourSteps[i]!;
+    if (!step.float) continue;
+    const ing = step.ingredient!;
+    const poured = (pouredBy.get(ing) ?? 0) > 2;
+    const gentle = gentleBy.get(ing) ?? false;
+    const prev = i > 0 ? pourSteps[i - 1]!.ingredient! : null;
+    const orderOk = !prev || (pourIndex.get(ing) ?? -1) > (pourIndex.get(prev) ?? -1);
+    const ok = poured && gentle && orderOk;
+    techScores.push(ok ? 1 : 0);
+    lines.push({
+      label: `플로팅(${GameState.ingredient(ing).nameKo})`,
+      ratio: ok ? 1 : 0,
+      detail: !poured ? '빠짐' : !gentle ? '너무 세게 부어 섞임!' : !orderOk ? '순서가 달라요' : 'OK',
+    });
+  }
+
   // 3-1) 셰이크 레시피: 셰이커 → 잔에 따르기(스트레인)
   if (recipe.method === 'shake') {
     techScores.push(strained ? 1 : 0);
@@ -162,6 +197,31 @@ export function scoreMix(recipe: Recipe, actions: MixAction[]): MixScore {
       ratio: ok ? 1 : 0,
       detail: ok ? 'OK' : '빠짐',
     });
+  }
+
+  // 5-0) 리밍 (소금/설탕 프로스팅)
+  for (const step of recipe.steps) {
+    if (step.action !== 'rim' || !step.ingredient) continue;
+    const ok = rimmed.has(step.ingredient);
+    garnishScores.push(ok ? 1 : 0);
+    lines.push({
+      label: `리밍(${GameState.ingredient(step.ingredient).nameKo})`,
+      ratio: ok ? 1 : 0,
+      detail: ok ? 'OK' : '빠짐',
+    });
+  }
+  const expectedRim = new Set(
+    recipe.steps.filter((s) => s.action === 'rim' && s.ingredient).map((s) => s.ingredient!),
+  );
+  for (const r of rimmed) {
+    if (!expectedRim.has(r)) {
+      extraPenalty += 0.05;
+      lines.push({
+        label: `리밍(${GameState.ingredient(r).nameKo})`,
+        ratio: 0,
+        detail: '불필요한 리밍',
+      });
+    }
   }
 
   // 5-1) 레시피에 없는 가니시 (소폭 감점)

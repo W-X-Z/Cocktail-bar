@@ -80,7 +80,10 @@ export class ShopScene extends Phaser.Scene {
   }
 
   private buildOrderList(): void {
-    const items = [...GameState.ingredients].sort((a, b) => a.price - b.price);
+    const typeOrder: Record<string, number> = { spirit: 0, liqueur: 1, mixer: 2, garnish: 3, other: 4 };
+    const items = [...GameState.ingredients].sort(
+      (a, b) => (typeOrder[a.type] ?? 9) - (typeOrder[b.type] ?? 9) || a.price - b.price,
+    );
     items.forEach((ing, i) => {
       const y = i * ROW_H + ROW_H / 2;
       const row = this.add.container(0, y);
