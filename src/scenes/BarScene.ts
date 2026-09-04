@@ -21,9 +21,11 @@ import {
   vignetteTexture,
 } from '../ui/art';
 import { portraitTexture, seatedTexture } from '../ui/portraits';
-import { button, COLORS, formatMoney, H, panel, txt, W } from '../ui/theme';
+import { button, COLORS, formatMoney, H, panel, txt, W, type Btn } from '../ui/theme';
 
-const DAY_LENGTH_SEC = 240; // 실시간 240초 = 영업시간 20:00 → 02:00
+const DAY_LENGTH_SEC = 200; // 실시간 200초 = 영업시간 20:00 → 02:00
+/** 마감 전 이 시간 동안은 새 손님이 오지 않는다 (라스트 오더 버퍼) */
+const LAST_ORDER_BUFFER_SEC = 60;
 const BASE_PATIENCE_SEC = 75;
 /** 바 월드 폭 — 화면(720)보다 넓고, 드래그로 가로 스크롤 */
 const WORLD_W = 1080;
@@ -67,6 +69,8 @@ export class BarScene extends Phaser.Scene {
   private customers: (Customer | null)[] = [null, null, null, null];
   private clockSec = 0;
   private dayOver = false;
+  private lastCall = false;
+  private endBtn: Btn | null = null;
   private spawnTimer = 0;
   private nextSpawnIn = 3;
 
@@ -92,6 +96,8 @@ export class BarScene extends Phaser.Scene {
     this.customers = [null, null, null, null];
     this.clockSec = 0;
     this.dayOver = false;
+    this.lastCall = false;
+    this.endBtn = null;
     this.spawnTimer = 0;
     this.nextSpawnIn = 3;
     this.toast = null;
@@ -215,8 +221,8 @@ export class BarScene extends Phaser.Scene {
       .setScrollFactor(0);
     this.hintText = txt(this, W / 2, 262, '', 23, '#ff8a8a').setOrigin(0.5).setDepth(46).setScrollFactor(0);
 
-    const endBtn = button(this, W - 130, 1186, 208, 78, '영업 종료', () => this.endDay(), 0x8a5a2e);
-    endBtn.container.setDepth(46).setScrollFactor(0, 0, true);
+    this.endBtn = button(this, W - 130, 1186, 208, 78, '주문 마감', () => this.beginLastCall(), 0x8a5a2e);
+    this.endBtn.container.setDepth(46).setScrollFactor(0, 0, true);
     txt(this, 40, 1188, `메뉴 ${GameState.menu.length}종`, 22, '#b09070').setDepth(46).setScrollFactor(0);
 
     const bgmBtn = button(this, 232, 1216, 96, 64, Bgm.muted ? '🔇' : '🔊', () => {
@@ -270,15 +276,28 @@ export class BarScene extends Phaser.Scene {
     c.add(start.container);
   }
 
+  /** 주문 마감 — 새 손님을 받지 않고, 남은 손님이 모두 나가면 정산 */
+  private beginLastCall(): void {
+    if (this.lastCall || this.dayOver) return;
+    this.lastCall = true;
+    if (this.endBtn) {
+      this.endBtn.label.setText('마감 중…');
+      this.endBtn.setEnabled(false);
+    }
+    this.hintText.setText('주문 마감');
+  }
+
   override update(_time: number, deltaMs: number): void {
     const dt = deltaMs / 1000;
     if (!this.dayOver && !this.introOpen) {
-      this.clockSec += dt;
-      if (this.clockSec >= DAY_LENGTH_SEC) {
+      this.clockSec = Math.min(this.clockSec + dt, DAY_LENGTH_SEC);
+      if (this.clockSec >= DAY_LENGTH_SEC) this.beginLastCall(); // 영업시간 종료 → 자동 마감
+      else this.trySpawn(dt);
+      // 마감 후 마지막 손님이 나가면 정산
+      if (this.lastCall && this.customers.every((c) => c === null)) {
         this.endDay();
         return;
       }
-      this.trySpawn(dt);
     }
     this.updateCustomers(dt);
 
@@ -288,6 +307,8 @@ export class BarScene extends Phaser.Scene {
   }
 
   private trySpawn(dt: number): void {
+    // 마감 임박(라스트 오더 버퍼) 또는 주문 마감 후에는 새 손님이 오지 않는다
+    if (this.lastCall || this.clockSec > DAY_LENGTH_SEC - LAST_ORDER_BUFFER_SEC) return;
     this.spawnTimer += dt;
     if (this.spawnTimer < this.nextSpawnIn) return;
 

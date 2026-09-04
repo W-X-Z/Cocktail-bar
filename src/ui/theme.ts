@@ -71,10 +71,14 @@ export function button(
   container.setSize(w, h);
   let enabled = true;
   image.setInteractive({ useHandCursor: true });
-  image.on('pointerdown', (p: Phaser.Input.Pointer) => {
+  image.on('pointerdown', () => {
     if (!enabled) return;
     // 뎁스만큼 가라앉는 프레스 (코지 UI 관례)
     scene.tweens.add({ targets: container, y: y + 4, duration: 60, yoyo: true });
+  });
+  // 클릭은 "탭"일 때만 (드래그 스크롤이 버튼 위를 지나가도 오발동하지 않게)
+  image.on('pointerup', (p: Phaser.Input.Pointer) => {
+    if (!enabled || p.getDistance() >= 16) return;
     onClick(p);
   });
   return {

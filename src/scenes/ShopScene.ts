@@ -17,6 +17,7 @@ export class ShopScene extends Phaser.Scene {
   private listContainer!: Phaser.GameObjects.Container;
   private scrollY = 0;
   private contentHeight = 0;
+  private dragging = false;
 
   constructor() {
     super('Shop');
@@ -44,8 +45,14 @@ export class ShopScene extends Phaser.Scene {
     const maskShape = this.make.graphics().fillRect(0, LIST_TOP, W, LIST_BOTTOM - LIST_TOP);
     this.listContainer.setMask(maskShape.createGeometryMask());
 
+    // 14px 이상 움직여야 스크롤 시작 (버튼 탭과 구분)
+    this.input.on('pointerdown', () => {
+      this.dragging = false;
+    });
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
       if (!p.isDown) return;
+      if (!this.dragging && Math.abs(p.y - p.downY) < 14) return;
+      this.dragging = true;
       this.scrollY = Phaser.Math.Clamp(
         this.scrollY + (p.y - p.prevPosition.y),
         Math.min(0, LIST_BOTTOM - LIST_TOP - this.contentHeight),
