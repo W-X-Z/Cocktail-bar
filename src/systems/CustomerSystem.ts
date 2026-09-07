@@ -118,9 +118,20 @@ export const TALK_LABELS: Record<TalkKind, string> = {
   silence: '🤫 침묵',
 };
 
-/** 이번 방문에 건넬 이야기 랜덤 선택 (talks가 없으면 null) */
+/** 페르소나별 최근에 나온 이야기 (세션 내 중복 방지) */
+const recentTalks = new Map<string, number[]>();
+
+/** 이번 방문에 건넬 이야기 랜덤 선택 — 최근 절반 안에 나온 주제는 피한다 (talks가 없으면 null) */
 export function pickTalk(p: Persona, rng: () => number = Math.random): Talk | null {
   const talks = p.talks ?? [];
   if (talks.length === 0) return null;
-  return talks[Math.floor(rng() * talks.length)] ?? null;
+  const recent = recentTalks.get(p.id) ?? [];
+  const pool = talks.map((_, i) => i).filter((i) => !recent.includes(i));
+  const idx = (pool.length > 0 ? pool : talks.map((_, i) => i))[
+    Math.floor(rng() * (pool.length > 0 ? pool.length : talks.length))
+  ]!;
+  recent.push(idx);
+  while (recent.length > Math.floor(talks.length / 2)) recent.shift();
+  recentTalks.set(p.id, recent);
+  return talks[idx] ?? null;
 }
