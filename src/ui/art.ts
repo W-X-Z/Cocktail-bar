@@ -1004,6 +1004,131 @@ export function arcadeTexture(scene: Phaser.Scene): string {
   });
 }
 
+/** 두더지 팡 오락기 (청록 캐비닛) */
+export function moleArcadeTexture(scene: Phaser.Scene): string {
+  return ensureTexture(scene, 'prop_arcade_mole', 104, 170, (ctx, w, h) => {
+    const cx = w / 2;
+    const g = ctx.createLinearGradient(0, 0, w, 0);
+    g.addColorStop(0, '#1c4a56');
+    g.addColorStop(0.5, '#2a6a7a');
+    g.addColorStop(1, '#143a44');
+    rounded(ctx, 8, 26, w - 16, h - 30, 8);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    // 마퀴
+    rounded(ctx, 4, 4, w - 8, 26, 6);
+    ctx.fillStyle = '#5ad7ff';
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#08303c';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('MOLE!', cx, 22);
+    // 스크린 (풀밭 + 두더지)
+    rounded(ctx, 16, 38, w - 32, 56, 5);
+    ctx.fillStyle = '#173a1e';
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#0c2410';
+    ctx.beginPath();
+    ctx.ellipse(36, 82, 12, 5, 0, 0, Math.PI * 2);
+    ctx.ellipse(66, 74, 12, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // 두더지 얼굴
+    ctx.fillStyle = '#8a5a34';
+    ctx.beginPath();
+    ctx.arc(36, 70, 9, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(32, 67, 2.5, 2.5);
+    ctx.fillRect(39, 67, 2.5, 2.5);
+    ctx.fillStyle = '#e8a0a0';
+    ctx.beginPath();
+    ctx.arc(36, 73, 2.4, 0, Math.PI * 2);
+    ctx.fill();
+    // 컨트롤 패널 (망치 버튼)
+    rounded(ctx, 14, 102, w - 28, 22, 4);
+    ctx.fillStyle = '#0e2a32';
+    ctx.fill();
+    ctx.fillStyle = '#ffd75a';
+    ctx.beginPath();
+    ctx.arc(cx, 113, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(14, 132);
+    ctx.lineTo(w - 14, 132);
+    ctx.stroke();
+  });
+}
+
+/** 두더지 (미니게임용, 정면) */
+export function moleTexture(scene: Phaser.Scene, golden = false): string {
+  return ensureTexture(scene, golden ? 'mole_gold' : 'mole', 100, 96, (ctx, w) => {
+    const cx = w / 2;
+    const body = golden ? '#e8b83a' : '#8a5a34';
+    const belly = golden ? '#f8dc8a' : '#c09468';
+    // 몸통
+    ctx.fillStyle = body;
+    ctx.beginPath();
+    ctx.ellipse(cx, 58, 34, 36, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    // 귀
+    ctx.fillStyle = body;
+    ctx.beginPath();
+    ctx.arc(cx - 24, 28, 9, 0, Math.PI * 2);
+    ctx.arc(cx + 24, 28, 9, 0, Math.PI * 2);
+    ctx.fill();
+    // 배
+    ctx.fillStyle = belly;
+    ctx.beginPath();
+    ctx.ellipse(cx, 68, 20, 22, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // 눈
+    ctx.fillStyle = '#141414';
+    ctx.fillRect(cx - 15, 44, 6, 6);
+    ctx.fillRect(cx + 9, 44, 6, 6);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(cx - 13, 45, 2, 2);
+    ctx.fillRect(cx + 11, 45, 2, 2);
+    // 코 + 수염
+    ctx.fillStyle = '#e8848a';
+    ctx.beginPath();
+    ctx.ellipse(cx, 56, 6, 4.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(cx - 10, 56);
+    ctx.lineTo(cx - 26, 52);
+    ctx.moveTo(cx - 10, 60);
+    ctx.lineTo(cx - 26, 62);
+    ctx.moveTo(cx + 10, 56);
+    ctx.lineTo(cx + 26, 52);
+    ctx.moveTo(cx + 10, 60);
+    ctx.lineTo(cx + 26, 62);
+    ctx.stroke();
+    // 앞니
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(cx - 4, 61, 4, 6);
+    ctx.fillRect(cx + 0.5, 61, 4, 6);
+    if (golden) {
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      ctx.beginPath();
+      ctx.arc(cx - 22, 36, 3, 0, Math.PI * 2);
+      ctx.arc(cx + 26, 70, 2.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+}
+
 /* ---------- UI ---------- */
 
 /** 라운드 버튼 — 플랫 + 하단 뎁스 (촌스러운 광택/굵은 테두리 제거) */

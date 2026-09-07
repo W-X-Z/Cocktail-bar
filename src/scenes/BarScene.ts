@@ -15,6 +15,7 @@ import { createOrder } from '../systems/OrderSystem';
 import type { Order, Persona, ScoreLine, Talk, TalkOption } from '../systems/types';
 import {
   arcadeTexture,
+  moleArcadeTexture,
   bottleTexture,
   counterTexture,
   glowTexture,
@@ -34,7 +35,6 @@ interface Customer {
   persona: Persona;
   container: Phaser.GameObjects.Container;
   sprite: Phaser.GameObjects.Image;
-  nameText: Phaser.GameObjects.Text;
   bubble: Phaser.GameObjects.Container;
   bubbleText: Phaser.GameObjects.Text;
   patienceBar: Phaser.GameObjects.Rectangle;
@@ -82,11 +82,13 @@ export class BarScene extends Phaser.Scene {
   private dialogueCard: Phaser.GameObjects.Container | null = null;
   private dialogueSticky = false;
   private introOpen = false;
+  private machineImgs: Phaser.GameObjects.Image[] = [];
+  private interiorOverlay: Phaser.GameObjects.Container | null = null;
 
   private seatX(i: number): number {
     return 260 + i * 230;
   }
-  private readonly seatY = 682;
+  private readonly seatY = 745;
 
   constructor() {
     super('Bar');
@@ -103,6 +105,8 @@ export class BarScene extends Phaser.Scene {
     this.toast = null;
     this.dialogueCard = null;
     this.dialogueSticky = false;
+    this.machineImgs = [];
+    this.interiorOverlay = null;
 
     this.cameras.main.setBounds(0, 0, WORLD_W, H);
     this.cameras.main.scrollX = 0;
@@ -136,11 +140,15 @@ export class BarScene extends Phaser.Scene {
     // 홀 배경
     const wallG = this.add.graphics();
     wallG.fillGradientStyle(0x241318, 0x241318, 0x160a10, 0x160a10, 1);
-    wallG.fillRect(0, 140, WORLD_W, 660);
+    wallG.fillRect(0, 140, WORLD_W, 730);
     for (let x = 40; x < WORLD_W; x += 160) {
       this.add.rectangle(x + 60, 400, 120, 380, 0x2e1a20).setStrokeStyle(2, 0x000000, 0.3);
     }
-    this.add.rectangle(60, 470, 110, 330, 0x0e0703).setStrokeStyle(3, COLORS.accent, 0.4);
+    // 아케이드 알코브 (왼쪽 벽면 오락기 존)
+    this.add.rectangle(122, 620, 224, 470, 0x0e0703).setStrokeStyle(3, COLORS.accent, 0.4);
+    const gameSign = txt(this, 122, 420, 'GAME', 24, '#5ad7ff', { fontStyle: 'bold' }).setOrigin(0.5);
+    gameSign.setShadow(0, 0, '#2a8ac0', 12);
+    this.tweens.add({ targets: gameSign, alpha: 0.6, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
     for (let i = 0; i < 4; i++) {
       this.add.rectangle(this.seatX(i) + 90, 320, 4, 60, 0x0a0506);
       this.add.circle(this.seatX(i) + 90, 360, 16, 0xffc878, 0.9).setStrokeStyle(2, 0x8a5a20);
@@ -175,34 +183,51 @@ export class BarScene extends Phaser.Scene {
     neon.setShadow(0, 0, '#ff4f9e', 14);
     this.tweens.add({ targets: neon, alpha: 0.72, duration: 1300, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
 
-    // 핀볼 오락기
-    const arcade = this.add.image(62, 700, arcadeTexture(this)).setDepth(9);
-    arcade.setInteractive({ useHandCursor: true });
-    arcade.on('pointerup', (p: Phaser.Input.Pointer) => {
-      if (p.getDistance() < 16 && !this.scene.isActive('Pinball')) this.scene.launch('Pinball');
-    });
-    this.add
-      .image(62, 660, glowTexture(this))
-      .setScale(0.58)
-      .setTint(0xff4f9e)
-      .setAlpha(0.25)
-      .setBlendMode(Phaser.BlendModes.ADD)
-      .setDepth(8);
-    this.tweens.add({ targets: arcade, scale: 1.04, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+    // 오락기 (보유 목록에 따라 배치)
+    this.drawMachines();
 
-    // 바 카운터 (월드 전체 폭)
-    this.add.image(WORLD_W / 2, 940, counterTexture(this, 'bar_counter_w', WORLD_W, 300)).setDepth(20);
-    this.add.rectangle(WORLD_W / 2, 786, WORLD_W, 20, COLORS.woodLight).setDepth(20).setStrokeStyle(2, 0x000000, 0.35);
+    // 바 카운터 (월드 전체 폭) — 낮은 카운터로 손님 상체가 잘 보이게
+    this.add.image(WORLD_W / 2, 995, counterTexture(this, 'bar_counter_w', WORLD_W, 260)).setDepth(20);
+    this.add.rectangle(WORLD_W / 2, 858, WORLD_W, 20, COLORS.woodLight).setDepth(20).setStrokeStyle(2, 0x000000, 0.35);
     this.add
-      .image(WORLD_W / 2, 830, glowTexture(this))
+      .image(WORLD_W / 2, 900, glowTexture(this))
       .setScale(5.2, 0.7)
       .setTint(0xffcf8a)
       .setAlpha(0.16)
       .setBlendMode(Phaser.BlendModes.ADD)
       .setDepth(21);
     for (let i = 0; i < 4; i++) {
-      this.add.ellipse(this.seatX(i) + 90, 828, 84, 26, 0x33200f).setDepth(21).setStrokeStyle(2, 0x000000, 0.3);
+      this.add.ellipse(this.seatX(i) + 90, 898, 84, 26, 0x33200f).setDepth(21).setStrokeStyle(2, 0x000000, 0.3);
     }
+  }
+
+  /** 보유한 오락기를 아케이드 존에 배치 (인테리어 구매 후 다시 그림) */
+  private drawMachines(): void {
+    for (const m of this.machineImgs) m.destroy();
+    this.machineImgs = [];
+    const owned = GameState.interior;
+    const defs: Array<{ id: string; tex: string; scene: string }> = [
+      { id: 'pinball', tex: arcadeTexture(this), scene: 'Pinball' },
+      { id: 'mole', tex: moleArcadeTexture(this), scene: 'Whack' },
+    ];
+    const placed = defs.filter((d) => owned.includes(d.id));
+    placed.forEach((d, i) => {
+      const x = placed.length === 1 ? 122 : 68 + i * 112;
+      const img = this.add.image(x, 738, d.tex).setDepth(9).setScale(1.12);
+      img.setInteractive({ useHandCursor: true });
+      img.on('pointerup', (p: Phaser.Input.Pointer) => {
+        if (p.getDistance() < 16 && !this.scene.isActive(d.scene)) this.scene.launch(d.scene);
+      });
+      const glow = this.add
+        .image(x, 700, glowTexture(this))
+        .setScale(0.62)
+        .setTint(d.id === 'pinball' ? 0xff4f9e : 0x5ad7ff)
+        .setAlpha(0.25)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(8);
+      this.tweens.add({ targets: img, scale: 1.16, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+      this.machineImgs.push(img, glow as unknown as Phaser.GameObjects.Image);
+    });
   }
 
   private drawHud(): void {
@@ -225,16 +250,19 @@ export class BarScene extends Phaser.Scene {
     this.endBtn.container.setDepth(46).setScrollFactor(0, 0, true);
     txt(this, 40, 1188, `메뉴 ${GameState.menu.length}종`, 22, '#b09070').setDepth(46).setScrollFactor(0);
 
-    const bgmBtn = button(this, 232, 1216, 96, 64, Bgm.muted ? '🔇' : '🔊', () => {
+    const bgmBtn = button(this, 204, 1216, 88, 64, Bgm.muted ? '🔇' : '🔊', () => {
       bgmBtn.label.setText(Bgm.toggleMute() ? '🔇' : '🔊');
     }, 0x5a7a9a);
     bgmBtn.container.setDepth(46).setScrollFactor(0, 0, true);
 
-    const titleBtn = button(this, 366, 1216, 130, 64, '타이틀', () => {
+    const titleBtn = button(this, 310, 1216, 110, 64, '타이틀', () => {
       GameState.save();
       this.scene.start('Boot');
     }, 0x6a5a7a);
     titleBtn.container.setDepth(46).setScrollFactor(0, 0, true);
+
+    const interiorBtn = button(this, 414, 1216, 88, 64, '🛋', () => this.openInterior(), 0x4a6a5a);
+    interiorBtn.container.setDepth(46).setScrollFactor(0, 0, true);
   }
 
   private clockLabel(): string {
@@ -274,6 +302,61 @@ export class BarScene extends Phaser.Scene {
       this.introOpen = false;
     }, COLORS.ok);
     c.add(start.container);
+  }
+
+  /** 인테리어 관리 오버레이 — 오락기 구매/설치 */
+  private openInterior(): void {
+    this.interiorOverlay?.destroy();
+    const c = this.add.container(0, 0).setDepth(60).setScrollFactor(0, 0, true);
+    this.interiorOverlay = c;
+    const close = (): void => {
+      c.destroy();
+      if (this.interiorOverlay === c) this.interiorOverlay = null;
+    };
+    const dim = this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.6);
+    dim.setInteractive();
+    dim.on('pointerup', (p: Phaser.Input.Pointer) => {
+      if (p.getDistance() < 16) close();
+    });
+    c.add(dim);
+    c.add(panel(this, W / 2, H / 2 - 40, 600, 470));
+    c.add(txt(this, W / 2, H / 2 - 240, '🛋 인테리어', 32, '#e8a33d', { fontStyle: 'bold' }).setOrigin(0.5));
+    c.add(txt(this, W / 2 - 260, H / 2 - 190, '오락기', 22, '#b09070'));
+
+    const catalog: Array<{ id: string; name: string; price: number; tex: string }> = [
+      { id: 'pinball', name: '핀볼 머신', price: 0, tex: arcadeTexture(this) },
+      { id: 'mole', name: '두더지 팡', price: 150000, tex: moleArcadeTexture(this) },
+    ];
+    catalog.forEach((item, i) => {
+      const y = H / 2 - 100 + i * 150;
+      const owned = GameState.interior.includes(item.id);
+      c.add(
+        this.add
+          .rectangle(W / 2, y, 540, 132, owned ? 0x22301f : COLORS.panelLight, 0.95)
+          .setStrokeStyle(2, owned ? COLORS.ok : COLORS.accent, owned ? 0.7 : 0.25),
+      );
+      c.add(this.add.image(W / 2 - 210, y, item.tex).setScale(0.62));
+      c.add(txt(this, W / 2 - 150, y - 36, item.name, 26, '#f2e6d0', { fontStyle: 'bold' }));
+      c.add(txt(this, W / 2 - 150, y + 2, item.id === 'pinball' ? '기본 설치' : '미니게임 1종 추가', 18, '#9a8a7a'));
+      if (owned) {
+        c.add(txt(this, W / 2 + 160, y, '✓ 설치됨', 24, '#7fdc8a', { fontStyle: 'bold' }).setOrigin(0.5));
+      } else {
+        const affordable = GameState.money >= item.price;
+        const buy = button(this, W / 2 + 160, y, 190, 66, formatMoney(item.price), () => {
+          if (GameState.buyInterior(item.id, item.price)) {
+            this.drawMachines();
+            close();
+            this.openInterior();
+            this.floatText(this.cameras.main.scrollX + W / 2, 700, '🕹 설치 완료!', '#5ad7ff');
+          }
+        }, affordable ? COLORS.accent : 0x555555);
+        buy.setEnabled(affordable);
+        c.add(buy.container);
+      }
+    });
+
+    const closeBtn = button(this, W / 2, H / 2 + 150, 200, 70, '닫기', close, 0x8a5a2e);
+    c.add(closeBtn.container);
   }
 
   /** 주문 마감 — 새 손님을 받지 않고, 남은 손님이 모두 나가면 정산 */
@@ -346,13 +429,6 @@ export class BarScene extends Phaser.Scene {
       .image(0, 0, seatedTexture(this, `seated_${persona.id}`, persona.look))
       .setScale(3);
     c.add(sprite);
-    const nameText = txt(this, 0, 0, this.nameLabel(persona), 20, lv.level >= 2 ? '#ffd27a' : '#b09070', {
-      fontStyle: 'bold',
-      align: 'center',
-    })
-      .setOrigin(0.5)
-      .setDepth(22)
-      .setVisible(false);
     c.setDepth(10);
     this.tweens.add({ targets: sprite, y: -6, duration: 220, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
 
@@ -390,7 +466,6 @@ export class BarScene extends Phaser.Scene {
       persona,
       container: c,
       sprite,
-      nameText,
       bubble,
       bubbleText,
       patienceBar,
@@ -417,7 +492,6 @@ export class BarScene extends Phaser.Scene {
         if (customer.state === 'walking') customer.state = 'seated';
         this.tweens.killTweensOf(sprite);
         sprite.setY(0);
-        nameText.setPosition(sx, 806).setVisible(true);
         bubble.setVisible(true);
         bubble.setScale(0);
         bubbleText.setText(greetText);
@@ -489,7 +563,6 @@ export class BarScene extends Phaser.Scene {
     }
 
     const newLevel = recordServe(customer.persona.id, s);
-    customer.nameText.setText(this.nameLabel(customer.persona));
     if (newLevel) {
       this.time.delayedCall(800, () => {
         this.floatText(
@@ -693,7 +766,6 @@ export class BarScene extends Phaser.Scene {
         this.floatText(customer.container.x, this.seatY - 200, icon, opt.affinity > 0 ? '#ff9ec6' : '#8a8a9a');
       }
       const newLevel = applyAffinity(customer.persona.id, opt.affinity);
-      customer.nameText.setText(this.nameLabel(customer.persona));
       if (newLevel) {
         this.floatText(
           customer.container.x,
@@ -780,7 +852,6 @@ export class BarScene extends Phaser.Scene {
         customer.bubbleText.setText('💢');
         this.showDialogue(customer.persona, angryLine);
         recordAngryLeave(customer.persona.id);
-        customer.nameText.setText(this.nameLabel(customer.persona));
         const c = customer;
         c.state = 'reacting';
         this.time.delayedCall(1400, () => this.removeCustomer(c, true));
@@ -793,7 +864,6 @@ export class BarScene extends Phaser.Scene {
     this.customers[customer.seatIndex] = null;
     customer.state = 'leaving';
     customer.bubble.setVisible(false);
-    customer.nameText.destroy();
     customer.drinkObj?.destroy();
     customer.container.disableInteractive();
     this.tweens.add({

@@ -25,6 +25,10 @@ interface Bumper {
   y: number;
   r: number;
   color: number;
+  /** 반발 임펄스 (기본 480) */
+  kick?: number;
+  /** 기본 점수 (기본 100) */
+  score?: number;
   obj?: Phaser.GameObjects.Arc;
 }
 
@@ -50,10 +54,18 @@ export class PinballScene extends Phaser.Scene {
   private alertBanner: Phaser.GameObjects.Container | null = null;
   private overPanel: Phaser.GameObjects.Container | null = null;
 
+  private comboCount = 0;
+  private lastBumperHitAt = 0;
+  private trail: Array<{ x: number; y: number }> = [];
+  private trailG!: Phaser.GameObjects.Graphics;
+
   private bumpers: Bumper[] = [
     { x: 230, y: 430, r: 30, color: 0xffd75a },
     { x: 470, y: 430, r: 30, color: 0x5ad7ff },
     { x: 350, y: 610, r: 34, color: 0xff5a8a },
+    // 슬링샷 (플리퍼 위 킥커 — 세게 튕기고 점수는 작다)
+    { x: 165, y: 815, r: 20, color: 0xa8ff5a, kick: 650, score: 50 },
+    { x: 555, y: 815, r: 20, color: 0xa8ff5a, kick: 650, score: 50 },
   ];
 
   // 하단 경사 가이드 (공을 플리퍼로 유도)
@@ -108,6 +120,10 @@ export class PinballScene extends Phaser.Scene {
       b.obj = this.add.circle(b.x, b.y, b.r, b.color, 0.9).setStrokeStyle(4, 0xffffff, 0.5);
     }
 
+    this.comboCount = 0;
+    this.lastBumperHitAt = 0;
+    this.trail = [];
+    this.trailG = this.add.graphics();
     this.flipperG = this.add.graphics();
     this.ball = this.add.circle(0, 0, BALL_R, 0xe8eef4).setStrokeStyle(2, 0x8a98a4);
 
@@ -205,13 +221,32 @@ export class PinballScene extends Phaser.Scene {
             this.ballX = b.x + nx * (b.r + BALL_R + 1);
             this.ballY = b.y + ny * (b.r + BALL_R + 1);
             const dot = this.vx * nx + this.vy * ny;
-            this.vx = (this.vx - 2 * dot * nx) * 0.6 + nx * 480;
-            this.vy = (this.vy - 2 * dot * ny) * 0.6 + ny * 480;
-            this.score += 100;
+            const kick = b.kick ?? 480;
+            this.vx = (this.vx - 2 * dot * nx) * 0.6 + nx * kick;
+            this.vy = (this.vy - 2 * dot * ny) * 0.6 + ny * kick;
+
+            // 콤보: 1.4초 안에 연속 히트 시 배율 증가 (최대 x4)
+            const now = this.time.now;
+            this.comboCount = now - this.lastBumperHitAt < 1400 ? this.comboCount + 1 : 1;
+            this.lastBumperHitAt = now;
+            const mult = Math.min(4, 1 + Math.floor(this.comboCount / 3));
+            const gained = (b.score ?? 100) * mult;
+            this.score += gained;
+            this.popScore(b.x, b.y - b.r - 14, gained, mult);
+
             if (b.obj) {
               this.tweens.killTweensOf(b.obj);
               b.obj.setScale(1.25);
               this.tweens.add({ targets: b.obj, scale: 1, duration: 160 });
+              // 히트 링 이펙트
+              const ring = this.add.circle(b.x, b.y, b.r, b.color, 0).setStrokeStyle(4, 0xffffff, 0.8);
+              this.tweens.add({
+                targets: ring,
+                scale: 1.9,
+                alpha: 0,
+                duration: 260,
+                onComplete: () => ring.destroy(),
+              });
             }
           }
         }
@@ -242,10 +277,34 @@ export class PinballScene extends Phaser.Scene {
       }
 
       this.ball.setPosition(this.ballX, this.ballY);
+
+      // 볼 트레일
+      this.trail.push({ x: this.ballX, y: this.ballY });
+      if (this.trail.length > 9) this.trail.shift();
+      this.trailG.clear();
+      this.trail.forEach((t, i) => {
+        this.trailG.fillStyle(0xaad4ff, 0.05 + (i / this.trail.length) * 0.22);
+        this.trailG.fillCircle(t.x, t.y, BALL_R * (0.35 + (i / this.trail.length) * 0.55));
+      });
+    } else {
+      this.trailG.clear();
+      this.trail = [];
     }
 
-    this.scoreText.setText(`SCORE ${this.score.toLocaleString()}`);
+    const mult = Math.min(4, 1 + Math.floor(this.comboCount / 3));
+    const comboLabel = mult > 1 && this.time.now - this.lastBumperHitAt < 1400 ? `  x${mult}` : '';
+    this.scoreText.setText(`SCORE ${this.score.toLocaleString()}${comboLabel}`);
     this.ballsText.setText(`● ${Math.max(0, this.ballsLeft)}`);
+  }
+
+  /** 범퍼 위 점수 팝업 */
+  private popScore(x: number, y: number, gained: number, mult: number): void {
+    const t = txt(this, x, y, mult > 1 ? `+${gained} x${mult}` : `+${gained}`, 24, mult > 1 ? '#ffd75a' : '#ffffff', {
+      fontStyle: 'bold',
+    })
+      .setOrigin(0.5)
+      .setDepth(6);
+    this.tweens.add({ targets: t, y: y - 60, alpha: 0, duration: 550, onComplete: () => t.destroy() });
   }
 
   private flipperSeg(side: 'L' | 'R'): Seg {

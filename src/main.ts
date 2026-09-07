@@ -4,6 +4,7 @@ import { BarScene } from './scenes/BarScene';
 import { BootScene } from './scenes/BootScene';
 import { MixScene } from './scenes/MixScene';
 import { PinballScene } from './scenes/PinballScene';
+import { WhackScene } from './scenes/WhackScene';
 import { PortraitPreviewScene } from './scenes/PortraitPreviewScene';
 import { ShopScene } from './scenes/ShopScene';
 import { COLORS, H, W } from './ui/theme';
@@ -38,7 +39,7 @@ const game = new Phaser.Game({
   },
   scene: debugPortraits
     ? [PortraitPreviewScene]
-    : [BootScene, BarScene, MixScene, ShopScene, PinballScene],
+    : [BootScene, BarScene, MixScene, ShopScene, PinballScene, WhackScene],
 });
 
 // 자동재생 정책: 첫 터치에서 BGM 시작, 이후 탭마다 resume 보장

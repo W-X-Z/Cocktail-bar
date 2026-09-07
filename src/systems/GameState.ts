@@ -38,6 +38,8 @@ interface SaveData {
   relationships?: Record<string, Relationship>;
   /** 시작 안내 팝업을 본 적 있는지 (구버전 세이브에는 없을 수 있음) */
   tutorialSeen?: boolean;
+  /** 설치된 인테리어(오락기 등) id 목록 (구버전 세이브에는 없을 수 있음) */
+  interior?: string[];
 }
 
 export interface SlotInfo {
@@ -63,6 +65,8 @@ class GameStateImpl {
   relationships: Record<string, Relationship> = {};
   /** 시작 안내 팝업 표시 여부 */
   tutorialSeen = false;
+  /** 설치된 인테리어(오락기 등) */
+  interior: string[] = ['pinball'];
 
   private currentSlot = 0;
 
@@ -109,6 +113,7 @@ class GameStateImpl {
       this.dayRevenue = data.dayRevenue ?? 0;
       this.relationships = data.relationships ?? {};
       this.tutorialSeen = data.tutorialSeen ?? false;
+      this.interior = data.interior ?? ['pinball'];
     } else {
       this.reset();
     }
@@ -117,6 +122,15 @@ class GameStateImpl {
   markTutorialSeen(): void {
     this.tutorialSeen = true;
     this.save();
+  }
+
+  /** 인테리어(오락기) 구매 — 성공 시 true */
+  buyInterior(id: string, price: number): boolean {
+    if (this.interior.includes(id) || this.money < price) return false;
+    this.money -= price;
+    this.interior.push(id);
+    this.save();
+    return true;
   }
 
   deleteSlot(slot: number): void {
@@ -153,6 +167,7 @@ class GameStateImpl {
     this.menu = ['gin_tonic', 'screwdriver'];
     this.relationships = {};
     this.tutorialSeen = false;
+    this.interior = ['pinball'];
     this.save();
   }
 
@@ -243,6 +258,7 @@ class GameStateImpl {
       dayRevenue: this.dayRevenue,
       relationships: this.relationships,
       tutorialSeen: this.tutorialSeen,
+      interior: this.interior,
     };
     try {
       localStorage.setItem(`${SAVE_PREFIX}${this.currentSlot}`, JSON.stringify(data));
